@@ -29,6 +29,7 @@
         <env name="TRACELESS_DEMO_MODE" value="true"/>
         <env name="TRACELESS_SCAN_DELAY_MS" value="0"/>
         <env name="BROADCAST_CONNECTION" value="log"/>
+        <env name="LOG_CHANNEL" value="stderr"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="PULSE_ENABLED" value="false"/>
         <env name="QUEUE_CONNECTION" value="sync"/>

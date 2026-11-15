@@ -169,12 +169,30 @@ php artisan tinker --execute="echo DB::select('select 1 as ok')[0]->ok;"
 
 ## Testing
 
+From this directory:
+
 ```bash
 php artisan test
+```
+
+From the repository root (the Python services live beside the application):
+
+```bash
 python -m unittest discover -s python-services/scanner/tests
 ```
 
-The PHP suite covers registration and sign-in via OTP, generic login responses, wrong-code lockout, expiry, account deletion via OTP, email-change verification, consent gating, the demo and live scan pipelines, untrusted scanner payload normalization, owner scoping and report downloads. The Python suite covers slug normalization, the per-source existence rules, blocked/timeout handling, consent enforcement and evidence generation without touching the network.
+Current state: **59 PHP tests** and **14 Python tests**, all passing.
+
+The PHP suite compiles Blade templates and, without `phpunit.xml`, would write
+an application log. `phpunit.xml` already forces the `stderr` log channel, so
+the only remaining write requirement is a compiled-view directory. Where the
+application directory is read-only (containers, CI sandboxes), redirect it:
+
+```bash
+VIEW_COMPILED_PATH=/tmp/traceless-views php artisan test
+```
+
+The PHP suite covers registration and sign-in via OTP, generic login responses, wrong-code lockout, expiry, account deletion via OTP, email-change verification, consent gating, the demo and live scan pipelines, untrusted scanner payload normalization, owner scoping and report downloads, and the production safety guard. The Python suite covers slug normalization, the per-source existence rules, blocked/timeout handling, consent enforcement and evidence generation without touching the network.
 
 ## Architecture notes
 

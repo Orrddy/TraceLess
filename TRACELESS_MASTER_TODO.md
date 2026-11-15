@@ -9,8 +9,8 @@ Every task below appears exactly once. Acceptance criteria and file-level detail
 | **Audit** | `TRACELESS_PROJECT_AUDIT.md` |
 | **Roadmap** | `TRACELESS_LAUNCH_ROADMAP.md` |
 | **Total tasks** | 72 + 4 open decisions |
-| **Complete** | 3 / 72 |
-| **Current milestone** | M0 — Safe baseline (Phase 0, in progress) |
+| **Complete** | 5 / 72 |
+| **Current milestone** | M0 — Safe baseline (Phase 0, 5 of 6 complete) |
 
 **Status legend:** `[ ]` not started · `[~]` in progress · `[x]` done · `[!]` blocked (add a note beneath) · `[-]` dropped (record why)
 
@@ -56,8 +56,10 @@ Record each decision (choice, date, owner, consequence) in `docs/DECISIONS.md` a
 - [x] **P0-02** — Remove preview auto-login + production boot guard · **Critical** · S · *Depends:* P0-01 · *Done when:* the route is deleted and the app throws when production runs with debug/demo/OTP-display enabled, with a test per combination
       *Done 2026-11-15 — `app/Support/ProductionSafetyGuard.php` wired in `AppServiceProvider::boot()`; `/__preview/dashboard` removed; 9 tests added (59 total pass); verified by booting with `APP_ENV=production` (refuses) and with a safe config (boots); documented in `docs/DEPLOYMENT.md`.*
 - [ ] **P0-03** — Separate dev from the production database branch · **Critical** · S · *Depends:* P0-01 · *Done when:* local dev uses SQLite or a dedicated Neon branch and the branch strategy is documented
-- [ ] **P0-04** — Rebuild assets and verify the frozen snapshot · **High** · S · *Depends:* P0-01 · *Done when:* `npm ci && npm run build` succeeds, the manifest updates, and all public routes return 200/302
-- [ ] **P0-05** — Repeatable test invocation · **High** · S · *Depends:* P0-01 · *Done when:* a documented command runs 50/50 PHP + 14/14 Python tests from a clean clone
+- [x] **P0-04** — Rebuild assets and verify the frozen snapshot · **High** · S · *Depends:* P0-01 · *Done when:* `npm ci && npm run build` succeeds, the manifest updates, and all public routes return 200/302
+      *Done 2026-11-15 — `npm run build` succeeded (6.7 s, 61 modules). CSS hash changed `app-Blz8Feto` → `app-DUORkCrx`, confirming the previous build was stale relative to the 02:42 edits. Served `/` returns 200 and references only the new assets.*
+- [x] **P0-05** — Repeatable test invocation · **High** · S · *Depends:* P0-01 · *Done when:* a documented command runs 50/50 PHP + 14/14 Python tests from a clean clone
+      *Done 2026-11-15 — `phpunit.xml` now forces `LOG_CHANNEL=stderr`; README documents `VIEW_COMPILED_PATH` for read-only trees and the correct Python working directory. Verified: 59 PHP + 14 Python tests pass.*
 - [x] **P0-06** — Commit audit, roadmap, tracker and decision log · **Medium** · S · *Depends:* P0-01 · *Done when:* the three documents are in the repo, `docs/DECISIONS.md` is seeded with D-01…D-04, and the README links them
       *Done 2026-11-15 — documents in the baseline commit; `docs/DECISIONS.md` added with D-01…D-04 (all Open) and a decision template; `README.md` links the audit, roadmap, tracker, decision log and runbook.*
 
