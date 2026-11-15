@@ -33,6 +33,10 @@ Thumbs.db
 # Scratch scripts ------------------------------------------------------------
 traceless-app/.tmp_ping.php
 
+# Local secrets --------------------------------------------------------------
+# Holds the deploy key used to push this repository. Never commit it.
+/.secrets/
+
 # Vendored third-party repositories -------------------------------------------
 # Upstream clones are fetched, not tracked: each is a separate Git repository
 # with its own history, and Git refuses to index files inside them.
