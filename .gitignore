@@ -26,10 +26,6 @@ Thumbs.db
 /me.mp4
 /bg neon.mp4
 
-# Redundant archive ----------------------------------------------------------
-# Extracted copy of the Stitch export lives in stitch_ui/.
-/stitch_smart_api_key_validator.zip
-
 # Scratch scripts ------------------------------------------------------------
 traceless-app/.tmp_ping.php
 
