@@ -47,36 +47,35 @@
         <div class="video-hero-overlay"></div>
         <div class="pointer-events-none absolute inset-0 opacity-[0.14] terminal-bg" style="background-color: transparent;"></div>
 
-        {{-- Slim telemetry row (deliberately quieter than the nav) --}}
+        {{-- Quiet status row --}}
         <div class="relative z-10 w-full px-5 pt-4 sm:px-10">
-            <div class="flex items-center justify-between gap-4 border-b border-line pb-3 font-mono text-[9px] uppercase tracking-[0.16em] text-body/70">
+            <div class="flex items-center justify-between gap-4 border-b border-line pb-3 text-xs text-body">
                 <div class="flex items-center gap-3">
-                    <span class="rounded border border-line bg-black/50 px-2 py-1 text-ink">Confidential briefing</span>
-                    <span class="hidden sm:inline">Public sources only</span>
-                    <span class="hidden md:inline text-faint">Demo environment</span>
+                    <span class="rounded-full border border-line bg-surface px-2.5 py-1 text-ink">Public data only</span>
+                    <span class="hidden sm:inline">No passwords, ever</span>
                 </div>
 
                 <div class="flex items-center gap-2">
                     <button type="button" @click="toggleSound()"
-                            class="flex items-center gap-1.5 rounded border border-white/15 bg-black/60 px-2.5 py-1 text-ink transition-colors hover:border-[#55D6E8]"
+                            class="flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1 text-body transition-colors hover:text-ink"
                             :aria-pressed="soundEnabled">
                         <span class="material-symbols-outlined text-[14px]" x-text="soundEnabled ? 'volume_up' : 'volume_off'"></span>
                         <span x-text="soundEnabled ? 'Sound on' : 'Enable sound'"></span>
                     </button>
                     <button type="button" @click="skipIntro()"
-                            class="rounded border border-transparent bg-surface px-2.5 py-1 text-ink transition-colors hover:bg-surface">
+                            class="rounded-lg border border-line bg-surface px-2.5 py-1 text-body transition-colors hover:text-ink">
                         Skip intro ↓
                     </button>
                 </div>
             </div>
         </div>
 
-        {{-- Briefing copy --}}
+        {{-- Hero copy --}}
         <div class="relative z-10 mx-auto my-auto w-full max-w-[1440px] px-5 py-10 sm:px-10">
             <div class="max-w-3xl space-y-6">
-                <div class="inline-flex flex-col gap-0.5 border border-[#55D6E8]/25 bg-canvas/70 px-3.5 py-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.18em] backdrop-blur-sm">
-                    <span class="text-accent">TraceLess // private intelligence</span>
-                    <span class="text-faint">Classification: confidential · Scope: public web</span>
+                <div class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-medium text-body backdrop-blur-sm">
+                    <span class="h-1.5 w-1.5 rounded-full bg-success"></span>
+                    Public sources only · Evidence kept for every finding
                 </div>
 
                 <h1 class="font-display text-[2.6rem] font-semibold leading-[1.02] tracking-[-0.035em] text-ink sm:text-6xl lg:text-[4.5rem]">
@@ -117,7 +116,7 @@
         </div>
 
         <div class="relative z-10 w-full pb-6 text-center">
-            <a href="#overview-section" class="inline-flex flex-col items-center gap-1 font-mono text-[9px] uppercase tracking-[0.2em] text-body/60 transition-colors hover:text-ink">
+            <a href="#overview-section" class="inline-flex flex-col items-center gap-1 text-xs text-body transition-colors hover:text-ink">
                 <span>Continue briefing</span>
                 <span class="material-symbols-outlined animate-bounce text-[16px]">keyboard_arrow_down</span>
             </a>
@@ -207,36 +206,36 @@
         </div>
     </section>
 
-    {{-- METHODOLOGY --}}
-    <section id="methodology" class="border-t border-line bg-surface py-20">
+    {{-- HOW IT WORKS --}}
+    <section id="how-it-works" class="border-t border-line bg-surface py-20">
         <div class="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
             <div class="mx-auto mb-14 max-w-2xl space-y-3 text-center">
-                <div class="ops-badge ops-badge-faint">Standard operating procedure</div>
+                <div class="ops-badge">How it works</div>
                 <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">Four steps to lower exposure</h2>
                 <p class="font-body text-sm leading-relaxed text-body">Every scan is deliberate, legally consented, and strictly limited to public-source discovery.</p>
             </div>
 
             <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
                 <div class="ops-card space-y-4 p-6">
-                    <div class="font-mono text-xs text-accent">STAGE 01 // IDENTITY</div>
+                    <div class="text-xs font-semibold uppercase tracking-wide text-accent">Step 1</div>
                     <h3 class="font-display text-base font-semibold text-ink">Monitored profile</h3>
                     <p class="font-body text-xs leading-relaxed text-body">Record your legal name, known handles and public emails behind an explicit ownership consent gate.</p>
                 </div>
 
                 <div class="ops-card space-y-4 p-6">
-                    <div class="font-mono text-xs text-accent">STAGE 02 // RECON</div>
+                    <div class="text-xs font-semibold uppercase tracking-wide text-accent">Step 2</div>
                     <h3 class="font-display text-base font-semibold text-ink">Public discovery</h3>
                     <p class="font-body text-xs leading-relaxed text-body">Check a curated public-source catalog for profiles and mentions that connect to your identifiers.</p>
                 </div>
 
                 <div class="ops-card space-y-4 p-6">
-                    <div class="font-mono text-xs text-accent">STAGE 03 // VERIFY</div>
+                    <div class="text-xs font-semibold uppercase tracking-wide text-accent">Step 3</div>
                     <h3 class="font-display text-base font-semibold text-ink">Evidence review</h3>
                     <p class="font-body text-xs leading-relaxed text-body">Each result carries its HTTP outcome, match rule and response hash. Blocked sources read <span class="text-warning">unknown</span>, never invented.</p>
                 </div>
 
                 <div class="ops-card space-y-4 p-6">
-                    <div class="font-mono text-xs text-accent">STAGE 04 // REMEDIATE</div>
+                    <div class="text-xs font-semibold uppercase tracking-wide text-accent">Step 4</div>
                     <h3 class="font-display text-base font-semibold text-ink">Tracked removal</h3>
                     <p class="font-body text-xs leading-relaxed text-body">Follow source-specific guidance, record what you sent, and monitor whether the record returns.</p>
                 </div>
@@ -248,7 +247,7 @@
     <section id="preparedness" class="mx-auto max-w-[1440px] border-t border-line px-4 py-24 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
             <div class="space-y-4 lg:col-span-6">
-                <div class="ops-badge ops-badge-coral">Intelligence briefing</div>
+                <div class="ops-badge">Why it matters</div>
                 <h2 class="font-display text-3xl font-semibold leading-tight tracking-[-0.03em] text-ink sm:text-4xl">
                     Public fragments are training data.
                 </h2>
@@ -270,7 +269,7 @@
                 <div class="ops-card space-y-2 p-5">
                     <span class="material-symbols-outlined text-accent">hub</span>
                     <h4 class="font-display text-sm font-semibold text-ink">Synthetic profiling</h4>
-                    <p class="font-body text-[11px] leading-relaxed text-body">Remove directory listings that feed identity dossiers and automated enrichment.</p>
+                    <p class="font-body text-[11px] leading-relaxed text-body">Remove directory listings that feed identity profiles and automated enrichment.</p>
                 </div>
                 <div class="ops-card space-y-2 p-5">
                     <span class="material-symbols-outlined text-success">history</span>
@@ -294,7 +293,7 @@
     {{-- FINAL CTA --}}
     <section class="mx-auto max-w-[1440px] border-t border-line px-4 py-24 sm:px-6 lg:px-8">
         <div class="ops-card scan-line-overlay mx-auto max-w-3xl space-y-6 p-10 text-center sm:p-12">
-            <div class="font-mono text-xs uppercase tracking-[0.2em] text-accent">Take back confidentiality</div>
+            <div class="text-xs font-semibold uppercase tracking-wide text-accent">Take back control</div>
             <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">Your privacy deserves more than hope.</h2>
             <p class="mx-auto max-w-lg font-body text-sm leading-relaxed text-body">
                 Start with one authorised identity. See what is actually public, understand how it was verified, and decide what to remove first.
