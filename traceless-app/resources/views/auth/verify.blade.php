@@ -13,38 +13,50 @@
         </p>
     </div>
 
-    @if($demoCode)
-        <div class="mb-5 rounded-lg border border-[#E9B45D]/30 bg-[#E9B45D]/[0.07] px-4 py-3">
-            <p class="flex items-center gap-2 font-mono text-[9px] uppercase tracking-wider text-[#E9B45D]">
-                <span class="material-symbols-outlined text-[13px]">science</span>
-                Demo mode — code shown locally
-            </p>
-            <p class="mt-1 font-mono text-2xl font-semibold tracking-[0.3em] text-ink">{{ $demoCode }}</p>
-            <p class="mt-1 font-body text-[11px] leading-relaxed text-muted">This panel is only rendered while demo mode is enabled. Production sends the code by email and never displays it.</p>
-        </div>
-    @endif
-
-    <form method="POST" action="{{ route('auth.verify.submit') }}" class="space-y-4">
+    <form method="POST" action="{{ route('auth.verify.submit') }}" class="space-y-4"
+          x-data="{ submitting: false }" x-ref="verifyForm">
         @csrf
 
         <div>
             <label for="code" class="mb-1.5 block font-mono text-[10px] uppercase tracking-wider text-muted">One-time code</label>
             <input id="code" type="text" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required autofocus
                    autocomplete="one-time-code" placeholder="000000"
+                   x-on:input="
+                       const digits = $event.target.value.replace(/\D/g, '').slice(0, 6);
+                       if ($event.target.value !== digits) { $event.target.value = digits; }
+                       if (digits.length === 6 && !submitting) {
+                           submitting = true;
+                           $refs.verifyForm.requestSubmit();
+                       }
+                   "
                    class="input-base text-center font-mono text-2xl tracking-[0.5em] @error('code') border-coral/60 @enderror">
             @error('code')<p class="mt-1 font-mono text-[10px] text-coral">{{ $message }}</p>@enderror
         </div>
 
-        <button type="submit" class="btn-primary w-full !py-3.5">
-            {{ $isRegistration ? 'Verify and create account' : 'Verify and sign in' }}
-            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        <button type="submit" class="btn-primary w-full !py-3.5" x-bind:disabled="submitting">
+            <span x-show="!submitting">{{ $isRegistration ? 'Verify and create account' : 'Verify and sign in' }}</span>
+            <span x-show="submitting" x-cloak>Verifying…</span>
+            <span class="material-symbols-outlined text-[16px]" x-show="!submitting">arrow_forward</span>
         </button>
     </form>
 
-    <form method="POST" action="{{ route('auth.verify.resend') }}" class="mt-3">
+    <form method="POST" action="{{ route('auth.verify.resend') }}" class="mt-3"
+          x-data="{
+              left: {{ (int) $resendAfter }},
+              tick: null,
+              start() {
+                  if (this.left <= 0) { return; }
+                  this.tick = setInterval(() => {
+                      this.left = Math.max(0, this.left - 1);
+                      if (this.left === 0) { clearInterval(this.tick); }
+                  }, 1000);
+              }
+          }"
+          x-init="start()">
         @csrf
-        <button type="submit" class="btn-secondary w-full" @if($resendAfter > 0) disabled @endif>
-            {{ $resendAfter > 0 ? "Resend available in {$resendAfter}s" : 'Send a new code' }}
+        <button type="submit" class="btn-secondary w-full" x-bind:disabled="left > 0">
+            <span x-show="left > 0">Resend available in <span x-text="left"></span>s</span>
+            <span x-show="left === 0" x-cloak>Send a new code</span>
         </button>
     </form>
 

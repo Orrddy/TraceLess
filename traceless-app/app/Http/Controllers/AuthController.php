@@ -47,14 +47,12 @@ class AuthController extends Controller
             'remember' => false,
         ]);
 
-        $issued = $this->otp->issue(
+        $this->otp->issue(
             $email,
             EmailOtp::PURPOSE_REGISTER,
             $request->ip(),
             $request->userAgent(),
         );
-
-        $this->rememberDemoCode($request, $issued);
 
         AuditLog::create([
             'user_id' => null,
@@ -97,14 +95,12 @@ class AuthController extends Controller
             $wait = $this->otp->secondsUntilResend($email, EmailOtp::PURPOSE_LOGIN);
 
             if (! $wait) {
-                $issued = $this->otp->issue(
+                $this->otp->issue(
                     $email,
                     EmailOtp::PURPOSE_LOGIN,
                     $request->ip(),
                     $request->userAgent(),
                 );
-
-                $this->rememberDemoCode($request, $issued);
 
                 AuditLog::create([
                     'user_id' => $user->id,
@@ -137,7 +133,6 @@ class AuthController extends Controller
             'maskedEmail' => $this->maskEmail($pending['email']),
             'purpose' => $pending['purpose'],
             'isRegistration' => $pending['purpose'] === EmailOtp::PURPOSE_REGISTER,
-            'demoCode' => $this->demoCode($request),
             'resendAfter' => $this->otp->secondsUntilResend($pending['email'], $pending['purpose']),
         ]);
     }
@@ -182,7 +177,7 @@ class AuthController extends Controller
             $user = User::where('email', $pending['email'])->first();
 
             if (! $user) {
-                $request->session()->forget(['otp_auth', 'otp_demo_code']);
+                $request->session()->forget('otp_auth');
 
                 return redirect()->route('login')->withErrors([
                     'email' => 'That code is not valid. Request a new one.',
@@ -204,7 +199,7 @@ class AuthController extends Controller
             'ip_address' => $request->ip(),
         ]);
 
-        $request->session()->forget(['otp_auth', 'otp_demo_code']);
+        $request->session()->forget('otp_auth');
 
         if ($pending['purpose'] === EmailOtp::PURPOSE_REGISTER) {
             return redirect()->route('identity.create');
@@ -234,14 +229,12 @@ class AuthController extends Controller
 
         // Never reveal whether an account exists for a login challenge.
         if ($pending['purpose'] !== EmailOtp::PURPOSE_LOGIN || $user) {
-            $issued = $this->otp->issue(
+            $this->otp->issue(
                 $pending['email'],
                 $pending['purpose'],
                 $request->ip(),
                 $request->userAgent(),
             );
-
-            $this->rememberDemoCode($request, $issued);
 
             AuditLog::create([
                 'user_id' => $user?->id,
@@ -287,22 +280,6 @@ class AuthController extends Controller
         event(new Registered($user));
 
         return $user;
-    }
-
-    protected function rememberDemoCode(Request $request, EmailOtp $otp): void
-    {
-        if (config('traceless.otp.demo_display') && $otp->plainCode) {
-            $request->session()->put('otp_demo_code', $otp->plainCode);
-        }
-    }
-
-    protected function demoCode(Request $request): ?string
-    {
-        if (! config('traceless.otp.demo_display')) {
-            return null;
-        }
-
-        return $request->session()->get('otp_demo_code');
     }
 
     protected function maskEmail(string $email): string

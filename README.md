@@ -119,9 +119,8 @@ php artisan queue:work --queue=scans,default
 php artisan schedule:work
 ```
 
-Demo sign-in uses `test@example.com`. With the default `log` mailer the
-six-digit code is written to `storage/logs/laravel.log` and, in demo mode,
-displayed on the verification screen.
+Demo sign-in uses `test@example.com`. The six-digit code is sent by the mailer
+configured in `.env` and is never rendered on screen.
 
 ## Testing
 
@@ -163,7 +162,7 @@ Key variables, all documented in `.env.example`:
 |---|---|
 | `TRACELESS_DEMO_MODE` | Switch between generated and verified findings |
 | `TRACELESS_OTP_EXPIRY_MINUTES`, `TRACELESS_OTP_MAX_ATTEMPTS`, `TRACELESS_OTP_RESEND_COOLDOWN` | One-time-code policy |
-| `TRACELESS_OTP_DEMO_DISPLAY` | Render the code on screen — **must be false outside local** |
+| `TRACELESS_OTP_DEMO_DISPLAY` | Show email-change and account-deletion codes in Settings — **must be false outside local** |
 | `TRACELESS_BREACH_PROVIDER` | Breach-metadata provider; empty disables the feature |
 | `TRACELESS_PYTHON_BINARY`, `TRACELESS_SCANNER_SCRIPT`, `TRACELESS_PYTHON_TIMEOUT` | Worker invocation |
 | `DB_URL`, `DB_LIBPQ_OPTIONS` | Neon/Postgres connection |
