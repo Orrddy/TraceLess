@@ -4,6 +4,17 @@ Privacy-first digital footprint protection. TraceLess scans **public** informati
 
 This repository contains the Laravel 12 + Livewire 3 application and a Python service boundary for scanner, normalisation and local-AI safety work.
 
+## Project status and planning
+
+TraceLess is in active recovery from a mid-redesign stop. The project-level
+documents live in the repository root:
+
+- [Project audit](../TRACELESS_PROJECT_AUDIT.md) — current state, feature matrix, outstanding issues
+- [Launch roadmap](../TRACELESS_LAUNCH_ROADMAP.md) — phased plan with acceptance criteria
+- [Master TODO](../TRACELESS_MASTER_TODO.md) — the working tracker
+- [Decision log](docs/DECISIONS.md) — open decisions that block planned work
+- [Deployment runbook](docs/DEPLOYMENT.md) — Neon/Upstash/Resend and container operations
+
 ## Passwordless authentication
 
 TraceLess has **no account passwords**. Sign-in and registration use a six-digit email one-time code (OTP):
