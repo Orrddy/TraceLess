@@ -41,7 +41,7 @@ no scan runs without a recorded ownership attestation.
 | 2026-11-15 | Added a fail-closed production guard: the app refuses to boot with `APP_DEBUG`, demo mode, or on-screen OTP codes enabled in production (9 tests) |
 | 2026-11-15 | Rebuilt the front-end assets — the previous build predated the last layout edits |
 | 2026-11-15 | Made the test suite reproducible (`LOG_CHANNEL=stderr`, documented `VIEW_COMPILED_PATH`) |
-| 2026-11-16 | Consolidated documentation into this README and removed the design/export assets |
+| 2026-11-15 | Consolidated documentation into this README and removed the design/export assets |
 
 ### Verified right now
 
@@ -82,8 +82,7 @@ no scan runs without a recorded ownership attestation.
 │   ├── database/           migrations, seeders, factories
 │   ├── resources/views/    Blade templates and the design system
 │   ├── routes/             web, channels, console
-│   ├── tests/              PHPUnit feature and unit tests
-│   └── docs/               deployment notes
+│   └── tests/              PHPUnit feature and unit tests
 ├── python-services/        scanner worker and its tests (outside the web root)
 │   ├── scanner/worker.py   verified public-source checks
 │   └── tests/              unittest suite
