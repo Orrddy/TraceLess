@@ -22,7 +22,7 @@ no scan runs without a recorded ownership attestation.
 | Passwordless authentication (email OTP) | **Working** — hashed codes, expiry, lockout, resend cooldown, route throttles |
 | Identity profile + recorded consent | **Working** — consent is re-validated before every queued scan |
 | Scan pipeline — demo mode | **Working** — deterministic 13-source adapter, labelled as demo |
-| Scan pipeline — live mode | **Working with limits** — username only, 24 curated public sources, evidence stored per finding |
+| Scan pipeline — live mode | **Working with limits** — username only, every monitored handle, 23 curated public sources, evidence stored per finding |
 | Findings, risk score, reports | **Working** — HTML dossier, signed download URL, per-report token |
 | Removal tracking | **Working as manual tracking** — no automated removal engine yet |
 | Continuous monitoring | **Partial** — preferences and hourly dispatch exist; live alerts are thin |
@@ -41,6 +41,8 @@ no scan runs without a recorded ownership attestation.
 | 2026-11-15 | Added a fail-closed production guard: the app refuses to boot with `APP_DEBUG`, demo mode, or on-screen OTP codes enabled in production (9 tests) |
 | 2026-11-15 | Rebuilt the front-end assets — the previous build predated the last layout edits |
 | 2026-11-15 | Made the test suite reproducible (`LOG_CHANNEL=stderr`, documented `VIEW_COMPILED_PATH`) |
+| 2026-11-15 | Verification screen: code no longer shown on-screen, six digits auto-submit, resend countdown ticks |
+| 2026-11-15 | Live scanning: every monitored username is checked, 5 dataset name mismatches fixed (19 → 23 sources), large pages truncate instead of failing |
 | 2026-11-15 | Consolidated documentation into this README and removed the design/export assets |
 
 ### Verified right now
@@ -148,7 +150,7 @@ VIEW_COMPILED_PATH=/tmp/traceless-views php artisan test
 | Mode | Behaviour |
 |---|---|
 | `TRACELESS_DEMO_MODE=true` (default) | Deterministic demo findings from a local catalogue. Every record is generated, not observed. |
-| `TRACELESS_DEMO_MODE=false` | The Python worker issues real HTTP requests to 24 curated public sources and reports a finding only when that source's own existence rule matches. Blocked, timed-out or unmatched sources are recorded as `unknown`, never as findings. |
+| `TRACELESS_DEMO_MODE=false` | The Python worker issues real HTTP requests to 23 curated public sources and reports a finding only when that source's own existence rule matches. Blocked, timed-out or unmatched sources are recorded as `unknown`, never as findings. Every monitored username is checked, up to `TRACELESS_MAX_USERNAMES`. |
 
 In live mode only a **public username** is sent to the worker. Emails, phone
 numbers and all password material are rejected at the process boundary.

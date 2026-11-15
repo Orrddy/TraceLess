@@ -146,5 +146,35 @@ class PayloadTests(unittest.TestCase):
         self.assertIsInstance(json.dumps(payload), str)
 
 
+class CuratedSiteTests(unittest.TestCase):
+    """The curated list must actually resolve against the installed dataset."""
+
+    @unittest.skipUnless(os.path.exists(worker.WMN_DATA_PATH), "dataset not installed")
+    def test_curated_labels_resolve_through_aliases(self):
+        scanner = worker.ScannerService(offline=True, delay_ms=0)
+        selected = scanner._selected_sites()
+        labels = [site.get("display_name") for site in selected]
+
+        self.assertGreaterEqual(len(selected), 22, f"only {len(selected)} sources resolved")
+        for label in ("GitHub", "Stack Overflow", "HackerNews", "Docker Hub"):
+            self.assertIn(label, labels, f"{label} did not resolve to a dataset entry")
+
+    @unittest.skipUnless(os.path.exists(worker.WMN_DATA_PATH), "dataset not installed")
+    def test_linkedin_is_absent_rather_than_silently_broken(self):
+        scanner = worker.ScannerService(offline=True, delay_ms=0)
+        labels = [site.get("display_name") for site in scanner._selected_sites()]
+
+        self.assertNotIn("LinkedIn", labels)
+        self.assertIn("LinkedIn", worker.CURATED_ALIASES)
+
+    @unittest.skipUnless(os.path.exists(worker.WMN_DATA_PATH), "dataset not installed")
+    def test_display_label_is_preserved_for_qualified_dataset_names(self):
+        scanner = worker.ScannerService(offline=True, delay_ms=0)
+        github = [s for s in scanner._selected_sites() if s.get("display_name") == "GitHub"]
+
+        self.assertEqual(len(github), 1)
+        self.assertTrue(github[0].get("name", "").startswith("GitHub"))
+
+
 if __name__ == "__main__":
     unittest.main()

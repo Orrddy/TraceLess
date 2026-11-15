@@ -65,7 +65,7 @@ WMN_DATA_PATH = os.path.join(ROOT_DIR, "upstream", "WhatsMyName", "wmn-data.json
 USER_AGENT = (
     "TraceLess/1.0 (+https://traceless.example; public-source footprint check)"
 )
-MAX_BODY_BYTES = 256 * 1024
+MAX_BODY_BYTES = 512 * 1024
 DEFAULT_TIMEOUT = 10.0
 DEFAULT_CONCURRENCY = 6
 DEFAULT_DELAY_MS = 1200
@@ -100,6 +100,17 @@ CURATED_SITES: Tuple[str, ...] = (
     "Dribbble",
     "Flickr",
 )
+
+CURATED_ALIASES: Dict[str, Tuple[str, ...]] = {
+    # Dataset entries whose names differ from the label we show to users.
+    "GitHub": ("GitHub (User)", "GitHub (Gists)"),
+    "Stack Overflow": ("StackOverflow",),
+    "HackerNews": ("Hacker News",),
+    "Docker Hub": ("Docker Hub (User)", "Docker Hub (Organization)"),
+    # LinkedIn is no longer present in the dataset; kept here so the curated
+    # list stays readable and the omission is explicit rather than silent.
+    "LinkedIn": (),
+}
 
 ATTRIBUTIONS: List[Dict[str, str]] = [
     {
@@ -272,17 +283,31 @@ class ScannerService:
         }
         selected: List[Dict[str, Any]] = []
         for name in CURATED_SITES:
-            site = by_name.get(name.lower())
+            site = self._resolve_site(by_name, name)
             if not site:
                 continue
             if not _text(site.get("uri_check")) or not _text(site.get("e_string")):
                 continue
             if site.get("valid") is False:
                 continue
-            selected.append(site)
+            # Keep the curated label for display; the dataset name is often
+            # qualified, e.g. "GitHub (User)".
+            display = dict(site)
+            display["display_name"] = name
+            selected.append(display)
             if len(selected) >= self.site_limit:
                 break
         return selected
+
+    def _resolve_site(
+        self, by_name: Dict[str, Dict[str, Any]], curated: str
+    ) -> Optional[Dict[str, Any]]:
+        """Map a curated label to its dataset entry, following known aliases."""
+        for candidate in (curated, *CURATED_ALIASES.get(curated, ())):
+            site = by_name.get(candidate.lower())
+            if site:
+                return site
+        return None
 
     # --------------------------------------------------------------- network
     def _fetch(self, url: str) -> Tuple[int, str, str]:
@@ -308,14 +333,15 @@ class ScannerService:
                 body = _decode_body(raw, error.headers.get("Content-Type", ""))
                 return error.code, body, error.geturl()
         with response:
-            raw = response.read(MAX_BODY_BYTES + 1)
-            if len(raw) > MAX_BODY_BYTES:
-                raise ValueError(REASON_TOO_LARGE)
+            # Large pages are truncated rather than rejected. Existence rules
+            # match on markers near the top of the document, and a marker that
+            # falls beyond the cut simply yields "unknown" — never a finding.
+            raw = response.read(MAX_BODY_BYTES)
             body = _decode_body(raw, response.headers.get("Content-Type", ""))
             return response.status, body, response.geturl()
 
     def _check_site(self, site: Dict[str, Any], slug: str) -> CheckResult:
-        name = _text(site.get("name")) or "Unknown source"
+        name = _text(site.get("display_name")) or _text(site.get("name")) or "Unknown source"
         category = _normalize_category(_text(site.get("cat")))
         template = _text(site.get("uri_check"))
         url = template.replace("{account}", urllib.parse.quote(slug, safe=""))

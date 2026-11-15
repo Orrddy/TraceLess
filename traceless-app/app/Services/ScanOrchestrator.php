@@ -249,16 +249,72 @@ class ScanOrchestrator
             return ['findings' => $this->demoAdapter->findingsFor($profile), 'sources' => null];
         }
 
-        $identifier = $profile->publicIdentifiers()
+        $usernames = $profile->publicIdentifiers()
             ->where('type', 'username')
             ->where('is_monitored', true)
-            ->first();
+            ->pluck('value')
+            ->map(fn ($value) => trim((string) $value))
+            ->filter()
+            ->unique()
+            ->take(max(1, (int) config('traceless.scan.max_usernames', 5)))
+            ->values();
 
-        if (! $identifier) {
+        if ($usernames->isEmpty()) {
             return ['findings' => [], 'sources' => []];
         }
 
-        return $this->pythonScanner->scanReport($identifier->type, $identifier->value, true);
+        $findings = [];
+        $sources = [];
+
+        // Every monitored handle is checked, not just the first. Each call is a
+        // separate worker process, so the cap in config keeps runtime bounded.
+        foreach ($usernames as $username) {
+            $report = $this->pythonScanner->scanReport('username', $username, true);
+
+            foreach ($report['findings'] ?? [] as $finding) {
+                $findings[] = $finding;
+            }
+
+            $sources = $this->mergeSources($sources, $report['sources'] ?? []);
+        }
+
+        return ['findings' => $findings, 'sources' => array_values($sources)];
+    }
+
+    /**
+     * Collapse per-username source telemetry into one row per source, keeping
+     * the strongest outcome observed (found > unknown > not_found > skipped).
+     *
+     * @param  array<string, array<string, mixed>>  $carry
+     * @param  array<int, array<string, mixed>>  $incoming
+     * @return array<string, array<string, mixed>>
+     */
+    protected function mergeSources(array $carry, array $incoming): array
+    {
+        $rank = ['found' => 3, 'unknown' => 2, 'not_found' => 1, 'skipped' => 0];
+
+        foreach ($incoming as $source) {
+            $name = $source['name'] ?? null;
+
+            if (! $name) {
+                continue;
+            }
+
+            if (! isset($carry[$name])) {
+                $carry[$name] = $source;
+
+                continue;
+            }
+
+            $existing = $rank[$carry[$name]['outcome'] ?? 'unknown'] ?? 0;
+            $candidate = $rank[$source['outcome'] ?? 'unknown'] ?? 0;
+
+            if ($candidate > $existing) {
+                $carry[$name] = $source;
+            }
+        }
+
+        return $carry;
     }
 
     /**

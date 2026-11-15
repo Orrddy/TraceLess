@@ -47,6 +47,9 @@ return [
         'sources_per_stage' => 4,
         'stage_delay_ms' => (int) env('TRACELESS_SCAN_DELAY_MS', 900),
         'minimum_score' => 5,
+        // Live scans check every monitored username. Each one runs the worker
+        // as a separate process, so the count bounds the wall-clock time.
+        'max_usernames' => (int) env('TRACELESS_MAX_USERNAMES', 5),
     ],
 
     /*

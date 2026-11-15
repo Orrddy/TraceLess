@@ -16,7 +16,8 @@ class RunScanJob implements ShouldQueue
 
     public int $tries = 1;
 
-    public int $timeout = 180;
+    // Live scans run the worker once per monitored username; allow for several.
+    public int $timeout = 300;
 
     public function __construct(public Scan $scan) {}
 
