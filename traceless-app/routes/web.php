@@ -87,21 +87,3 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', SettingsPage::class)->name('settings');
     Route::get('/account/export', AccountExportController::class)->name('account.export');
 });
-
-/*
-|--------------------------------------------------------------------------
-| Local-only design preview shortcut
-|--------------------------------------------------------------------------
-| Registers only in the local environment; never available in staging or
-| production. Used to capture authenticated screens during design review.
-*/
-if (app()->environment('local')) {
-    Route::get('/__preview/dashboard', function () {
-        $user = \App\Models\User::where('email', 'test@example.com')->first();
-        abort_unless($user, 404, 'Demo user not seeded.');
-        \Illuminate\Support\Facades\Auth::login($user);
-        request()->session()->regenerate();
-
-        return redirect()->route('dashboard');
-    });
-}

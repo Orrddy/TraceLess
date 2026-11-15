@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Database\NeonPostgresConnector;
+use App\Support\ProductionSafetyGuard;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Refuse to run production with development conveniences enabled.
+        // No-op in local, testing and any non-production environment.
+        (new ProductionSafetyGuard)->enforce();
     }
 }

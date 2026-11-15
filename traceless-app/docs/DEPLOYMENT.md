@@ -147,6 +147,31 @@ requirements:
 - a real queue connection and a running worker
 - `LOG_CHANNEL=stderr` so container logs reach the platform
 
+### Production safety guard
+
+The application refuses to boot when `APP_ENV=production` and any of the
+following is still set to its development value:
+
+| Setting | Why it blocks the boot |
+|---|---|
+| `APP_DEBUG=true` | Stack traces, configuration values and query bindings leak into responses and logs. |
+| `TRACELESS_DEMO_MODE=true` | The scanner returns fabricated findings instead of checking public sources. |
+| `TRACELESS_OTP_DEMO_DISPLAY=true` | The six-digit sign-in code is rendered on the verification screen. Because a code is issued for any existing account, this is an account-takeover path. |
+
+The check lives in `app/Support/ProductionSafetyGuard.php` and runs from
+`AppServiceProvider::boot()`. It is intentionally a hard failure: a container
+that exits on start is easier to notice than a service that quietly
+misrepresents its data or hands out sessions.
+
+Consequences to plan for:
+
+- `php artisan` commands (including `config:cache` and `migrate`) will also
+  fail until the environment is corrected. Fix the environment; do not disable
+  the guard.
+- Local, testing and any other non-production environment is unaffected.
+- `tests/Feature/ProductionSafetyGuardTest.php` covers both the accepted and
+  rejected combinations.
+
 ## 7. Docker
 
 Build and start:
