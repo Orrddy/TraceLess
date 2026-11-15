@@ -1,12 +1,11 @@
 <div class="relative min-h-[75vh] flex items-center justify-center overflow-hidden rounded-2xl border border-line" wire:poll.1500ms>
     <!-- Background Looping Scanner Video (bg neon.mp4) -->
-    <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-fit-cover object-center opacity-30 z-0 pointer-events-none">
+    <video width="1920" height="1080" autoplay loop muted playsinline class="absolute inset-0 h-full w-full object-cover object-center opacity-30 z-0 pointer-events-none">
         <source src="{{ asset('assets/videos/scanner-loop.mp4') }}" type="video/mp4">
     </video>
 
-    <!-- Dark Tactical Overlay to protect readability -->
-    <div class="absolute inset-0 bg-gradient-to-t from-[#080A0D] via-[#080A0D]/80 to-[#080A0D]/60 z-1"></div>
-    <div class="absolute inset-0 scan-line-overlay z-2 pointer-events-none"></div>
+    <!-- Scrim keeps the progress copy readable over the loop -->
+    <div class="absolute inset-0 z-0 bg-canvas/85"></div>
 
     <!-- Central Operational Console -->
     <div class="relative z-10 max-w-xl w-full p-8 text-center space-y-6">
@@ -58,7 +57,7 @@
             </div>
         @else
             <div class="font-mono text-[10px] text-faint">
-                ENCLAVE: LOCAL OSINT WORKER ACTIVE // ZERO PASSWORDS QUERIED
+                Checking public sources. No passwords are queried.
             </div>
         @endif
     </div>

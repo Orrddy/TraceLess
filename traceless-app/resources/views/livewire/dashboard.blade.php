@@ -32,7 +32,7 @@
             <div class="flex items-center gap-3">
                 <button wire:click="triggerQuickScan" class="btn-ops-primary text-xs py-2.5 px-4">
                     <span class="material-symbols-outlined text-[16px]">radar</span>
-                    <span>Execute Recon Scan</span>
+                    <span>Run a scan</span>
                 </button>
                 <a href="{{ route('reports') }}" class="btn-ops-secondary text-xs py-2.5 px-3">
                     <span class="material-symbols-outlined text-[16px]">article</span>
@@ -156,7 +156,7 @@
                     </div>
                 @else
                     <div class="py-12 text-center font-mono text-xs text-faint">
-                        No intelligence nodes detected. Click "Execute Recon Scan" above.
+                        No findings yet. Run a scan to see what is public about you.
                     </div>
                 @endif
             </div>

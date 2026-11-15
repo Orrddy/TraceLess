@@ -1,10 +1,10 @@
 @extends('layouts.auth')
 
-@section('title', 'Sign in — TraceLess')
+@section('title', 'Sign in · TraceLess')
 
 @section('content')
     <div class="mb-8">
-        <p class="eyebrow">Secure enclave // access</p>
+        <p class="eyebrow">Sign in</p>
         <h1 class="display-title mt-2 text-[2.2rem] text-ink sm:text-[2.6rem]">Welcome back.</h1>
         <p class="mt-2 font-body text-sm leading-relaxed text-muted">Enter your email and we will send a 6-digit sign-in code. No password to remember or store.</p>
     </div>

@@ -50,8 +50,8 @@
 
                 <div class="grid grid-cols-2 gap-px bg-hairline sm:grid-cols-4">
                     @foreach([
-                        ['Discovered', $finding->discovered_at?->format('M d, Y') ?? '—'],
-                        ['Last checked', $finding->last_checked_at?->format('M d, Y') ?? '—'],
+                        ['Discovered', $finding->discovered_at?->format('M d, Y') ?? 'n/a'],
+                        ['Last checked', $finding->last_checked_at?->format('M d, Y') ?? 'n/a'],
                         ['Removal method', str($finding->removal_method)->replace('_', ' ')->title()],
                         ['Scan', $finding->scan_id ? '#'.str_pad((string) $finding->scan_id, 4, '0', STR_PAD_LEFT) : 'Manual'],
                     ] as [$label, $value])
@@ -77,10 +77,10 @@
                         </p>
                         <dl class="mt-3 grid gap-px overflow-hidden rounded-xl border border-hairline bg-hairline sm:grid-cols-2">
                             @foreach([
-                                ['Match rule', $finding->evidence['rule'] ?? '—'],
-                                ['HTTP status', $finding->evidence['http_status'] ?? '—'],
-                                ['Checked at', $finding->evidence['checked_at'] ?? '—'],
-                                ['Response hash', \Illuminate\Support\Str::limit($finding->evidence['body_sha256'] ?? '—', 24)],
+                                ['Match rule', $finding->evidence['rule'] ?? 'n/a'],
+                                ['HTTP status', $finding->evidence['http_status'] ?? 'n/a'],
+                                ['Checked at', $finding->evidence['checked_at'] ?? 'n/a'],
+                                ['Response hash', \Illuminate\Support\Str::limit($finding->evidence['body_sha256'] ?? 'n/a', 24)],
                             ] as [$label, $value])
                                 <div class="bg-elevated px-4 py-3">
                                     <p class="mono-label">{{ $label }}</p>

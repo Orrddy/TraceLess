@@ -1,12 +1,12 @@
 @extends('layouts.auth')
 
-@section('title', 'Create account — TraceLess')
+@section('title', 'Create account · TraceLess')
 
 @section('content')
     <div class="mb-7">
         <p class="eyebrow">Begin assessment</p>
-        <h1 class="display-title mt-2 text-[2.2rem] text-ink sm:text-[2.6rem]">Create your enclave.</h1>
-        <p class="mt-2 font-body text-sm leading-relaxed text-muted">Set up a private account with your email. We will send a one-time code to verify it — no password required.</p>
+        <h1 class="display-title mt-2 text-[2.2rem] text-ink sm:text-[2.6rem]">Create your account.</h1>
+        <p class="mt-2 font-body text-sm leading-relaxed text-muted">Set up a private account with your email. We will send a one-time code to verify it. No password required.</p>
     </div>
 
     <form method="POST" action="{{ route('register') }}" class="space-y-4">

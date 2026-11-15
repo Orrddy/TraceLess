@@ -1,6 +1,6 @@
 @extends('layouts.marketing')
 
-@section('title', 'Privacy policy — TraceLess')
+@section('title', 'Privacy policy · TraceLess')
 
 @section('content')
     <div class="mx-auto max-w-3xl px-5 py-16 lg:px-10 lg:py-24">

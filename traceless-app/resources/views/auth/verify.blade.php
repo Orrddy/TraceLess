@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Enter your code — TraceLess')
+@section('title', 'Enter your code · TraceLess')
 
 @section('content')
     <div class="mb-7">

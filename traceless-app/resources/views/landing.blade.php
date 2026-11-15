@@ -40,12 +40,12 @@
 
     {{-- FULL-VIEWPORT BRIEFING --}}
     <section class="video-hero-container flex flex-col justify-between" id="hero-viewport">
-        <video x-ref="heroVideo" autoplay loop playsinline muted preload="auto" aria-hidden="true">
+        <video x-ref="heroVideo" width="1920" height="1080" class="h-full w-full object-cover" autoplay loop playsinline muted preload="metadata" aria-hidden="true">
             <source src="{{ asset('assets/videos/hero-intro.mp4') }}" type="video/mp4">
         </video>
 
         <div class="video-hero-overlay"></div>
-        <div class="pointer-events-none absolute inset-0 opacity-[0.14] terminal-bg" style="background-color: transparent;"></div>
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-canvas/40 via-transparent to-canvas" aria-hidden="true"></div>
 
         {{-- Quiet status row --}}
         <div class="relative z-10 w-full px-5 pt-4 sm:px-10">
@@ -73,11 +73,6 @@
         {{-- Hero copy --}}
         <div class="relative z-10 mx-auto my-auto w-full max-w-[1440px] px-5 py-10 sm:px-10">
             <div class="max-w-3xl space-y-6">
-                <div class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-medium text-body backdrop-blur-sm">
-                    <span class="h-1.5 w-1.5 rounded-full bg-success"></span>
-                    Public sources only · Evidence kept for every finding
-                </div>
-
                 <h1 class="font-display text-[2.6rem] font-semibold leading-[1.02] tracking-[-0.035em] text-ink sm:text-6xl lg:text-[4.5rem]">
                     Your digital footprint.<br>
                     <span class="text-accent">Under your control.</span>
@@ -163,7 +158,7 @@
             </div>
 
             <div id="capabilities" class="lg:col-span-7">
-                <div id="intelligence" class="ops-card scan-line-overlay p-6 sm:p-8">
+                <div id="intelligence" class="ops-card p-6 sm:p-8">
                     <div class="mb-6 flex items-center justify-between border-b border-line pb-4 font-mono text-xs">
                         <div class="flex items-center gap-2">
                             <span class="h-2 w-2 rounded-full bg-success"></span>
@@ -292,7 +287,7 @@
 
     {{-- FINAL CTA --}}
     <section class="mx-auto max-w-[1440px] border-t border-line px-4 py-24 sm:px-6 lg:px-8">
-        <div class="ops-card scan-line-overlay mx-auto max-w-3xl space-y-6 p-10 text-center sm:p-12">
+        <div class="ops-card mx-auto max-w-3xl space-y-6 p-10 text-center sm:p-12">
             <div class="text-xs font-semibold uppercase tracking-wide text-accent">Take back control</div>
             <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">Your privacy deserves more than hope.</h2>
             <p class="mx-auto max-w-lg font-body text-sm leading-relaxed text-body">

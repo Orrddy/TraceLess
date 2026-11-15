@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#ffffff">
-    <title>@yield('title', 'TraceLess — Secure access')</title>
+    <title>@yield('title', 'TraceLess · Secure access')</title>
 
     <script>
         (() => {
@@ -27,7 +27,7 @@
     <!-- Processing loop (the same footage used during a scan) as the ambient backdrop. -->
     <video
         class="pointer-events-none fixed inset-0 z-0 h-full w-full object-cover opacity-45 motion-reduce:hidden"
-        autoplay muted loop playsinline preload="metadata" tabindex="-1" aria-hidden="true">
+        width="1920" height="1080" autoplay muted loop playsinline preload="metadata" tabindex="-1" aria-hidden="true">
         <source src="{{ asset('assets/videos/scanner-loop.mp4') }}" type="video/mp4">
     </video>
     <!-- Readability scrims: keep form text above 4.5:1 contrast over moving footage. -->

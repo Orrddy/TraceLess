@@ -106,7 +106,7 @@
                             @if($task->finding)
                                 <a href="{{ route('findings.show', $task->finding) }}" class="font-mono text-[10px] text-electric-blue hover:underline">{{ Str::limit($task->finding->identifier_value, 26) }}</a>
                             @else
-                                <span class="text-muted">—</span>
+                                <span class="text-muted">n/a</span>
                             @endif
                         </dd>
                     </div>

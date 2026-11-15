@@ -28,7 +28,7 @@
 
                     @if($email_change_demo_code)
                         <div class="mt-3 rounded-lg border border-amber/30 bg-amber/[.07] px-3 py-2">
-                            <p class="font-mono text-[9px] uppercase tracking-wider text-[#9A6700]">Demo mode — code shown locally</p>
+                            <p class="font-mono text-[9px] uppercase tracking-wider text-[#9A6700]">Demo mode: code shown locally</p>
                             <p class="mt-0.5 font-mono text-xl font-semibold tracking-[0.3em] text-ink">{{ $email_change_demo_code }}</p>
                         </div>
                     @endif
@@ -66,16 +66,16 @@
                 <dl class="mt-4 space-y-2.5 font-body text-xs">
                     <div class="flex items-center justify-between gap-3">
                         <dt class="text-muted">Renews</dt>
-                        <dd class="font-mono text-[10px] text-ink">{{ $subscription->current_period_end?->format('d M Y') ?? '—' }}</dd>
+                        <dd class="font-mono text-[10px] text-ink">{{ $subscription->current_period_end?->format('d M Y') ?? 'n/a' }}</dd>
                     </div>
                     <div class="flex items-center justify-between gap-3">
                         <dt class="text-muted">Provider</dt>
-                        <dd class="capitalize text-ink">{{ $subscription->provider ?? '—' }}</dd>
+                        <dd class="capitalize text-ink">{{ $subscription->provider ?? 'n/a' }}</dd>
                     </div>
                 </dl>
             @else
                 <p class="mt-4 font-body text-xs leading-relaxed text-muted">You are on the free Snapshot plan. Monitoring and deep reports require Deep Scan.</p>
-                <a href="{{ route('home') }}#pricing" class="btn-secondary mt-4 w-full">Compare plans</a>
+                <p class="mt-4 text-xs text-muted">Deep Scan is not available yet.</p>
             @endif
 
             <div class="mt-5 rounded-xl border border-hairline bg-canvas-alt px-3 py-2.5">
@@ -174,7 +174,7 @@
                 @else
                     @if($delete_demo_code)
                         <div class="mt-3 rounded-lg border border-amber/30 bg-amber/[.07] px-3 py-2">
-                            <p class="font-mono text-[9px] uppercase tracking-wider text-[#9A6700]">Demo mode — code shown locally</p>
+                            <p class="font-mono text-[9px] uppercase tracking-wider text-[#9A6700]">Demo mode: code shown locally</p>
                             <p class="mt-0.5 font-mono text-xl font-semibold tracking-[0.3em] text-ink">{{ $delete_demo_code }}</p>
                         </div>
                     @else

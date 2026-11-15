@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $report->title }} — TraceLess</title>
+    <title>{{ $report->title }} · TraceLess</title>
     <style>
         :root { --ink:#101217; --muted:#626977; --line:#e5e7eb; --blue:#246BFE; }
         * { box-sizing: border-box; }
@@ -143,7 +143,7 @@
             </div>
             <div style="text-align:right;">
                 <div>Downloaded {{ $report->download_count }} time(s)</div>
-                <div>Keep this document private — it contains public records linked to your identity.</div>
+                <div>Keep this document private. It contains public records linked to your identity.</div>
             </div>
         </div>
     </div>
