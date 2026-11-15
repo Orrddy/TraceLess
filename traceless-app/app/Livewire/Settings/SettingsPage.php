@@ -1,0 +1,252 @@
+<?php
+
+namespace App\Livewire\Settings;
+
+use App\Models\EmailOtp;
+use App\Models\User;
+use App\Services\AuditService;
+use App\Services\OtpService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+use Livewire\Component;
+
+class SettingsPage extends Component
+{
+    public string $name = '';
+
+    public string $email = '';
+
+    public ?string $pending_email = null;
+
+    public string $email_change_code = '';
+
+    public bool $email_change_sent = false;
+
+    public ?string $email_change_demo_code = null;
+
+    public string $delete_code = '';
+
+    public bool $delete_code_sent = false;
+
+    public ?string $delete_demo_code = null;
+
+    public bool $confirm_data_purge = false;
+
+    public bool $confirm_account_delete = false;
+
+    public function mount(): void
+    {
+        $this->name = Auth::user()->name;
+        $this->email = Auth::user()->email;
+    }
+
+    public function updateProfile(): void
+    {
+        $user = Auth::user();
+        $this->email = app(OtpService::class)->normalizeEmail($this->email);
+
+        $this->validate([
+            'name' => 'required|string|max:120',
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+        ]);
+
+        $user->update(['name' => strip_tags($this->name)]);
+
+        if ($user->email === $this->email) {
+            app(AuditService::class)->log($user->id, 'profile_updated', 'Account profile updated.', request()->ip());
+            $this->dispatch('notify', message: 'Profile updated.');
+
+            return;
+        }
+
+        $otp = app(OtpService::class);
+
+        if ($wait = $otp->secondsUntilResend($this->email, EmailOtp::PURPOSE_CHANGE_EMAIL)) {
+            $this->addError('email', "Please wait {$wait} seconds before requesting another code.");
+
+            return;
+        }
+
+        $issued = $otp->issue(
+            $this->email,
+            EmailOtp::PURPOSE_CHANGE_EMAIL,
+            request()->ip(),
+            request()->userAgent(),
+        );
+
+        $this->pending_email = $this->email;
+        $this->email_change_sent = true;
+        $this->email_change_code = '';
+        $this->email_change_demo_code = config('traceless.otp.demo_display') ? $issued->plainCode : null;
+
+        app(AuditService::class)->log($user->id, 'email_change_requested', 'Verification code sent to a new email address.', request()->ip());
+        $this->dispatch('notify', message: 'Enter the 6-digit code sent to your new address to finish the change.');
+    }
+
+    public function confirmEmailChange(): void
+    {
+        $this->validate(['email_change_code' => 'required|digits:6']);
+
+        $user = Auth::user();
+
+        if (! $this->pending_email) {
+            $this->addError('email_change_code', 'Request a new verification code first.');
+
+            return;
+        }
+
+        if (User::where('email', $this->pending_email)->whereKeyNot($user->id)->exists()) {
+            $this->addError('email', 'That email address is already in use.');
+
+            return;
+        }
+
+        $result = app(OtpService::class)->verify(
+            $this->pending_email,
+            EmailOtp::PURPOSE_CHANGE_EMAIL,
+            $this->email_change_code,
+        );
+
+        if (! $result['ok']) {
+            $this->addError('email_change_code', match ($result['reason']) {
+                'expired' => 'That code has expired. Request a new one.',
+                'locked' => 'Too many incorrect attempts. Request a new code.',
+                default => 'That code is not valid. Check the email and try again.',
+            });
+
+            return;
+        }
+
+        $oldEmail = $user->email;
+        $newEmail = $this->pending_email;
+
+        $user->forceFill([
+            'email' => $newEmail,
+            'email_verified_at' => now(),
+        ])->save();
+
+        $this->email = $newEmail;
+        $this->pending_email = null;
+        $this->email_change_code = '';
+        $this->email_change_sent = false;
+        $this->email_change_demo_code = null;
+
+        app(AuditService::class)->log(
+            $user->id,
+            'email_changed',
+            "Sign-in email changed from {$oldEmail} to {$newEmail}.",
+            request()->ip(),
+        );
+        $this->dispatch('notify', message: 'Email updated and verified. Use it for future sign-in codes.');
+    }
+
+    public function cancelEmailChange(): void
+    {
+        $this->pending_email = null;
+        $this->email_change_code = '';
+        $this->email_change_sent = false;
+        $this->email_change_demo_code = null;
+        $this->resetErrorBag();
+    }
+
+    public function requestDeleteCode(): void
+    {
+        $user = Auth::user();
+        $otp = app(OtpService::class);
+
+        if ($wait = $otp->secondsUntilResend($user->email, EmailOtp::PURPOSE_DELETE_ACCOUNT)) {
+            $this->addError('delete_code', "Please wait {$wait} seconds before requesting another code.");
+
+            return;
+        }
+
+        $issued = $otp->issue(
+            $user->email,
+            EmailOtp::PURPOSE_DELETE_ACCOUNT,
+            request()->ip(),
+            request()->userAgent(),
+        );
+
+        $this->delete_code_sent = true;
+        $this->delete_code = '';
+        $this->delete_demo_code = config('traceless.otp.demo_display') ? $issued->plainCode : null;
+
+        app(AuditService::class)->log($user->id, 'account_delete_requested', 'Deletion verification code requested.', request()->ip());
+        $this->dispatch('notify', message: 'Enter the 6-digit code sent to your email to confirm deletion.');
+    }
+
+    public function purgeScanData(): void
+    {
+        $this->validate(['confirm_data_purge' => 'accepted']);
+        $user = Auth::user();
+
+        foreach ($user->identityProfiles as $profile) {
+            $profile->reports()->delete();
+            $profile->alerts()->delete();
+            $profile->removalTasks()->delete();
+            $profile->credentialExposures()->delete();
+            $profile->findings()->delete();
+            $profile->scans()->delete();
+            $profile->monitoringSubscription?->delete();
+        }
+
+        $this->confirm_data_purge = false;
+        app(AuditService::class)->log($user->id, 'scan_data_purged', 'User purged all scan findings and reports.', request()->ip());
+        $this->dispatch('notify', message: 'All scan findings, reports and removal records were deleted.');
+    }
+
+    public function deleteAccount()
+    {
+        $this->validate([
+            'delete_code' => 'required|digits:6',
+            'confirm_account_delete' => 'accepted',
+        ]);
+
+        $user = Auth::user();
+
+        $result = app(OtpService::class)->verify(
+            $user->email,
+            EmailOtp::PURPOSE_DELETE_ACCOUNT,
+            $this->delete_code,
+        );
+
+        if (! $result['ok']) {
+            $this->addError('delete_code', match ($result['reason']) {
+                'expired' => 'That code has expired. Request a new one.',
+                'locked' => 'Too many incorrect attempts. Request a new code.',
+                default => 'That code is not valid. Check the email and try again.',
+            });
+
+            return;
+        }
+
+        $userId = $user->id;
+
+        app(AuditService::class)->log($userId, 'account_deleted', 'User requested account deletion.', request()->ip());
+
+        EmailOtp::where('email', $user->email)->delete();
+        $user->notifications()->delete();
+
+        // Log out before deleting the model. SessionGuard::logout cycles the
+        // remember token, which would re-insert a model already marked deleted.
+        Auth::logout();
+        $user->delete();
+
+        if (request()->hasSession()) {
+            request()->session()->invalidate();
+            request()->session()->regenerateToken();
+        }
+
+        return redirect('/')->with('status', 'Your account and associated data have been deleted.');
+    }
+
+    public function render()
+    {
+        return view('livewire.settings-page', [
+            'user' => Auth::user(),
+            'auditLogs' => Auth::user()->auditLogs()->latest()->take(10)->get(),
+            'subscription' => Auth::user()->activeSubscription(),
+            'profile' => Auth::user()->latestProfile(),
+        ])->layout('layouts.app', ['title' => 'Settings // TraceLess']);
+    }
+}

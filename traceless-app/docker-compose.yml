@@ -1,0 +1,72 @@
+name: traceless
+
+x-app: &app
+  build:
+    context: .
+    target: runtime
+  image: traceless-app:latest
+  env_file:
+    - .env
+  restart: unless-stopped
+  volumes:
+    - storage:/var/www/html/storage
+    # The worker and its offline WhatsMyName dataset live outside the Laravel
+    # root, so they are mounted rather than baked into the image.
+    - ../python-services:/opt/traceless/python-services:ro
+
+services:
+  web:
+    <<: *app
+    environment:
+      APP_ROLE: web
+      TRACELESS_SCANNER_SCRIPT: /opt/traceless/python-services/scanner/worker.py
+    ports:
+      - "8080:8080"
+
+  queue:
+    <<: *app
+    environment:
+      APP_ROLE: queue
+      TRACELESS_SCANNER_SCRIPT: /opt/traceless/python-services/scanner/worker.py
+    command:
+      - php
+      - artisan
+      - queue:work
+      - --queue=scans,default
+      - --sleep=3
+      - --tries=3
+      - --max-time=3600
+    healthcheck:
+      disable: true
+
+  scheduler:
+    <<: *app
+    environment:
+      APP_ROLE: scheduler
+      TRACELESS_SCANNER_SCRIPT: /opt/traceless/python-services/scanner/worker.py
+    command:
+      - php
+      - artisan
+      - schedule:work
+    healthcheck:
+      disable: true
+
+  # One-off migrations: docker compose run --rm migrate
+  migrate:
+    <<: *app
+    profiles:
+      - tools
+    environment:
+      APP_ROLE: migrate
+      TRACELESS_SCANNER_SCRIPT: /opt/traceless/python-services/scanner/worker.py
+    command:
+      - php
+      - artisan
+      - migrate
+      - --force
+    restart: "no"
+    healthcheck:
+      disable: true
+
+volumes:
+  storage:

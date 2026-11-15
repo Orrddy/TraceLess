@@ -1,0 +1,45 @@
+# ---------------------------------------------------------------------------
+# TraceLess — repository root
+#
+# The Laravel application keeps its own rules in traceless-app/.gitignore, and
+# Laravel's storage/bootstrap directories ignore themselves via nested
+# .gitignore files. This file only covers what lives above or outside the app.
+# ---------------------------------------------------------------------------
+
+# Secrets and environment files ---------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.staging.example
+.neon
+
+# Operating-system and editor cruft -----------------------------------------
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Video masters --------------------------------------------------------------
+# These are byte-identical duplicates of the assets the application actually
+# serves; tracking both would double ~15 MB of binaries.
+# See traceless-app/public/assets/videos/.
+/me.mp4
+/bg neon.mp4
+
+# Redundant archive ----------------------------------------------------------
+# Extracted copy of the Stitch export lives in stitch_ui/.
+/stitch_smart_api_key_validator.zip
+
+# Scratch scripts ------------------------------------------------------------
+traceless-app/.tmp_ping.php
+
+# Vendored third-party repositories -------------------------------------------
+# Upstream clones are fetched, not tracked: each is a separate Git repository
+# with its own history, and Git refuses to index files inside them.
+#   python-services/upstream/WhatsMyName   (CC BY-SA 4.0 dataset)
+#   python-services/upstream/user-scanner  (MIT, reference only)
+# The scanner's runtime dataset is packaged under python-services/data/ so a
+# fresh clone can run live scans without cloning anything.
+python-services/upstream/
+python-services/**/__pycache__/
+python-services/**/*.pyc

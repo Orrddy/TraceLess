@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\AuditLog;
+use App\Models\EmailOtp;
+use App\Models\Finding;
+use App\Models\Report;
+use App\Models\Scan;
+use Illuminate\Console\Command;
+
+class PruneTraceLessData extends Command
+{
+    protected $signature = 'traceless:prune {--dry-run}';
+
+    protected $description = 'Apply TraceLess data-retention windows to scan telemetry, reports and audit logs.';
+
+    public function handle(): int
+    {
+        $scanCutoff = now()->subDays((int) config('traceless.retention.scan_telemetry_days'));
+        $reportCutoff = now()->subDays((int) config('traceless.retention.report_days'));
+        $auditCutoff = now()->subDays((int) config('traceless.retention.audit_days'));
+
+        $scans = Scan::whereIn('status', ['completed', 'failed', 'cancelled'])
+            ->where('created_at', '<', $scanCutoff);
+
+        $reports = Report::where('created_at', '<', $reportCutoff);
+        $audits = AuditLog::where('created_at', '<', $auditCutoff);
+        $otps = EmailOtp::where('expires_at', '<', now()->subDay());
+
+        if ($this->option('dry-run')) {
+            $this->table(['Record', 'Count'], [
+                ['scan telemetry', (clone $scans)->count()],
+                ['reports', (clone $reports)->count()],
+                ['audit logs', (clone $audits)->count()],
+                ['expired one-time codes', (clone $otps)->count()],
+            ]);
+
+            return self::SUCCESS;
+        }
+
+        $scanCount = (clone $scans)->count();
+        // Findings and sources cascade with their scan (findings set null on scan
+        // delete by schema, so prune orphaned findings explicitly first).
+        $scansToDelete = (clone $scans)->pluck('id');
+        Finding::whereIn('scan_id', $scansToDelete)->where('created_at', '<', $scanCutoff)->delete();
+        Scan::whereIn('id', $scansToDelete)->delete();
+
+        $reportCount = (clone $reports)->delete();
+        $auditCount = (clone $audits)->delete();
+        $otpCount = (clone $otps)->delete();
+
+        $this->info("Pruned {$scanCount} scans, {$reportCount} reports, {$otpCount} expired codes and {$auditCount} audit records.");
+
+        return self::SUCCESS;
+    }
+}

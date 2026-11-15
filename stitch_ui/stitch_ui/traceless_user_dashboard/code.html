@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@100..900&family=Geist:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"on-surface":"#1a1b21","secondary-fixed-dim":"#54d5ff","tertiary":"#6239e0","on-primary-container":"#ffffff","on-secondary":"#ffffff","primary-fixed":"#dbe1ff","on-secondary-fixed-variant":"#004d61","inverse-primary":"#b3c5ff","primary-fixed-dim":"#b3c5ff","on-tertiary-fixed-variant":"#4b14c9","surface-container-low":"#f3f3fa","on-error-container":"#93000a","surface-container-lowest":"#ffffff","surface-bright":"#f9f9ff","on-primary":"#ffffff","on-tertiary-fixed":"#1e0061","surface-container-highest":"#e2e2e9","surface-container":"#ededf5","on-error":"#ffffff","surface-dim":"#d9d9e1","on-background":"#1a1b21","secondary-fixed":"#b8eaff","error-container":"#ffdad6","on-primary-fixed":"#00174a","outline-variant":"#c2c6d8","on-tertiary-container":"#fffeff","surface-container-high":"#e8e7ef","on-surface-variant":"#424655","surface-variant":"#e2e2e9","on-secondary-container":"#005469","primary":"#0052d7","background":"#f9f9ff","secondary-container":"#00cefe","secondary":"#006780","surface-tint":"#0053d9","tertiary-fixed-dim":"#cbbeff","error":"#ba1a1a","outline":"#737687","on-primary-fixed-variant":"#003ea6","on-tertiary":"#ffffff","inverse-on-surface":"#f0f0f7","on-secondary-fixed":"#001f28","tertiary-container":"#7c57fa","inverse-surface":"#2e3036","tertiary-fixed":"#e7deff","surface":"#f9f9ff","primary-container":"#246bfe"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"margin-mobile":"1rem","margin":"3rem","gutter-mobile":"0.75rem","space-xl":"2.5rem","space-xs":"0.25rem","space-sm":"0.5rem","margin-tablet":"2rem","gutter":"1.5rem","space-lg":"1.5rem","space-md":"1rem"},"fontFamily":{"body-sm":["Geist"],"headline-xl":["Bodoni Moda"],"body-lg":["Geist"],"headline-lg":["Bodoni Moda"],"headline-xl-mobile":["Bodoni Moda"],"body-md":["Geist"],"headline-lg-mobile":["Bodoni Moda"],"label-sm":["JetBrains Mono"],"title-lg":["Geist"],"headline-md":["Bodoni Moda"],"headline-sm":["Bodoni Moda"],"label-lg":["JetBrains Mono"],"label-md":["JetBrains Mono"],"title-md":["Geist"]},"fontSize":{"body-sm":["12px",{"lineHeight":"18px","fontWeight":"400"}],"headline-xl":["56px",{"lineHeight":"64px","letterSpacing":"-0.03em","fontWeight":"700"}],"body-lg":["16px",{"lineHeight":"26px","fontWeight":"400"}],"headline-lg":["40px",{"lineHeight":"48px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-xl-mobile":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-md":["14px",{"lineHeight":"22px","fontWeight":"400"}],"headline-lg-mobile":["28px",{"lineHeight":"36px","letterSpacing":"-0.01em","fontWeight":"600"}],"label-sm":["10px",{"lineHeight":"14px","letterSpacing":"0.12em","fontWeight":"500"}],"title-lg":["18px",{"lineHeight":"26px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-md":["28px",{"lineHeight":"36px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-sm":["22px",{"lineHeight":"30px","letterSpacing":"0em","fontWeight":"600"}],"label-lg":["13px",{"lineHeight":"18px","letterSpacing":"0.04em","fontWeight":"500"}],"label-md":["11px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"500"}],"title-md":["16px",{"lineHeight":"24px","letterSpacing":"-0.005em","fontWeight":"600"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-lowest/85 backdrop-blur-xl z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col"><div class="h-16 px-space-md flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="w-7 h-7 bg-on-surface flex items-center justify-center rounded-DEFAULT"><span class="material-symbols-outlined text-surface text-[18px]">shield</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface leading-none">TRACELAND</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">SEC_ENCLAVE // 4.2</span></div></div><span class="font-label-sm text-label-sm text-outline px-space-xs py-0.5 rounded-DEFAULT bg-surface-container">V4.2</span></div><div class="px-space-md py-space-sm"><div class="px-space-sm py-space-xs rounded-DEFAULT bg-surface-container-low flex items-center justify-between"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase">TELEMETRY NODES</span><span class="font-label-sm text-label-sm text-primary font-bold">8/8 ON</span></div></div><nav class="flex flex-col gap-1 px-space-sm pt-space-xs" data-active-classes="bg-primary-container text-on-primary-container font-bold rounded-lg shadow-sm"><a aria-current="page" class="flex items-center gap-space-sm px-space-sm py-2 transition-all bg-primary-container text-on-primary-container font-bold rounded-lg shadow-sm" data-path="overview" href="#"><span class="material-symbols-outlined text-[18px]">grid_view</span><span>Overview</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="my-identity" href="#"><span class="material-symbols-outlined text-[18px]">fingerprint</span><span>My Identity</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="scan-results" href="#"><span class="material-symbols-outlined text-[18px]">radar</span><span>Scan Results</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="credential-exposure" href="#"><span class="material-symbols-outlined text-[18px]">key</span><span>Credential Exposure</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="removal-actions" href="#"><span class="material-symbols-outlined text-[18px]">delete_sweep</span><span>Removal Actions</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="monitoring" href="#"><span class="material-symbols-outlined text-[18px]">visibility</span><span>Monitoring</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="reports" href="#"><span class="material-symbols-outlined text-[18px]">description</span><span>Reports</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="settings" href="#"><span class="material-symbols-outlined text-[18px]">settings</span><span>Settings</span></a></nav></div><div class="p-space-md flex flex-col gap-space-sm"><div class="p-space-sm rounded-DEFAULT bg-surface-container-low flex flex-col gap-space-xs"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase">ISOLATION</span><div class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></div></div><div class="font-label-sm text-label-sm text-outline truncate">SHA256: 9b2d8f...39a1c</div></div><div class="flex items-center justify-between pt-space-xs"><span class="font-label-sm text-label-sm text-on-surface-variant">LATENCY</span><span class="font-label-sm text-label-sm text-on-surface font-bold">14ms // ENCRYPTED</span></div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface-container-lowest/80 backdrop-blur-xl z-40 flex items-center justify-between px-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm bg-surface-container-low px-space-md py-1.5 rounded-DEFAULT w-80"><span class="material-symbols-outlined text-outline text-[18px]">search</span><input class="bg-transparent text-body-sm font-body-sm text-on-surface placeholder:text-outline focus:outline-none w-full" placeholder="Query ledger, identities, leaks..." type="text"/><span class="font-label-sm text-label-sm text-outline px-1 rounded-DEFAULT bg-surface-container-highest">⌘K</span></div><div class="hidden xl:flex items-center gap-space-xs px-space-sm py-1 rounded-DEFAULT bg-surface-container-low"><div class="w-2 h-2 rounded-full bg-secondary-container"></div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">ZERO-KNOWLEDGE ENCLAVE: ACTIVE</span></div></div><div class="flex items-center gap-space-md"><button class="relative p-2 rounded-DEFAULT text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary"></span></button><div class="flex items-center gap-space-sm pl-space-sm"><div class="flex flex-col text-right"><span class="font-body-sm text-body-sm font-bold text-on-surface leading-tight">Elena Rostova</span><span class="font-label-sm text-label-sm text-primary uppercase">Shield Pro</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface px-space-lg min-h-screen"><div class="flex flex-col w-full pb-space-xl">
+<!-- Top Sovereign Metadata Banner -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm py-space-sm mb-space-md">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">
+        IDENTITY SECURITY STATUS • CONTINUOUS MONITORING ACTIVE
+      </span>
+<span class="font-label-sm text-label-sm text-primary px-space-xs py-0.5 rounded-DEFAULT bg-primary-fixed/40">
+        [NODE: US-EAST-SECURE // PROTOCOL 4.9]
+      </span>
+</div>
+<div class="flex items-center gap-space-md text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">verified_user</span>
+        ENCLAVE HASH: 0x89F4...D31E
+      </span>
+<span class="hidden sm:inline text-outline-variant">|</span>
+<span>EPOCH: 2025.Q2</span>
+</div>
+</div>
+<!-- Primary Header & Sovereign Welcome Bar -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg mb-space-xl bg-surface-container-lowest/80 backdrop-blur-xl p-space-lg rounded-xl shadow-sm">
+<div class="flex flex-col gap-space-xs max-w-2xl">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-widest">SOVEREIGN LEDGER // ARCHIVE IX</span>
+<span class="px-space-xs py-0.5 rounded-DEFAULT bg-surface-container-high text-on-surface font-label-sm text-label-sm flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          Elena Rostova (Verified Sovereign)
+        </span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface leading-tight">
+        Welcome back, Elena
+      </h1>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Autonomous telemetry scan completed 18 minutes ago. Four high-exposure attack vectors detected across tier-1 broker nodes.
+      </p>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm shrink-0">
+<button class="group flex items-center gap-space-sm px-space-md py-2.5 rounded-lg bg-surface-container-high hover:bg-surface-container text-on-surface transition-all shadow-sm font-label-md text-label-md uppercase" type="button">
+<span class="material-symbols-outlined text-[18px] text-outline group-hover:text-primary transition-colors">download_for_offline</span>
+<span>Export Privacy Dossier</span>
+</button>
+<button class="group flex items-center gap-space-sm px-space-md py-2.5 rounded-lg bg-on-surface hover:bg-primary text-surface-container-lowest transition-all shadow-md font-label-md text-label-md uppercase tracking-wider" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary-fixed-dim">radar</span>
+<span>New Privacy Scan</span>
+<span class="material-symbols-outlined text-[16px] text-surface-container-highest group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- KPI Quad-Grid (Gothic Cybercore Precision Cards) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md mb-space-xl">
+<!-- 1. Privacy Resilience Index -->
+<div class="relative bg-surface-container-lowest/80 backdrop-blur-xl p-space-lg rounded-xl shadow-sm flex flex-col justify-between overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none"></div>
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-bold tracking-wider">INDEX // PRIMUS</span>
+<span class="font-label-sm text-label-sm text-outline">SEC-SCORE</span>
+</div>
+<div class="flex items-center gap-space-md my-space-xs">
+<!-- Circular Gauge Inline SVG -->
+<div class="relative w-16 h-16 shrink-0 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="64, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface leading-none">64</span>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-semibold">64 / 100</span>
+<span class="font-label-sm text-label-sm text-amber-700 bg-amber-500/10 px-1.5 py-0.5 rounded-DEFAULT inline-block w-fit">
+              Moderate Standing
+            </span>
+</div>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs flex items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-[16px] shrink-0">trending_up</span>
+<span>+22 pts achievable via 4 pending actions</span>
+</div>
+</div>
+<!-- 2. Public Findings -->
+<div class="bg-surface-container-lowest/80 backdrop-blur-xl p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-bold tracking-wider">TELEMETRY // SECUNDUS</span>
+<span class="font-label-sm text-label-sm text-error bg-error-container/40 px-1 py-0.5 rounded-DEFAULT font-bold">+3 MO</span>
+</div>
+<div class="flex items-baseline gap-space-xs my-space-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">27</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Active Disclosures</span>
+</div>
+</div>
+<div class="mt-space-md flex items-center gap-1.5 flex-wrap">
+<span class="px-space-xs py-0.5 rounded-DEFAULT bg-error/10 text-error font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> 4 High
+        </span>
+<span class="px-space-xs py-0.5 rounded-DEFAULT bg-amber-500/15 text-amber-800 font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span> 9 Mod
+        </span>
+<span class="px-space-xs py-0.5 rounded-DEFAULT bg-primary/10 text-primary font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> 14 Low
+        </span>
+</div>
+</div>
+<!-- 3. Credential Leaks -->
+<div class="bg-surface-container-lowest/80 backdrop-blur-xl p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-bold tracking-wider">CREDS // TERTIUS</span>
+<span class="material-symbols-outlined text-[16px] text-error">warning</span>
+</div>
+<div class="flex items-baseline gap-space-xs my-space-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">2</span>
+<span class="font-title-md text-title-md text-error font-bold">Alerts</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs font-body-sm text-body-sm text-on-surface-variant flex flex-col">
+<span class="text-on-surface font-medium truncate">1 B2B CRM Dump (2024)</span>
+<span class="font-label-sm text-label-sm text-outline">Plaintext passwordhash match</span>
+</div>
+</div>
+<!-- 4. Removal Pipeline -->
+<div class="bg-surface-container-lowest/80 backdrop-blur-xl p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-bold tracking-wider">ERASURE // QUARTUS</span>
+<span class="font-label-sm text-label-sm text-secondary font-bold">10 / 26 DONE</span>
+</div>
+<div class="flex items-baseline gap-space-xs my-space-xs">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">38%</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Suppressed</span>
+</div>
+</div>
+<!-- Mini Multi-Bar Status Visualizer -->
+<div class="mt-space-md flex flex-col gap-1.5">
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden flex">
+<div class="bg-secondary-container h-full" style="width: 38.4%"></div>
+<div class="bg-amber-400 h-full" style="width: 27%"></div>
+<div class="bg-surface-container-high h-full" style="width: 34.6%"></div>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm text-outline">
+<span>10 Purged</span>
+<span>7 In Flight</span>
+<span>9 Queued</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Asymmetric Bento Workspace -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<!-- Left Column: Exposure Breakdown & Actionable Vulnerability Stream (8 cols) -->
+<div class="lg:col-span-8 flex flex-col gap-space-lg">
+<!-- Exposure by Category -->
+<div class="bg-surface-container-lowest/80 backdrop-blur-xl p-space-lg rounded-xl shadow-sm">
+<div class="flex items-center justify-between pb-space-md mb-space-md">
+<div class="flex items-center gap-space-sm">
+<span class="w-1.5 h-4 bg-primary rounded-DEFAULT"></span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Exposure Categorization</h2>
+<span class="font-label-sm text-label-sm text-outline bg-surface-container-low px-1.5 py-0.5 rounded-DEFAULT">5 VECTORS</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">AUDIT REF: EX-8910</span>
+</div>
+<div class="flex flex-col gap-space-md">
+<!-- Vector 1 -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<span class="font-medium text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-outline">alternate_email</span>
+                Social Profiles & Reused Nicknames
+              </span>
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">8 records</span>
+<span class="font-label-sm text-label-sm text-outline-variant font-bold">30%</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 30%;"></div>
+</div>
+</div>
+<!-- Vector 2 -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<span class="font-medium text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-error">phone_iphone</span>
+                Contact Details & Direct Phone
+                <span class="font-label-sm text-label-sm text-error bg-error-container/40 px-1 py-0.2 rounded-DEFAULT uppercase">High Risk</span>
+</span>
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">6 records</span>
+<span class="font-label-sm text-label-sm text-outline-variant font-bold">22%</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 22%;"></div>
+</div>
+</div>
+<!-- Vector 3 -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<span class="font-medium text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-amber-600">hub</span>
+                Data Broker Aggregators & Dossiers
+                <span class="font-label-sm text-label-sm text-amber-700 bg-amber-500/15 px-1 py-0.2 rounded-DEFAULT uppercase">Action Required</span>
+</span>
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">7 records</span>
+<span class="font-label-sm text-label-sm text-outline-variant font-bold">26%</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-amber-500 h-full rounded-full" style="width: 26%;"></div>
+</div>
+</div>
+<!-- Vector 4 -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<span class="font-medium text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-outline">history</span>
+                Inactive Dormant Accounts
+              </span>
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">4 records</span>
+<span class="font-label-sm text-label-sm text-outline-variant font-bold">15%</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 15%;"></div>
+</div>
+</div>
+<!-- Vector 5 -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<span class="font-medium text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-outline">image</span>
+                Public Media & Metadata Footprints
+              </span>
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">2 records</span>
+<span class="font-label-sm text-label-sm text-outline-variant font-bold">7%</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-tertiary-container h-full rounded-full" style="width: 7%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Findings & Vulnerability Stream -->
+<div class="bg-surface-container-lowest/80 backdrop-blur-xl p-space-lg rounded-xl shadow-sm flex flex-col">
+<div class="flex items-center justify-between pb-space-md mb-space-md">
+<div class="flex items-center gap-space-sm">
+<span class="w-1.5 h-4 bg-error rounded-DEFAULT"></span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Vulnerability & Exposure Ledger</h2>
+</div>
+<span class="font-label-sm text-label-sm text-outline">LIVE FEED // AUTO-SYNCHRONIZED</span>
+</div>
+<div class="flex flex-col divide-y divide-surface-container-high/60">
+<!-- Item 1: Critical Phone/Home Address -->
+<div class="py-space-md flex flex-col md:flex-row md:items-center justify-between gap-space-md hover:bg-surface-container-low/40 px-space-xs rounded-lg transition-colors">
+<div class="flex items-start gap-space-md">
+<div class="w-9 h-9 rounded-lg bg-error-container/40 flex items-center justify-center shrink-0 text-error">
+<span class="material-symbols-outlined text-[20px]">fmd_bad</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-title-md text-title-md text-on-surface font-semibold">Phone number & home address exposed</span>
+<span class="px-1.5 py-0.5 rounded-DEFAULT bg-error text-surface-container-lowest font-label-sm text-label-sm font-bold uppercase">Critical</span>
+<span class="px-1.5 py-0.5 rounded-DEFAULT bg-secondary-fixed/40 text-on-secondary-fixed-variant font-label-sm text-label-sm font-medium">Auto-Removal</span>
+</div>
+<div class="flex items-center gap-space-sm mt-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="font-mono text-[11px] text-outline">Source: PublicDataBroker.io</span>
+<span>•</span>
+<span>Disclosed in unindexed lookup register</span>
+</div>
+</div>
+</div>
+<button class="shrink-0 self-start md:self-center px-space-md py-1.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-sm text-label-sm uppercase font-semibold transition-all shadow-sm" type="button">
+              Start Removal
+            </button>
+</div>
+<!-- Item 2: B2B CRM Dump -->
+<div class="py-space-md flex flex-col md:flex-row md:items-center justify-between gap-space-md hover:bg-surface-container-low/40 px-space-xs rounded-lg transition-colors">
+<div class="flex items-start gap-space-md">
+<div class="w-9 h-9 rounded-lg bg-error-container/20 flex items-center justify-center shrink-0 text-error">
+<span class="material-symbols-outlined text-[20px]">corporate_fare</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-title-md text-title-md text-on-surface font-semibold">Work email found in 2024 Marketing Leak</span>
+<span class="px-1.5 py-0.5 rounded-DEFAULT bg-error/15 text-error font-label-sm text-label-sm font-bold uppercase">High</span>
+<span class="px-1.5 py-0.5 rounded-DEFAULT bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">Manual Guide</span>
+</div>
+<div class="flex items-center gap-space-sm mt-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="font-mono text-[11px] text-outline">Source: Enterprise B2B CRM Dump</span>
+<span>•</span>
+<span>Credential salt compromised</span>
+</div>
+</div>
+</div>
+<button class="shrink-0 self-start md:self-center px-space-md py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-sm text-label-sm uppercase font-semibold transition-all" type="button">
+              View Action Steps
+            </button>
+</div>
+<!-- Item 3: PeopleSearchArchive -->
+<div class="py-space-md flex flex-col md:flex-row md:items-center justify-between gap-space-md hover:bg-surface-container-low/40 px-space-xs rounded-lg transition-colors">
+<div class="flex items-start gap-space-md">
+<div class="w-9 h-9 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0 text-amber-700">
+<span class="material-symbols-outlined text-[20px]">contact_phone</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-title-md text-title-md text-on-surface font-semibold">Public indexable phone record</span>
+<span class="px-1.5 py-0.5 rounded-DEFAULT bg-amber-500/15 text-amber-800 font-label-sm text-label-sm font-bold uppercase">Moderate</span>
+<span class="px-1.5 py-0.5 rounded-DEFAULT bg-secondary-fixed/40 text-on-secondary-fixed-variant font-label-sm text-label-sm font-medium">Auto-Removal</span>
+</div>
+<div class="flex items-center gap-space-sm mt-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="font-mono text-[11px] text-outline">Source: PeopleSearchArchive</span>
+<span>•</span>
+<span>Aggregated reverse telephony</span>
+</div>
+</div>
+</div>
+<button class="shrink-0 self-start md:self-center px-space-md py-1.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-sm text-label-sm uppercase font-semibold transition-all shadow-sm" type="button">
+              Start Removal
+            </button>
+</div>
+<!-- Item 4: Dormant Forum Account -->
+<div class="py-space-md flex flex-col md:flex-row md:items-center justify-between gap-space-md hover:bg-surface-container-low/40 px-space-xs rounded-lg transition-colors">
+<div class="flex items-start gap-space-md">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 text-outline">
+<span class="material-symbols-outlined text-[20px]">forum</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-title-md text-title-md text-on-surface font-semibold">Inactive forum account with reused handle</span>
+<span class="px-1.5 py-0.5 rounded-DEFAULT bg-amber-500/15 text-amber-800 font-label-sm text-label-sm font-bold uppercase">Moderate</span>
+<span class="px-1.5 py-0.5 rounded-DEFAULT bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">Self-Serve</span>
+</div>
+<div class="flex items-center gap-space-sm mt-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="font-mono text-[11px] text-outline">Source: DevDiscourse Archives</span>
+<span>•</span>
+<span>Linked via SHA-1 identity hash</span>
+</div>
+</div>
+</div>
+<button class="shrink-0 self-start md:self-center px-space-md py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-sm text-label-sm uppercase font-semibold transition-all" type="button">
+              View Guide
+            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Priority Actions & Architectural Telemetry (4 cols) -->
+<div class="lg:col-span-4 flex flex-col gap-space-lg">
+<!-- Priority Action Center (+22 Pts Potential) -->
+<div class="bg-surface-container-lowest/90 backdrop-blur-xl p-space-lg rounded-xl shadow-md relative overflow-hidden">
+<div class="flex items-center justify-between pb-space-sm mb-space-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-widest">EXPEDITED MITIGATION</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Priority Actions</h3>
+</div>
+<span class="px-2 py-1 rounded-DEFAULT bg-primary text-on-primary font-label-sm text-label-sm font-bold">
+            +22 PTS
+          </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">
+          Resolving these top 3 high-impact records elevates your sovereignty status from Moderate to Resilient (86/100).
+        </p>
+<div class="flex flex-col gap-space-md">
+<!-- Action 1 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">1. Opt-out: PublicDataBroker.io</span>
+<span class="font-label-sm text-label-sm text-emerald-700 bg-emerald-500/10 px-1 py-0.5 rounded-DEFAULT font-bold">+12 PTS</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Immediate suppression of home address & family tree.</p>
+<button class="mt-space-xs w-full py-2 bg-on-surface hover:bg-primary text-surface-container-lowest font-label-sm text-label-sm uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-1" type="button">
+<span>1-Click Opt-Out</span>
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+</button>
+</div>
+<!-- Action 2 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">2. Revoke Leaked Work Email</span>
+<span class="font-label-sm text-label-sm text-emerald-700 bg-emerald-500/10 px-1 py-0.5 rounded-DEFAULT font-bold">+6 PTS</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Reset B2B corporate access tokens and rotate passkey.</p>
+<button class="mt-space-xs w-full py-1.5 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-sm text-label-sm uppercase tracking-wider rounded-lg transition-all" type="button">
+              Review Instructions
+            </button>
+</div>
+<!-- Action 3 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">3. Purge PeopleSearchArchive</span>
+<span class="font-label-sm text-label-sm text-emerald-700 bg-emerald-500/10 px-1 py-0.5 rounded-DEFAULT font-bold">+4 PTS</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Delist telephone record from historical web cache.</p>
+<button class="mt-space-xs w-full py-1.5 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-sm text-label-sm uppercase tracking-wider rounded-lg transition-all" type="button">
+              Initiate Takedown
+            </button>
+</div>
+</div>
+</div>
+<!-- 6-Month Resilience Trendline SVG -->
+<div class="bg-surface-container-lowest/80 backdrop-blur-xl p-space-lg rounded-xl shadow-sm flex flex-col">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-bold tracking-widest">RESILIENCE TRAJECTORY</span>
+<h3 class="font-title-md text-title-md text-on-surface font-bold">6-Month Trendline</h3>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold">48 → 64</span>
+</div>
+<!-- Inline Sparkline Visualization -->
+<div class="w-full h-32 pt-space-xs">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 280 100">
+<defs>
+<lineargradient id="trendGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#246bfe" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="#246bfe" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Grid Lines -->
+<line stroke="#ededf5" stroke-dasharray="2,2" stroke-width="1" x1="0" x2="280" y1="20" y2="20"></line>
+<line stroke="#ededf5" stroke-dasharray="2,2" stroke-width="1" x1="0" x2="280" y1="60" y2="60"></line>
+<!-- Area Fill -->
+<polygon fill="url(#trendGradient)" points="0,100 0,82 46,76 92,80 138,62 184,55 230,48 276,34 276,100"></polygon>
+<!-- Curve Line -->
+<path d="M 0,82 C 25,80 35,76 46,76 C 65,76 75,82 92,80 C 115,76 125,64 138,62 C 160,58 170,56 184,55 C 205,52 215,49 230,48 C 250,45 260,36 276,34" fill="none" stroke="#246bfe" stroke-width="2.5"></path>
+<!-- Active Data Points -->
+<circle class="fill-surface stroke-primary" cx="0" cy="82" r="3.5" stroke-width="2"></circle>
+<circle class="fill-surface stroke-primary" cx="138" cy="62" r="3.5" stroke-width="2"></circle>
+<circle class="fill-primary-container stroke-surface" cx="276" cy="34" r="4.5" stroke-width="2.5"></circle>
+</svg>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm text-outline pt-space-xs">
+<span>NOV</span>
+<span>DEC</span>
+<span>JAN</span>
+<span>FEB</span>
+<span>MAR</span>
+<span>APR (TODAY)</span>
+</div>
+</div>
+<!-- Zero-Knowledge Security Guarantee Card (Sanctuary Node Seal) -->
+<div class="bg-surface-container-low p-space-lg rounded-xl flex flex-col gap-space-sm relative overflow-hidden">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-on-surface flex items-center justify-center text-surface shrink-0">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-semibold leading-tight">Zero-Knowledge Enclave</span>
+<span class="font-label-sm text-label-sm text-outline uppercase">GDPR §17 // CCPA COMPLIANT</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Removal dispatches utilize blinded asymmetric tokens. Your personal identifiable vectors are never persisted in unencrypted memory.
+        </p>
+<div class="pt-space-xs flex items-center justify-between text-outline font-label-sm text-label-sm">
+<span class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            E2E AUDITED
+          </span>
+<a class="text-primary hover:underline font-bold uppercase tracking-wider" href="#">Audit Protocol ></a>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Cryptographic Terminal Ribbon -->
+<div class="mt-space-xl p-space-sm rounded-lg bg-surface-container-lowest/80 backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm font-label-sm text-label-sm text-outline">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[14px] text-primary">terminal</span>
+<span class="text-on-surface-variant font-mono">SHA-256 LEDGER STATE: c3b91a784d12fe89e4a11029cba87123ef6120194bc</span>
+</div>
+<div class="flex items-center gap-space-md">
+<span>LATENCY: 12ms</span>
+<span>SIGNATURE: VERIFIED // ECDSA</span>
+<span class="text-primary font-bold">NODE 4.2 ONLINE</span>
+</div>
+</div>
+</div></main></div></body></html>
