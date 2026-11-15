@@ -17,10 +17,20 @@
     @livewireStyles
 </head>
 <body class="min-h-screen bg-[#080A0D] font-body text-[#F1F4F7] antialiased">
-    <div class="grid min-h-screen lg:grid-cols-12">
+    <!-- Processing loop (the same footage used during a scan) as the ambient backdrop. -->
+    <video
+        class="pointer-events-none fixed inset-0 z-0 h-full w-full object-cover opacity-45 motion-reduce:hidden"
+        autoplay muted loop playsinline preload="metadata" tabindex="-1" aria-hidden="true">
+        <source src="{{ asset('assets/videos/scanner-loop.mp4') }}" type="video/mp4">
+    </video>
+    <!-- Readability scrims: keep form text above 4.5:1 contrast over moving footage. -->
+    <div class="pointer-events-none fixed inset-0 z-0 bg-[#080A0D]/80" aria-hidden="true"></div>
+    <div class="pointer-events-none fixed inset-0 z-0 bg-gradient-to-br from-[#080A0D]/70 via-[#080A0D]/30 to-[#080A0D]/85" aria-hidden="true"></div>
+
+    <div class="relative z-10 grid min-h-screen lg:grid-cols-12">
 
         <!-- Intelligence briefing panel -->
-        <aside class="relative hidden overflow-hidden border-r border-white/[0.08] bg-[#0A0E13] lg:col-span-5 lg:flex lg:flex-col">
+        <aside class="relative hidden overflow-hidden border-r border-white/[0.08] bg-[#0A0E13]/70 lg:col-span-5 lg:flex lg:flex-col lg:backdrop-blur-md">
             <div class="pointer-events-none absolute inset-0 app-grid opacity-40" aria-hidden="true"></div>
             <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(85,214,232,0.12),transparent_55%),radial-gradient(circle_at_90%_90%,rgba(74,222,155,0.06),transparent_50%)]" aria-hidden="true"></div>
 
@@ -75,7 +85,7 @@
         </aside>
 
         <!-- Access form -->
-        <main class="relative flex items-center justify-center px-5 py-10 sm:px-8 lg:col-span-7">
+        <main class="relative flex items-center justify-center bg-[#080A0D]/30 px-5 py-10 sm:px-8 lg:col-span-7">
             <div class="pointer-events-none absolute inset-0 app-grid opacity-30 lg:hidden" aria-hidden="true"></div>
             <div class="relative w-full max-w-md">
                 <a href="{{ route('home') }}" class="mb-9 flex items-center gap-2.5 lg:hidden">
