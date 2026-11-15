@@ -1,8 +1,17 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
 
-/** @type {import('tailwindcss').Config} */
+/**
+ * One semantic palette, two themes.
+ *
+ * Colours resolve to CSS variables defined in resources/css/app.css, so a view
+ * never needs to know which theme is active. `darkMode: 'class'` switches the
+ * variables on <html>.
+ *
+ * @type {import('tailwindcss').Config}
+ */
 export default {
+    darkMode: 'class',
     content: [
         './resources/**/*.blade.php',
         './resources/**/*.js',
@@ -12,82 +21,58 @@ export default {
     theme: {
         extend: {
             colors: {
-                // Obsidian / graphite world
-                obsidian: '#080A0D',
-                graphite: '#101419',
-                elevated: '#171D24',
-                silver: '#A6B0BC',
+                canvas: 'rgb(var(--c-canvas) / <alpha-value>)',
+                surface: 'rgb(var(--c-surface) / <alpha-value>)',
+                elevated: 'rgb(var(--c-elevated) / <alpha-value>)',
+                line: 'rgb(var(--c-line) / <alpha-value>)',
+                ink: 'rgb(var(--c-ink) / <alpha-value>)',
+                body: 'rgb(var(--c-body) / <alpha-value>)',
+                muted: 'rgb(var(--c-muted) / <alpha-value>)',
+                faint: 'rgb(var(--c-faint) / <alpha-value>)',
+                accent: 'rgb(var(--c-accent) / <alpha-value>)',
+                success: 'rgb(var(--c-success) / <alpha-value>)',
+                warning: 'rgb(var(--c-warning) / <alpha-value>)',
+                danger: 'rgb(var(--c-danger) / <alpha-value>)',
 
-                // Legacy semantic names, remapped to the dark world so
-                // untouched inner views stay legible.
-                canvas: '#080A0D',
-                'canvas-alt': '#0B0E12',
-                mist: '#101419',
-                ink: '#F1F4F7',
-                charcoal: '#C6CFD9',
-                muted: '#A6B0BC',
-                hairline: 'rgba(255,255,255,0.09)',
-                'electric-blue': '#55D6E8',
-                'cyan-glow': '#55D6E8',
-                emerald: '#4ADE9B',
-                amber: '#E9B45D',
-                coral: '#EF6262',
-                violet: '#9C8CFF',
-                midnight: '#080A0D',
-                'deep-navy': '#101419',
+                // Legacy names kept so untouched markup still resolves.
+                obsidian: 'rgb(var(--c-canvas) / <alpha-value>)',
+                graphite: 'rgb(var(--c-surface) / <alpha-value>)',
+                silver: 'rgb(var(--c-muted) / <alpha-value>)',
+                charcoal: 'rgb(var(--c-body) / <alpha-value>)',
+                mist: 'rgb(var(--c-surface) / <alpha-value>)',
+                hairline: 'rgb(var(--c-line) / <alpha-value>)',
+                'electric-blue': 'rgb(var(--c-accent) / <alpha-value>)',
+                'cyan-glow': 'rgb(var(--c-accent) / <alpha-value>)',
+                'canvas-alt': 'rgb(var(--c-surface) / <alpha-value>)',
+                emerald: 'rgb(var(--c-success) / <alpha-value>)',
+                amber: 'rgb(var(--c-warning) / <alpha-value>)',
+                coral: 'rgb(var(--c-danger) / <alpha-value>)',
+                violet: 'rgb(var(--c-accent) / <alpha-value>)',
+                midnight: 'rgb(var(--c-canvas) / <alpha-value>)',
+                'deep-navy': 'rgb(var(--c-surface) / <alpha-value>)',
             },
             fontFamily: {
-                display: ["'Schibsted Grotesk'", "'Inter'", ...defaultTheme.fontFamily.sans],
-                // Legacy alias kept so existing `font-editorial` markup
-                // renders the new editorial sans, not the old serif.
-                editorial: ["'Schibsted Grotesk'", "'Inter'", ...defaultTheme.fontFamily.sans],
-                body: ["'Inter'", ...defaultTheme.fontFamily.sans],
                 sans: ["'Inter'", ...defaultTheme.fontFamily.sans],
+                body: ["'Inter'", ...defaultTheme.fontFamily.sans],
+                display: ["'Schibsted Grotesk'", "'Inter'", ...defaultTheme.fontFamily.sans],
                 mono: ["'JetBrains Mono'", ...defaultTheme.fontFamily.mono],
             },
-            boxShadow: {
-                glass: '0 30px 80px -40px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.04)',
-                'glass-sm': '0 12px 34px -22px rgba(0,0,0,0.9)',
-                'glow-blue': '0 0 0 1px rgba(85,214,232,.25), 0 18px 44px -18px rgba(85,214,232,.38)',
-                'glow-cyan': '0 0 0 1px rgba(85,214,232,.25), 0 18px 44px -18px rgba(85,214,232,.38)',
-            },
             borderRadius: {
-                '4xl': '28px',
-                '5xl': '32px',
+                card: '12px',
+                control: '8px',
+            },
+            boxShadow: {
+                card: '0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06)',
+                raised: '0 4px 12px -2px rgba(16, 24, 40, 0.08), 0 2px 6px -2px rgba(16, 24, 40, 0.05)',
             },
             keyframes: {
-                'fade-up': {
-                    '0%': { opacity: '0', transform: 'translateY(14px)' },
+                'fade-in': {
+                    '0%': { opacity: '0', transform: 'translateY(4px)' },
                     '100%': { opacity: '1', transform: 'translateY(0)' },
-                },
-                'scan-sweep': {
-                    '0%': { transform: 'translateY(-120%)' },
-                    '100%': { transform: 'translateY(420%)' },
-                },
-                shimmer: {
-                    '0%': { backgroundPosition: '-200% 0' },
-                    '100%': { backgroundPosition: '200% 0' },
-                },
-                'pulse-node': {
-                    '0%, 100%': { opacity: '0.55', transform: 'scale(1)' },
-                    '50%': { opacity: '1', transform: 'scale(1.35)' },
-                },
-                'dash-flow': {
-                    to: { strokeDashoffset: '-120' },
-                },
-                'ring-pulse': {
-                    '0%': { boxShadow: '0 0 0 0 rgba(85,214,232,.22)' },
-                    '70%': { boxShadow: '0 0 0 18px rgba(85,214,232,0)' },
-                    '100%': { boxShadow: '0 0 0 0 rgba(85,214,232,0)' },
                 },
             },
             animation: {
-                'fade-up': 'fade-up .7s cubic-bezier(.22,.8,.24,1) both',
-                scan: 'scan-sweep 5s linear infinite',
-                shimmer: 'shimmer 2.4s linear infinite',
-                node: 'pulse-node 3.2s ease-in-out infinite',
-                'dash-flow': 'dash-flow 6s linear infinite',
-                'ring-pulse': 'ring-pulse 2.8s ease-out infinite',
+                'fade-in': 'fade-in .25s ease-out both',
             },
         },
     },

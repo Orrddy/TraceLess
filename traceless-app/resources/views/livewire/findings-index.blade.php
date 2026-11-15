@@ -1,10 +1,10 @@
 <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-line">
         <div>
             <div class="ops-badge ops-badge-cyan mb-2">Exposure Telemetry</div>
-            <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">Discovered Footprint Nodes</h1>
-            <p class="font-mono text-xs text-[#A6B0BC] mt-1">Cross-platform correlation of publicly exposed identifiers.</p>
+            <h1 class="text-2xl sm:text-3xl font-bold text-ink tracking-tight">Discovered Footprint Nodes</h1>
+            <p class="font-mono text-xs text-body mt-1">Cross-platform correlation of publicly exposed identifiers.</p>
         </div>
     </div>
 
@@ -37,7 +37,7 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left font-mono text-xs">
                 <thead>
-                    <tr class="border-b border-white/[0.08] bg-[#080A0D]/60 text-[10px] uppercase tracking-wider text-[#5D6B7A]">
+                    <tr class="border-b border-line bg-canvas/60 text-[10px] uppercase tracking-wider text-faint">
                         <th class="px-5 py-3.5">Source & Category</th>
                         <th class="px-5 py-3.5">Monitored Identifier</th>
                         <th class="px-5 py-3.5">Confidence</th>
@@ -46,17 +46,17 @@
                         <th class="px-5 py-3.5 text-right">Action</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-white/[0.06]">
+                <tbody class="divide-y divide-line">
                     @forelse($findings as $f)
-                        <tr class="hover:bg-white/[0.02] transition-colors">
+                        <tr class="hover:bg-surface transition-colors">
                             <td class="px-5 py-4">
-                                <div class="font-sans text-sm font-semibold text-white">{{ $f->source }}</div>
-                                <div class="text-[10px] text-[#5D6B7A]">{{ str_replace('_', ' ', strtoupper($f->category)) }}</div>
+                                <div class="font-sans text-sm font-semibold text-ink">{{ $f->source }}</div>
+                                <div class="text-[10px] text-faint">{{ str_replace('_', ' ', strtoupper($f->category)) }}</div>
                             </td>
-                            <td class="px-5 py-4 text-[#A6B0BC]">
+                            <td class="px-5 py-4 text-body">
                                 {{ $f->identifier_value }}
                             </td>
-                            <td class="px-5 py-4 text-[#55D6E8]">
+                            <td class="px-5 py-4 text-accent">
                                 {{ number_format($f->confidence * 100, 0) }}%
                             </td>
                             <td class="px-5 py-4">
@@ -67,7 +67,7 @@
                                     {{ strtoupper($f->risk) }}
                                 </span>
                             </td>
-                            <td class="px-5 py-4 text-[#A6B0BC]">
+                            <td class="px-5 py-4 text-body">
                                 {{ ucwords(str_replace('_', ' ', $f->status)) }}
                             </td>
                             <td class="px-5 py-4 text-right">
@@ -81,7 +81,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-5 py-12 text-center text-[#5D6B7A]">
+                            <td colspan="6" class="px-5 py-12 text-center text-faint">
                                 No exposure nodes found matching filters.
                             </td>
                         </tr>

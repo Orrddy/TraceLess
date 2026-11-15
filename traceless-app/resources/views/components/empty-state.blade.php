@@ -1,7 +1,7 @@
 @props(['icon' => 'inbox', 'title', 'description' => null])
 
 <div {{ $attributes->merge(['class' => 'glass-card flex flex-col items-center justify-center px-6 py-12 text-center']) }}>
-    <span class="mb-4 flex h-12 w-12 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-muted">
+    <span class="mb-4 flex h-12 w-12 items-center justify-center rounded-lg border border-line bg-surface text-muted">
         <span class="material-symbols-outlined text-[24px]" aria-hidden="true">{{ $icon }}</span>
     </span>
     <p class="font-editorial text-xl text-ink">{{ $title }}</p>

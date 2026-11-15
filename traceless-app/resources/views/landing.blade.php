@@ -49,22 +49,22 @@
 
         {{-- Slim telemetry row (deliberately quieter than the nav) --}}
         <div class="relative z-10 w-full px-5 pt-4 sm:px-10">
-            <div class="flex items-center justify-between gap-4 border-b border-white/10 pb-3 font-mono text-[9px] uppercase tracking-[0.16em] text-[#A6B0BC]/70">
+            <div class="flex items-center justify-between gap-4 border-b border-line pb-3 font-mono text-[9px] uppercase tracking-[0.16em] text-body/70">
                 <div class="flex items-center gap-3">
-                    <span class="rounded border border-white/10 bg-black/50 px-2 py-1 text-white">Confidential briefing</span>
+                    <span class="rounded border border-line bg-black/50 px-2 py-1 text-ink">Confidential briefing</span>
                     <span class="hidden sm:inline">Public sources only</span>
-                    <span class="hidden md:inline text-[#5D6B7A]">Demo environment</span>
+                    <span class="hidden md:inline text-faint">Demo environment</span>
                 </div>
 
                 <div class="flex items-center gap-2">
                     <button type="button" @click="toggleSound()"
-                            class="flex items-center gap-1.5 rounded border border-white/15 bg-black/60 px-2.5 py-1 text-white transition-colors hover:border-[#55D6E8]"
+                            class="flex items-center gap-1.5 rounded border border-white/15 bg-black/60 px-2.5 py-1 text-ink transition-colors hover:border-[#55D6E8]"
                             :aria-pressed="soundEnabled">
                         <span class="material-symbols-outlined text-[14px]" x-text="soundEnabled ? 'volume_up' : 'volume_off'"></span>
                         <span x-text="soundEnabled ? 'Sound on' : 'Enable sound'"></span>
                     </button>
                     <button type="button" @click="skipIntro()"
-                            class="rounded border border-transparent bg-white/10 px-2.5 py-1 text-white transition-colors hover:bg-white/20">
+                            class="rounded border border-transparent bg-surface px-2.5 py-1 text-ink transition-colors hover:bg-surface">
                         Skip intro ↓
                     </button>
                 </div>
@@ -74,17 +74,17 @@
         {{-- Briefing copy --}}
         <div class="relative z-10 mx-auto my-auto w-full max-w-[1440px] px-5 py-10 sm:px-10">
             <div class="max-w-3xl space-y-6">
-                <div class="inline-flex flex-col gap-0.5 border border-[#55D6E8]/25 bg-[#080A0D]/70 px-3.5 py-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.18em] backdrop-blur-sm">
-                    <span class="text-[#55D6E8]">TraceLess // private intelligence</span>
-                    <span class="text-[#5D6B7A]">Classification: confidential · Scope: public web</span>
+                <div class="inline-flex flex-col gap-0.5 border border-[#55D6E8]/25 bg-canvas/70 px-3.5 py-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.18em] backdrop-blur-sm">
+                    <span class="text-accent">TraceLess // private intelligence</span>
+                    <span class="text-faint">Classification: confidential · Scope: public web</span>
                 </div>
 
-                <h1 class="font-display text-[2.6rem] font-semibold leading-[1.02] tracking-[-0.035em] text-white sm:text-6xl lg:text-[4.5rem]">
+                <h1 class="font-display text-[2.6rem] font-semibold leading-[1.02] tracking-[-0.035em] text-ink sm:text-6xl lg:text-[4.5rem]">
                     Your digital footprint.<br>
-                    <span class="text-[#55D6E8]">Under your control.</span>
+                    <span class="text-accent">Under your control.</span>
                 </h1>
 
-                <p class="max-w-xl font-body text-base leading-relaxed text-[#A6B0BC] sm:text-lg">
+                <p class="max-w-xl font-body text-base leading-relaxed text-body sm:text-lg">
                     See which public profiles, open registries and archived posts connect to you. Every match is verified against the source, and every exposure comes with a clear path to removal. No passwords, ever.
                 </p>
 
@@ -99,17 +99,17 @@
                     </a>
                 </div>
 
-                <div class="grid grid-cols-1 gap-3 border-t border-white/10 pt-5 font-mono text-[10px] text-[#A6B0BC]/85 sm:grid-cols-3">
+                <div class="grid grid-cols-1 gap-3 border-t border-line pt-5 font-mono text-[10px] text-body/85 sm:grid-cols-3">
                     <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[15px] text-[#4ADE9B]">public</span>
+                        <span class="material-symbols-outlined text-[15px] text-success">public</span>
                         <span>Public web data only</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[15px] text-[#4ADE9B]">key_off</span>
+                        <span class="material-symbols-outlined text-[15px] text-success">key_off</span>
                         <span>Zero passwords requested</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[15px] text-[#4ADE9B]">verified_user</span>
+                        <span class="material-symbols-outlined text-[15px] text-success">verified_user</span>
                         <span>Consent recorded per identity</span>
                     </div>
                 </div>
@@ -117,7 +117,7 @@
         </div>
 
         <div class="relative z-10 w-full pb-6 text-center">
-            <a href="#overview-section" class="inline-flex flex-col items-center gap-1 font-mono text-[9px] uppercase tracking-[0.2em] text-[#A6B0BC]/60 transition-colors hover:text-white">
+            <a href="#overview-section" class="inline-flex flex-col items-center gap-1 font-mono text-[9px] uppercase tracking-[0.2em] text-body/60 transition-colors hover:text-ink">
                 <span>Continue briefing</span>
                 <span class="material-symbols-outlined animate-bounce text-[16px]">keyboard_arrow_down</span>
             </a>
@@ -129,76 +129,76 @@
         <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
             <div class="space-y-6 lg:col-span-5">
                 <div class="ops-badge ops-badge-cyan">Evidence matrix</div>
-                <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">
+                <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
                     Privacy intelligence built on proof, not alerts.
                 </h2>
-                <p class="font-body text-sm leading-relaxed text-[#A6B0BC]">
+                <p class="font-body text-sm leading-relaxed text-body">
                     Most checkers leave you with a warning and no next step. TraceLess records how each match was found, states plainly when a source could not be verified, and turns what remains into removal work you can track.
                 </p>
 
                 <div class="space-y-3 font-mono text-xs">
-                    <div class="flex items-center justify-between rounded-lg border border-white/5 bg-[#101419] p-3.5">
+                    <div class="flex items-center justify-between rounded-lg border border-line bg-surface p-3.5">
                         <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[18px] text-[#55D6E8]">account_tree</span>
-                            <span class="text-white">Federated handle discovery</span>
+                            <span class="material-symbols-outlined text-[18px] text-accent">account_tree</span>
+                            <span class="text-ink">Federated handle discovery</span>
                         </div>
-                        <span class="text-[#55D6E8]">WhatsMyName</span>
+                        <span class="text-accent">WhatsMyName</span>
                     </div>
 
-                    <div class="flex items-center justify-between rounded-lg border border-white/5 bg-[#101419] p-3.5">
+                    <div class="flex items-center justify-between rounded-lg border border-line bg-surface p-3.5">
                         <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[18px] text-[#E9B45D]">fact_check</span>
-                            <span class="text-white">Verification evidence per finding</span>
+                            <span class="material-symbols-outlined text-[18px] text-warning">fact_check</span>
+                            <span class="text-ink">Verification evidence per finding</span>
                         </div>
-                        <span class="text-[#E9B45D]">Status + hash</span>
+                        <span class="text-warning">Status + hash</span>
                     </div>
 
-                    <div class="flex items-center justify-between rounded-lg border border-white/5 bg-[#101419] p-3.5">
+                    <div class="flex items-center justify-between rounded-lg border border-line bg-surface p-3.5">
                         <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[18px] text-[#5D6B7A]">vpn_key_off</span>
-                            <span class="text-[#A6B0BC]">Breach metadata provider</span>
+                            <span class="material-symbols-outlined text-[18px] text-faint">vpn_key_off</span>
+                            <span class="text-body">Breach metadata provider</span>
                         </div>
-                        <span class="text-[#5D6B7A]">Not configured</span>
+                        <span class="text-faint">Not configured</span>
                     </div>
                 </div>
             </div>
 
             <div id="capabilities" class="lg:col-span-7">
                 <div id="intelligence" class="ops-card scan-line-overlay p-6 sm:p-8">
-                    <div class="mb-6 flex items-center justify-between border-b border-white/10 pb-4 font-mono text-xs">
+                    <div class="mb-6 flex items-center justify-between border-b border-line pb-4 font-mono text-xs">
                         <div class="flex items-center gap-2">
-                            <span class="h-2 w-2 rounded-full bg-[#4ADE9B]"></span>
-                            <span class="font-semibold text-white">Illustrative evidence record</span>
+                            <span class="h-2 w-2 rounded-full bg-success"></span>
+                            <span class="font-semibold text-ink">Illustrative evidence record</span>
                         </div>
-                        <span class="text-[#E9B45D]">DEMO DATA</span>
+                        <span class="text-warning">DEMO DATA</span>
                     </div>
 
                     <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                        <div class="rounded-lg border border-white/5 bg-[#080A0D] p-4 text-center">
-                            <div class="mb-1 font-mono text-3xl font-bold text-white">73<span class="text-xs text-[#A6B0BC]">/100</span></div>
-                            <div class="font-mono text-[9px] uppercase tracking-wider text-[#A6B0BC]">Posture index</div>
+                        <div class="rounded-lg border border-line bg-canvas p-4 text-center">
+                            <div class="mb-1 font-mono text-3xl font-bold text-ink">73<span class="text-xs text-body">/100</span></div>
+                            <div class="font-mono text-[9px] uppercase tracking-wider text-body">Posture index</div>
                         </div>
-                        <div class="rounded-lg border border-white/5 bg-[#080A0D] p-4 text-center">
-                            <div class="mb-1 font-mono text-3xl font-bold text-[#E9B45D]">14</div>
-                            <div class="font-mono text-[9px] uppercase tracking-wider text-[#A6B0BC]">Verified nodes</div>
+                        <div class="rounded-lg border border-line bg-canvas p-4 text-center">
+                            <div class="mb-1 font-mono text-3xl font-bold text-warning">14</div>
+                            <div class="font-mono text-[9px] uppercase tracking-wider text-body">Verified nodes</div>
                         </div>
-                        <div class="rounded-lg border border-white/5 bg-[#080A0D] p-4 text-center">
-                            <div class="mb-1 font-mono text-3xl font-bold text-[#4ADE9B]">2</div>
-                            <div class="font-mono text-[9px] uppercase tracking-wider text-[#A6B0BC]">Removals ready</div>
+                        <div class="rounded-lg border border-line bg-canvas p-4 text-center">
+                            <div class="mb-1 font-mono text-3xl font-bold text-success">2</div>
+                            <div class="font-mono text-[9px] uppercase tracking-wider text-body">Removals ready</div>
                         </div>
                     </div>
 
-                    <div class="space-y-1.5 rounded-lg border border-white/5 bg-[#080A0D] p-4 font-mono text-[11px] leading-relaxed text-[#A6B0BC]/90">
-                        <div class="text-[#55D6E8]">[INFO] Consent recorded. Starting public-source check for target handle...</div>
-                        <div>[200] Public profile catalog queried... <span class="text-[#4ADE9B]">MATCH (GitHub, Reddit, DeviantArt)</span></div>
-                        <div>[200] Match rule satisfied, response hash stored... <span class="text-[#4ADE9B]">VERIFIED</span></div>
-                        <div>[403] Source blocked automated checks... <span class="text-[#E9B45D]">UNKNOWN, NOT A FINDING</span></div>
-                        <div class="text-[#4ADE9B]">[OK] Actionable removal tasks compiled. Evidence attached to each record.</div>
+                    <div class="space-y-1.5 rounded-lg border border-line bg-canvas p-4 font-mono text-[11px] leading-relaxed text-body/90">
+                        <div class="text-accent">[INFO] Consent recorded. Starting public-source check for target handle...</div>
+                        <div>[200] Public profile catalog queried... <span class="text-success">MATCH (GitHub, Reddit, DeviantArt)</span></div>
+                        <div>[200] Match rule satisfied, response hash stored... <span class="text-success">VERIFIED</span></div>
+                        <div>[403] Source blocked automated checks... <span class="text-warning">UNKNOWN, NOT A FINDING</span></div>
+                        <div class="text-success">[OK] Actionable removal tasks compiled. Evidence attached to each record.</div>
                     </div>
 
-                    <div class="mt-6 flex flex-col gap-2 font-mono text-[10px] text-[#5D6B7A] sm:flex-row sm:items-center sm:justify-between">
+                    <div class="mt-6 flex flex-col gap-2 font-mono text-[10px] text-faint sm:flex-row sm:items-center sm:justify-between">
                         <span>ILLUSTRATIVE ONLY · NO PRIVATE DATA USED</span>
-                        <a href="{{ route('register') }}" class="flex items-center gap-1 text-[#55D6E8] hover:underline">
+                        <a href="{{ route('register') }}" class="flex items-center gap-1 text-accent hover:underline">
                             Run it on your own profile →
                         </a>
                     </div>
@@ -208,59 +208,59 @@
     </section>
 
     {{-- METHODOLOGY --}}
-    <section id="methodology" class="border-t border-white/[0.06] bg-[#0B0E12] py-20">
+    <section id="methodology" class="border-t border-line bg-surface py-20">
         <div class="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
             <div class="mx-auto mb-14 max-w-2xl space-y-3 text-center">
                 <div class="ops-badge ops-badge-faint">Standard operating procedure</div>
-                <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">Four steps to lower exposure</h2>
-                <p class="font-body text-sm leading-relaxed text-[#A6B0BC]">Every scan is deliberate, legally consented, and strictly limited to public-source discovery.</p>
+                <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">Four steps to lower exposure</h2>
+                <p class="font-body text-sm leading-relaxed text-body">Every scan is deliberate, legally consented, and strictly limited to public-source discovery.</p>
             </div>
 
             <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
                 <div class="ops-card space-y-4 p-6">
-                    <div class="font-mono text-xs text-[#55D6E8]">STAGE 01 // IDENTITY</div>
-                    <h3 class="font-display text-base font-semibold text-white">Monitored profile</h3>
-                    <p class="font-body text-xs leading-relaxed text-[#A6B0BC]">Record your legal name, known handles and public emails behind an explicit ownership consent gate.</p>
+                    <div class="font-mono text-xs text-accent">STAGE 01 // IDENTITY</div>
+                    <h3 class="font-display text-base font-semibold text-ink">Monitored profile</h3>
+                    <p class="font-body text-xs leading-relaxed text-body">Record your legal name, known handles and public emails behind an explicit ownership consent gate.</p>
                 </div>
 
                 <div class="ops-card space-y-4 p-6">
-                    <div class="font-mono text-xs text-[#55D6E8]">STAGE 02 // RECON</div>
-                    <h3 class="font-display text-base font-semibold text-white">Public discovery</h3>
-                    <p class="font-body text-xs leading-relaxed text-[#A6B0BC]">Check a curated public-source catalog for profiles and mentions that connect to your identifiers.</p>
+                    <div class="font-mono text-xs text-accent">STAGE 02 // RECON</div>
+                    <h3 class="font-display text-base font-semibold text-ink">Public discovery</h3>
+                    <p class="font-body text-xs leading-relaxed text-body">Check a curated public-source catalog for profiles and mentions that connect to your identifiers.</p>
                 </div>
 
                 <div class="ops-card space-y-4 p-6">
-                    <div class="font-mono text-xs text-[#55D6E8]">STAGE 03 // VERIFY</div>
-                    <h3 class="font-display text-base font-semibold text-white">Evidence review</h3>
-                    <p class="font-body text-xs leading-relaxed text-[#A6B0BC]">Each result carries its HTTP outcome, match rule and response hash. Blocked sources read <span class="text-[#E9B45D]">unknown</span>, never invented.</p>
+                    <div class="font-mono text-xs text-accent">STAGE 03 // VERIFY</div>
+                    <h3 class="font-display text-base font-semibold text-ink">Evidence review</h3>
+                    <p class="font-body text-xs leading-relaxed text-body">Each result carries its HTTP outcome, match rule and response hash. Blocked sources read <span class="text-warning">unknown</span>, never invented.</p>
                 </div>
 
                 <div class="ops-card space-y-4 p-6">
-                    <div class="font-mono text-xs text-[#55D6E8]">STAGE 04 // REMEDIATE</div>
-                    <h3 class="font-display text-base font-semibold text-white">Tracked removal</h3>
-                    <p class="font-body text-xs leading-relaxed text-[#A6B0BC]">Follow source-specific guidance, record what you sent, and monitor whether the record returns.</p>
+                    <div class="font-mono text-xs text-accent">STAGE 04 // REMEDIATE</div>
+                    <h3 class="font-display text-base font-semibold text-ink">Tracked removal</h3>
+                    <p class="font-body text-xs leading-relaxed text-body">Follow source-specific guidance, record what you sent, and monitor whether the record returns.</p>
                 </div>
             </div>
         </div>
     </section>
 
     {{-- WHY PUBLIC EXPOSURE MATTERS --}}
-    <section id="preparedness" class="mx-auto max-w-[1440px] border-t border-white/[0.06] px-4 py-24 sm:px-6 lg:px-8">
+    <section id="preparedness" class="mx-auto max-w-[1440px] border-t border-line px-4 py-24 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
             <div class="space-y-4 lg:col-span-6">
                 <div class="ops-badge ops-badge-coral">Intelligence briefing</div>
-                <h2 class="font-display text-3xl font-semibold leading-tight tracking-[-0.03em] text-white sm:text-4xl">
+                <h2 class="font-display text-3xl font-semibold leading-tight tracking-[-0.03em] text-ink sm:text-4xl">
                     Public fragments are training data.
                 </h2>
-                <p class="font-body text-sm leading-relaxed text-[#A6B0BC]">
+                <p class="font-body text-sm leading-relaxed text-body">
                     Automated profiling, voice cloning and targeted phishing rarely need to break into a private server. They assemble what is already public: old usernames, archived forum posts, directory listings and forgotten accounts.
                 </p>
-                <div class="space-y-2 rounded-lg border border-white/5 bg-[#101419] p-4 font-mono text-xs text-[#A6B0BC]">
-                    <div class="flex items-center gap-2 font-semibold text-white">
-                        <span class="material-symbols-outlined text-[18px] text-[#55D6E8]">verified_user</span>
+                <div class="space-y-2 rounded-lg border border-line bg-surface p-4 font-mono text-xs text-body">
+                    <div class="flex items-center gap-2 font-semibold text-ink">
+                        <span class="material-symbols-outlined text-[18px] text-accent">verified_user</span>
                         <span>Minimisation, not disappearance</span>
                     </div>
-                    <p class="text-[11px] leading-relaxed text-[#5D6B7A]">
+                    <p class="text-[11px] leading-relaxed text-faint">
                         Reducing your public surface lowers the material available to automated social engineering. It cannot guarantee complete deletion by third parties.
                     </p>
                 </div>
@@ -268,35 +268,35 @@
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-6">
                 <div class="ops-card space-y-2 p-5">
-                    <span class="material-symbols-outlined text-[#55D6E8]">hub</span>
-                    <h4 class="font-display text-sm font-semibold text-white">Synthetic profiling</h4>
-                    <p class="font-body text-[11px] leading-relaxed text-[#A6B0BC]">Remove directory listings that feed identity dossiers and automated enrichment.</p>
+                    <span class="material-symbols-outlined text-accent">hub</span>
+                    <h4 class="font-display text-sm font-semibold text-ink">Synthetic profiling</h4>
+                    <p class="font-body text-[11px] leading-relaxed text-body">Remove directory listings that feed identity dossiers and automated enrichment.</p>
                 </div>
                 <div class="ops-card space-y-2 p-5">
-                    <span class="material-symbols-outlined text-[#4ADE9B]">history</span>
-                    <h4 class="font-display text-sm font-semibold text-white">Forgotten accounts</h4>
-                    <p class="font-body text-[11px] leading-relaxed text-[#A6B0BC]">Find stale profiles created years ago on platforms you no longer use.</p>
+                    <span class="material-symbols-outlined text-success">history</span>
+                    <h4 class="font-display text-sm font-semibold text-ink">Forgotten accounts</h4>
+                    <p class="font-body text-[11px] leading-relaxed text-body">Find stale profiles created years ago on platforms you no longer use.</p>
                 </div>
                 <div class="ops-card space-y-2 p-5">
-                    <span class="material-symbols-outlined text-[#E9B45D]">visibility_off</span>
-                    <h4 class="font-display text-sm font-semibold text-white">Old public posts</h4>
-                    <p class="font-body text-[11px] leading-relaxed text-[#A6B0BC]">Surface archived text that still links your name to an old handle.</p>
+                    <span class="material-symbols-outlined text-warning">visibility_off</span>
+                    <h4 class="font-display text-sm font-semibold text-ink">Old public posts</h4>
+                    <p class="font-body text-[11px] leading-relaxed text-body">Surface archived text that still links your name to an old handle.</p>
                 </div>
                 <div class="ops-card space-y-2 p-5">
-                    <span class="material-symbols-outlined text-[#EF6262]">notifications_active</span>
-                    <h4 class="font-display text-sm font-semibold text-white">Re-exposure watch</h4>
-                    <p class="font-body text-[11px] leading-relaxed text-[#A6B0BC]">Be told when a record you removed is published again at the same source.</p>
+                    <span class="material-symbols-outlined text-danger">notifications_active</span>
+                    <h4 class="font-display text-sm font-semibold text-ink">Re-exposure watch</h4>
+                    <p class="font-body text-[11px] leading-relaxed text-body">Be told when a record you removed is published again at the same source.</p>
                 </div>
             </div>
         </div>
     </section>
 
     {{-- FINAL CTA --}}
-    <section class="mx-auto max-w-[1440px] border-t border-white/[0.06] px-4 py-24 sm:px-6 lg:px-8">
+    <section class="mx-auto max-w-[1440px] border-t border-line px-4 py-24 sm:px-6 lg:px-8">
         <div class="ops-card scan-line-overlay mx-auto max-w-3xl space-y-6 p-10 text-center sm:p-12">
-            <div class="font-mono text-xs uppercase tracking-[0.2em] text-[#55D6E8]">Take back confidentiality</div>
-            <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">Your privacy deserves more than hope.</h2>
-            <p class="mx-auto max-w-lg font-body text-sm leading-relaxed text-[#A6B0BC]">
+            <div class="font-mono text-xs uppercase tracking-[0.2em] text-accent">Take back confidentiality</div>
+            <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">Your privacy deserves more than hope.</h2>
+            <p class="mx-auto max-w-lg font-body text-sm leading-relaxed text-body">
                 Start with one authorised identity. See what is actually public, understand how it was verified, and decide what to remove first.
             </p>
             <div class="flex flex-wrap justify-center gap-4 pt-2">
@@ -305,7 +305,7 @@
                     <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
                 </a>
             </div>
-            <div class="font-mono text-[10px] text-[#5D6B7A]">
+            <div class="font-mono text-[10px] text-faint">
                 NO PASSWORDS REQUESTED // PUBLIC SOURCES ONLY // DEMO MODE LABELLED
             </div>
         </div>

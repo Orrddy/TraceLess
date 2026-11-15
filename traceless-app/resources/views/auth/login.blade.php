@@ -38,7 +38,7 @@
 
     <a href="{{ route('register') }}" class="btn-secondary w-full">Create an account</a>
 
-    <div class="mt-8 rounded-lg border border-white/[0.08] bg-[#101419]/70 px-4 py-3">
+    <div class="mt-8 rounded-lg border border-line bg-surface/70 px-4 py-3">
         <p class="flex items-center gap-2 font-mono text-[9px] uppercase tracking-wider text-muted">
             <span class="material-symbols-outlined text-[13px] text-emerald">lock</span>
             Passwordless by design

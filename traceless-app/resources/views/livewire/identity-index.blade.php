@@ -9,9 +9,9 @@
 
     @forelse($profiles as $profile)
         <div class="glass-card overflow-hidden">
-            <div class="flex flex-col gap-4 border-b border-hairline bg-white/30 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <div class="flex flex-col gap-4 border-b border-hairline bg-elevated px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
                 <div class="flex items-center gap-4">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-hairline bg-white font-mono text-sm font-semibold text-electric-blue">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-hairline bg-elevated font-mono text-sm font-semibold text-electric-blue">
                         {{ $profile->privacy_score }}
                     </div>
                     <div>
@@ -45,7 +45,7 @@
                     </div>
                     <div class="mt-3 flex flex-wrap gap-2">
                         @forelse($profile->publicIdentifiers as $identifier)
-                            <span class="group inline-flex items-center gap-1.5 rounded-lg border border-hairline bg-white/70 px-2.5 py-1.5 font-mono text-[10px] text-charcoal">
+                            <span class="group inline-flex items-center gap-1.5 rounded-lg border border-hairline bg-elevated px-2.5 py-1.5 font-mono text-[10px] text-charcoal">
                                 <span class="uppercase tracking-wider text-muted">{{ $identifier->type }}</span>
                                 <span class="max-w-[200px] truncate">{{ $identifier->value }}</span>
                                 <button wire:click="removeIdentifier({{ $identifier->id }})" wire:confirm="Remove this identifier from future scans?" class="text-muted/60 hover:text-coral" aria-label="Remove identifier">&times;</button>
@@ -62,7 +62,7 @@
                             ['Removals', $profile->removalTasks()->count(), 'text-electric-blue'],
                             ['Leaks', $profile->credentialExposures()->where('is_resolved', false)->count(), 'text-amber'],
                         ] as [$label, $value, $tone])
-                            <div class="rounded-xl border border-hairline bg-white/50 p-2.5">
+                            <div class="rounded-xl border border-hairline bg-elevated p-2.5">
                                 <p class="font-mono text-lg font-semibold {{ $tone }}">{{ $value }}</p>
                                 <p class="font-mono text-[8px] uppercase tracking-wider text-muted">{{ $label }}</p>
                             </div>
@@ -71,7 +71,7 @@
                 </div>
 
                 <div class="lg:col-span-4">
-                    <div class="rounded-2xl border border-hairline bg-white/50 p-4">
+                    <div class="rounded-2xl border border-hairline bg-elevated p-4">
                         <p class="mono-label">Consent record</p>
                         @if($profile->consent_given_at)
                             <p class="mt-2 font-body text-xs leading-relaxed text-charcoal">Owner authorization recorded {{ $profile->consent_given_at->format('M d, Y H:i') }} UTC.</p>

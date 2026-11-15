@@ -30,15 +30,15 @@
                     <button type="button" role="switch" aria-checked="{{ $isActive ? 'true' : 'false' }}"
                             wire:click="$toggle('isActive')"
                             class="relative inline-flex h-7 w-12 shrink-0 items-center rounded-full border transition {{ $isActive ? 'border-electric-blue bg-electric-blue' : 'border-hairline bg-ink/10' }}">
-                        <span class="inline-block h-5 w-5 transform rounded-full bg-white shadow transition {{ $isActive ? 'translate-x-6' : 'translate-x-1' }}"></span>
+                        <span class="inline-block h-5 w-5 transform rounded-full bg-elevated shadow transition {{ $isActive ? 'translate-x-6' : 'translate-x-1' }}"></span>
                         <span class="sr-only">Toggle recurring monitoring</span>
                     </button>
                 </div>
 
                 @if(!$isDeepScan && !$demoMode)
                     <div class="mt-5 rounded-xl border border-amber/25 bg-amber/10 px-4 py-3">
-                        <p class="font-mono text-[10px] font-semibold text-[#8a5c00]">Recurring monitoring requires Deep Scan</p>
-                        <p class="mt-1 font-body text-xs leading-relaxed text-[#8a5c00]/85">You can configure preferences now, but scheduled scans only run on an active Deep Scan plan.</p>
+                        <p class="font-mono text-[10px] font-semibold text-warning">Recurring monitoring requires Deep Scan</p>
+                        <p class="mt-1 font-body text-xs leading-relaxed text-warning/85">You can configure preferences now, but scheduled scans only run on an active Deep Scan plan.</p>
                     </div>
                 @endif
 
@@ -47,7 +47,7 @@
                     <div class="grid gap-2 sm:grid-cols-3">
                         @foreach(['daily' => ['Daily', 'Highest signal, most requests'], 'weekly' => ['Weekly', 'Recommended balance'], 'monthly' => ['Monthly', 'Light-touch monitoring']] as $value => [$label, $hint])
                             <button type="button" wire:click="$set('cadence', '{{ $value }}')"
-                                    class="rounded-2xl border p-4 text-left transition {{ $cadence === $value ? 'border-electric-blue/40 bg-electric-blue/[.06] shadow-glass-sm' : 'border-hairline bg-white/60 hover:bg-white' }}">
+                                    class="rounded-2xl border p-4 text-left transition {{ $cadence === $value ? 'border-electric-blue/40 bg-electric-blue/[.06] shadow-glass-sm' : 'border-hairline bg-elevated hover:bg-elevated' }}">
                                 <span class="flex items-center justify-between">
                                     <span class="font-body text-sm font-medium text-ink">{{ $label }}</span>
                                     <span class="material-symbols-outlined text-[16px] {{ $cadence === $value ? 'text-electric-blue' : 'text-muted' }}">{{ $cadence === $value ? 'radio_button_checked' : 'radio_button_unchecked' }}</span>
@@ -69,7 +69,7 @@
                             'credentials' => 'Credential leaks',
                             'impersonation' => 'Impersonation signals',
                         ] as $key => $label)
-                            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-hairline bg-white/60 px-3 py-2.5 transition hover:bg-white">
+                            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-hairline bg-elevated px-3 py-2.5 transition hover:bg-elevated">
                                 <input type="checkbox" wire:model="options.{{ $key }}" class="rounded border-hairline text-electric-blue focus:ring-electric-blue/30">
                                 <span class="font-body text-xs text-charcoal">{{ $label }}</span>
                             </label>
@@ -150,7 +150,7 @@
                 @forelse($alerts as $alert)
                     <div class="flex items-start gap-3 px-5 py-4 {{ $alert->is_read ? 'opacity-70' : '' }}">
                         <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border
-                            {{ $alert->severity === 'critical' || $alert->severity === 'high' ? 'border-coral/25 bg-coral/10 text-coral' : ($alert->severity === 'moderate' ? 'border-amber/25 bg-amber/10 text-[#a86f00]' : 'border-hairline bg-white text-electric-blue') }}">
+                            {{ $alert->severity === 'critical' || $alert->severity === 'high' ? 'border-coral/25 bg-coral/10 text-coral' : ($alert->severity === 'moderate' ? 'border-amber/25 bg-amber/10 text-[#a86f00]' : 'border-hairline bg-elevated text-electric-blue') }}">
                             <span class="material-symbols-outlined text-[16px]">
                                 {{ $alert->severity === 'critical' || $alert->severity === 'high' ? 'warning' : 'notifications' }}
                             </span>

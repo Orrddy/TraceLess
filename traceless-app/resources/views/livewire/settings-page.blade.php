@@ -152,7 +152,7 @@
         <h2 class="mt-1 font-editorial text-2xl text-ink">Irreversible actions</h2>
 
         <div class="mt-5 grid gap-5 lg:grid-cols-2">
-            <div class="rounded-2xl border border-hairline bg-white/70 p-5">
+            <div class="rounded-2xl border border-hairline bg-elevated p-5">
                 <p class="font-body text-sm font-semibold text-ink">Purge scan data</p>
                 <p class="mt-1 font-body text-xs leading-relaxed text-muted">Deletes all findings, scans, reports, credential records, removal tasks and monitoring preferences. Your account remains.</p>
                 <label class="mt-3 flex cursor-pointer items-start gap-2">
@@ -163,7 +163,7 @@
                 <button wire:click="purgeScanData" wire:confirm="Permanently delete all scan findings and reports?" class="btn-danger mt-3 w-full">Purge scan data</button>
             </div>
 
-            <div class="rounded-2xl border border-coral/30 bg-white/70 p-5">
+            <div class="rounded-2xl border border-coral/30 bg-elevated p-5">
                 <p class="font-body text-sm font-semibold text-ink">Delete account</p>
                 <p class="mt-1 font-body text-xs leading-relaxed text-muted">Permanently removes your account and all associated identity, scan and monitoring data.</p>
 

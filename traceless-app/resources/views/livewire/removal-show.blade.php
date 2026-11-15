@@ -40,7 +40,7 @@
                             <span class="absolute left-[13px] top-7 h-[calc(100%-1.75rem)] w-px {{ $done ? 'bg-emerald/40' : 'bg-hairline' }}"></span>
                         @endif
                         <span class="relative z-10 mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border
-                            {{ $done ? 'border-emerald/30 bg-emerald/10 text-emerald' : ($active ? 'border-electric-blue/40 bg-electric-blue/10 text-electric-blue' : 'border-hairline bg-white/70 text-muted') }}">
+                            {{ $done ? 'border-emerald/30 bg-emerald/10 text-emerald' : ($active ? 'border-electric-blue/40 bg-electric-blue/10 text-electric-blue' : 'border-hairline bg-elevated text-muted') }}">
                             <span class="material-symbols-outlined text-[14px]">{{ $done ? 'check' : ($active ? 'radio_button_checked' : 'circle') }}</span>
                         </span>
                         <div>
@@ -56,8 +56,8 @@
 
             @if(in_array($task->status, ['user_action_required', 'could_not_verify', 'reappeared'], true))
                 <div class="mt-2 rounded-xl border border-amber/25 bg-amber/10 px-4 py-3">
-                    <p class="font-mono text-[10px] font-semibold text-[#8a5c00]">This task needs your intervention</p>
-                    <p class="mt-1 font-body text-xs leading-relaxed text-[#8a5c00]/85">
+                    <p class="font-mono text-[10px] font-semibold text-warning">This task needs your intervention</p>
+                    <p class="mt-1 font-body text-xs leading-relaxed text-warning/85">
                         @if($task->status === 'reappeared')
                             The source republished this record. Re-submit the opt-out and document the reappearance.
                         @elseif($task->status === 'could_not_verify')
@@ -146,7 +146,7 @@
                 @foreach([$instruction->step_1, $instruction->step_2, $instruction->step_3, $instruction->step_4] as $step)
                     @continue(!$step)
                     <li class="glass-inset flex gap-3 p-4">
-                        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink font-mono text-[10px] font-semibold text-white">{{ $loop->iteration }}</span>
+                        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink font-mono text-[10px] font-semibold text-ink">{{ $loop->iteration }}</span>
                         <p class="font-body text-xs leading-relaxed text-charcoal">{{ $step }}</p>
                     </li>
                 @endforeach
@@ -157,7 +157,7 @@
                 </a>
             @endif
         @else
-            <p class="mt-4 rounded-xl border border-hairline bg-white/60 p-4 font-body text-xs leading-relaxed text-muted">
+            <p class="mt-4 rounded-xl border border-hairline bg-elevated p-4 font-body text-xs leading-relaxed text-muted">
                 No curated playbook exists for this source yet. Use the source's privacy policy or contact page, reference the specific record URL, and keep a copy of your request. Removal is not guaranteed.
             </p>
         @endif

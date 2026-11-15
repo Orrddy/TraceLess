@@ -27,7 +27,7 @@
             <p class="mt-1.5 font-body text-[11px] text-muted">This address becomes your sign-in method. Keep access to it.</p>
         </div>
 
-        <div class="rounded-lg border border-white/[0.08] bg-[#101419]/70 p-4">
+        <div class="rounded-lg border border-line bg-surface/70 p-4">
             <label class="flex cursor-pointer items-start gap-3">
                 <input type="checkbox" name="terms" value="1" @checked(old('terms')) required
                        class="mt-0.5 rounded border-hairline text-electric-blue focus:ring-electric-blue/30">
@@ -46,7 +46,7 @@
         </button>
     </form>
 
-    <div class="mt-6 rounded-lg border border-white/[0.08] bg-[#101419]/70 px-4 py-3">
+    <div class="mt-6 rounded-lg border border-line bg-surface/70 px-4 py-3">
         <p class="flex items-center gap-2 font-mono text-[9px] uppercase tracking-wider text-muted">
             <span class="material-symbols-outlined text-[13px] text-emerald">verified_user</span>
             Verified at sign-up

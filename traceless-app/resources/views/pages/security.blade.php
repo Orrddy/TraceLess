@@ -18,7 +18,7 @@
                 ['rule', 'Rate limiting and throttles', 'Code requests, code verification, account changes, scan creation, monitoring and report generation are rate limited to reduce abuse.'],
             ] as [$icon, $title, $body])
                 <div class="glass-card p-5">
-                    <span class="flex h-10 w-10 items-center justify-center rounded-xl border border-hairline bg-white text-electric-blue">
+                    <span class="flex h-10 w-10 items-center justify-center rounded-xl border border-hairline bg-elevated text-electric-blue">
                         <span class="material-symbols-outlined text-[19px]">{{ $icon }}</span>
                     </span>
                     <h2 class="mt-3 font-body text-sm font-semibold text-ink">{{ $title }}</h2>
@@ -48,7 +48,7 @@
             </div>
         </section>
 
-        <section class="mt-10 rounded-2xl border border-hairline bg-white/60 p-6">
+        <section class="mt-10 rounded-2xl border border-hairline bg-elevated p-6">
             <p class="mono-label">Responsible disclosure</p>
             <p class="mt-2 font-body text-sm leading-relaxed text-muted">If you find a vulnerability, report it privately to the operator of this deployment with reproduction steps. Do not access other users' data, run destructive tests, or publish details before a fix is available.</p>
         </section>

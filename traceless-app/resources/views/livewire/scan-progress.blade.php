@@ -1,4 +1,4 @@
-<div class="relative min-h-[75vh] flex items-center justify-center overflow-hidden rounded-2xl border border-white/[0.08]" wire:poll.1500ms>
+<div class="relative min-h-[75vh] flex items-center justify-center overflow-hidden rounded-2xl border border-line" wire:poll.1500ms>
     <!-- Background Looping Scanner Video (bg neon.mp4) -->
     <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-fit-cover object-center opacity-30 z-0 pointer-events-none">
         <source src="{{ asset('assets/videos/scanner-loop.mp4') }}" type="video/mp4">
@@ -11,8 +11,8 @@
     <!-- Central Operational Console -->
     <div class="relative z-10 max-w-xl w-full p-8 text-center space-y-6">
         <!-- Classification -->
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#101419]/90 border border-[#55D6E8]/30 font-mono text-[10px] uppercase tracking-widest text-[#55D6E8]">
-            <span class="h-1.5 w-1.5 rounded-full bg-[#55D6E8] animate-ping"></span>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-surface/90 border border-[#55D6E8]/30 font-mono text-[10px] uppercase tracking-widest text-accent">
+            <span class="h-1.5 w-1.5 rounded-full bg-accent animate-ping"></span>
             <span>SCAN PROTOCOL // #{{ $scan->id }}</span>
         </div>
 
@@ -31,20 +31,20 @@
                         stroke-linecap="round" class="transition-all duration-500 ease-out"/>
             </svg>
             <div class="absolute inset-0 flex flex-col items-center justify-center">
-                <span class="font-mono text-3xl font-bold text-white tracking-tight">{{ $pct }}%</span>
-                <span class="font-mono text-[9px] uppercase tracking-wider text-[#A6B0BC]">TELEMETRY</span>
+                <span class="font-mono text-3xl font-bold text-ink tracking-tight">{{ $pct }}%</span>
+                <span class="font-mono text-[9px] uppercase tracking-wider text-body">TELEMETRY</span>
             </div>
         </div>
 
         <!-- Stage Copy from Backend -->
         <div class="space-y-2">
-            <h2 class="text-xl font-bold text-white tracking-tight font-mono uppercase">
+            <h2 class="text-xl font-bold text-ink tracking-tight font-mono uppercase">
                 {{ $scan->current_stage }}
             </h2>
-            <div class="font-mono text-xs text-[#A6B0BC] space-x-4">
-                <span>STATUS: <strong class="text-white">{{ strtoupper($scan->status) }}</strong></span>
-                <span>SOURCES PROBED: <strong class="text-[#55D6E8]">{{ $scan->sources_checked }}</strong></span>
-                <span>NODES FOUND: <strong class="text-[#E9B45D]">{{ $scan->findings_count }}</strong></span>
+            <div class="font-mono text-xs text-body space-x-4">
+                <span>STATUS: <strong class="text-ink">{{ strtoupper($scan->status) }}</strong></span>
+                <span>SOURCES PROBED: <strong class="text-accent">{{ $scan->sources_checked }}</strong></span>
+                <span>NODES FOUND: <strong class="text-warning">{{ $scan->findings_count }}</strong></span>
             </div>
         </div>
 
@@ -57,7 +57,7 @@
                 </a>
             </div>
         @else
-            <div class="font-mono text-[10px] text-[#5D6B7A]">
+            <div class="font-mono text-[10px] text-faint">
                 ENCLAVE: LOCAL OSINT WORKER ACTIVE // ZERO PASSWORDS QUERIED
             </div>
         @endif

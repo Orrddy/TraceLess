@@ -1,12 +1,12 @@
 <div class="relative" x-data="{ open: false }" @click.outside="open = false" wire:poll.20s>
-    <button @click="open = !open" class="relative flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-white/70 text-charcoal transition hover:shadow-glass-sm" :aria-expanded="open" aria-label="Notifications">
+    <button @click="open = !open" class="relative flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-elevated text-charcoal transition hover:shadow-glass-sm" :aria-expanded="open" aria-label="Notifications">
         <span class="material-symbols-outlined text-[19px]">notifications</span>
         @if($unread > 0)
-            <span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-coral px-1 font-mono text-[9px] font-semibold text-white">{{ $unread }}</span>
+            <span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-coral px-1 font-mono text-[9px] font-semibold text-ink">{{ $unread }}</span>
         @endif
     </button>
 
-    <div x-cloak x-show="open" x-transition class="absolute right-0 mt-2 w-[340px] overflow-hidden rounded-2xl border border-hairline bg-white/95 shadow-glass backdrop-blur-xl">
+    <div x-cloak x-show="open" x-transition class="absolute right-0 mt-2 w-[340px] overflow-hidden rounded-2xl border border-hairline bg-elevated shadow-glass backdrop-blur-xl">
         <div class="flex items-center justify-between border-b border-hairline px-4 py-3">
             <div>
                 <p class="font-body text-sm font-semibold">Alerts</p>
@@ -20,7 +20,7 @@
             @forelse($alerts as $alert)
                 <div class="border-b border-hairline px-4 py-3 last:border-0 {{ $alert->is_read ? 'opacity-60' : '' }}">
                     <div class="flex items-start gap-2.5">
-                        <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-hairline bg-white">
+                        <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-hairline bg-elevated">
                             <span class="material-symbols-outlined text-[13px] {{ $alert->severity === 'critical' || $alert->severity === 'high' ? 'text-coral' : ($alert->severity === 'moderate' ? 'text-amber' : 'text-electric-blue') }}">
                                 {{ $alert->type === 'credential_leak' ? 'key' : ($alert->type === 'reappeared' ? 'restart_alt' : 'radar') }}
                             </span>
@@ -47,6 +47,6 @@
                 </div>
             @endforelse
         </div>
-        <a href="{{ route('alerts') }}" class="block border-t border-hairline px-4 py-2.5 text-center font-mono text-[10px] text-electric-blue hover:bg-white">View monitoring &amp; alerts</a>
+        <a href="{{ route('alerts') }}" class="block border-t border-hairline px-4 py-2.5 text-center font-mono text-[10px] text-electric-blue hover:bg-elevated">View monitoring &amp; alerts</a>
     </div>
 </div>

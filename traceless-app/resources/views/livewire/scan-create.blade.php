@@ -5,7 +5,7 @@
     </div>
 
     <div class="glass-card overflow-hidden">
-        <div class="relative border-b border-hairline bg-white/40 px-6 py-6">
+        <div class="relative border-b border-hairline bg-elevated px-6 py-6">
             <div class="pointer-events-none absolute -right-14 -top-16 h-52 w-52 rounded-full bg-electric-blue/10 blur-3xl"></div>
             <p class="eyebrow">New assessment</p>
             <h1 class="display-title mt-1 text-[2rem] text-ink">Start a privacy scan</h1>
@@ -31,7 +31,7 @@
                 <div>
                     <p class="mono-label mb-2">Scan depth</p>
                     <div class="grid gap-3 sm:grid-cols-2">
-                        <label class="cursor-pointer rounded-2xl border border-hairline bg-white/60 p-4 transition has-[:checked]:border-electric-blue has-[:checked]:bg-electric-blue/[.05]">
+                        <label class="cursor-pointer rounded-2xl border border-hairline bg-elevated p-4 transition has-[:checked]:border-electric-blue has-[:checked]:bg-electric-blue/[.05]">
                             <input type="radio" wire:model.live="type" value="snapshot" class="sr-only">
                             <div class="flex items-start justify-between">
                                 <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-electric-blue/10 text-electric-blue"><span class="material-symbols-outlined text-[18px]">bolt</span></span>
@@ -41,7 +41,7 @@
                             <p class="mt-1 font-body text-[11px] leading-relaxed text-muted">One identity, public profile discovery, basic credential metadata and removal guidance.</p>
                         </label>
 
-                        <label class="cursor-pointer rounded-2xl border border-hairline bg-white/60 p-4 transition has-[:checked]:border-violet has-[:checked]:bg-violet/[.05]">
+                        <label class="cursor-pointer rounded-2xl border border-hairline bg-elevated p-4 transition has-[:checked]:border-violet has-[:checked]:bg-violet/[.05]">
                             <input type="radio" wire:model.live="type" value="deep_scan" class="sr-only">
                             <div class="flex items-start justify-between">
                                 <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-violet/10 text-violet"><span class="material-symbols-outlined text-[18px]">neurology</span></span>

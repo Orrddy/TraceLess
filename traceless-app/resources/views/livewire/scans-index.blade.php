@@ -22,9 +22,9 @@
 
         <div class="divide-y divide-hairline">
             @forelse($scans as $scan)
-                <div class="flex flex-col gap-3 px-5 py-4 transition hover:bg-white/40 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex flex-col gap-3 px-5 py-4 transition hover:bg-elevated sm:flex-row sm:items-center sm:justify-between">
                     <div class="flex items-start gap-3">
-                        <span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-hairline bg-white">
+                        <span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-hairline bg-elevated">
                             <span class="material-symbols-outlined text-[17px] {{ $scan->status === 'completed' ? 'text-emerald' : ($scan->status === 'failed' ? 'text-coral' : 'text-electric-blue') }}">
                                 {{ $scan->status === 'completed' ? 'check_circle' : ($scan->status === 'failed' ? 'error' : 'radar') }}
                             </span>

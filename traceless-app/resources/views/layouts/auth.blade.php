@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="#080A0D">
+    <meta name="theme-color" content="#ffffff">
     <title>@yield('title', 'TraceLess — Secure access')</title>
+
+    <script>
+        (() => {
+            const stored = localStorage.getItem('traceless-theme');
+            document.documentElement.classList.toggle('dark', stored === 'dark');
+        })();
+    </script>
 
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +23,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="min-h-screen bg-[#080A0D] font-body text-[#F1F4F7] antialiased">
+<body class="min-h-screen bg-canvas font-body text-ink antialiased">
     <!-- Processing loop (the same footage used during a scan) as the ambient backdrop. -->
     <video
         class="pointer-events-none fixed inset-0 z-0 h-full w-full object-cover opacity-45 motion-reduce:hidden"
@@ -24,90 +31,90 @@
         <source src="{{ asset('assets/videos/scanner-loop.mp4') }}" type="video/mp4">
     </video>
     <!-- Readability scrims: keep form text above 4.5:1 contrast over moving footage. -->
-    <div class="pointer-events-none fixed inset-0 z-0 bg-[#080A0D]/80" aria-hidden="true"></div>
-    <div class="pointer-events-none fixed inset-0 z-0 bg-gradient-to-br from-[#080A0D]/70 via-[#080A0D]/30 to-[#080A0D]/85" aria-hidden="true"></div>
+    <div class="pointer-events-none fixed inset-0 z-0 bg-canvas/80" aria-hidden="true"></div>
+    <div class="pointer-events-none fixed inset-0 z-0 bg-gradient-to-br from-canvas/70 via-canvas/40 to-canvas/90" aria-hidden="true"></div>
 
     <div class="relative z-10 grid min-h-screen lg:grid-cols-12">
 
         <!-- Intelligence briefing panel -->
-        <aside class="relative hidden overflow-hidden border-r border-white/[0.08] bg-[#0A0E13]/70 lg:col-span-5 lg:flex lg:flex-col lg:backdrop-blur-md">
+        <aside class="relative hidden overflow-hidden border-r border-line bg-surface/70 lg:col-span-5 lg:flex lg:flex-col lg:backdrop-blur-md">
             <div class="pointer-events-none absolute inset-0 app-grid opacity-40" aria-hidden="true"></div>
             <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(85,214,232,0.12),transparent_55%),radial-gradient(circle_at_90%_90%,rgba(74,222,155,0.06),transparent_50%)]" aria-hidden="true"></div>
 
             <div class="relative flex flex-1 flex-col p-10 xl:p-14">
                 <a href="{{ route('home') }}" class="flex items-center gap-3">
-                    <span class="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-[#101419] text-[#55D6E8]">
+                    <span class="flex h-10 w-10 items-center justify-center rounded-lg border border-line bg-surface text-accent">
                         <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M12 8v4M12 16h.01" stroke-linecap="round"/>
                         </svg>
                     </span>
-                    <span class="flex flex-col leading-none">
-                        <span class="font-mono text-base font-bold tracking-[0.14em] text-white">TRACE<span class="text-[#55D6E8]">LESS</span></span>
-                        <span class="mt-1 font-mono text-[8px] uppercase tracking-[0.22em] text-[#5D6B7A]">Confidential // Access</span>
+                    <span class="flex flex-col leading-tight">
+                        <span class="font-display text-lg font-semibold tracking-tight text-ink">TraceLess</span>
+                        <span class="mt-0.5 text-xs text-faint">Account access</span>
                     </span>
                 </a>
 
                 <div class="mt-auto max-w-md">
-                    <div class="inline-flex items-center gap-2 rounded border border-[#55D6E8]/25 bg-[#55D6E8]/[0.06] px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.18em] text-[#55D6E8]">
-                        <span class="h-1.5 w-1.5 rounded-full bg-[#55D6E8]"></span>
-                        Session enclave
+                    <div class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-medium text-body">
+                        <span class="h-1.5 w-1.5 rounded-full bg-success"></span>
+                        Secure sign-in
                     </div>
 
-                    <h2 class="mt-5 font-display text-[2.6rem] font-semibold leading-[1.04] tracking-[-0.03em] text-white xl:text-[3rem]">
-                        A quiet command center for your public exposure.
+                    <h2 class="mt-5 font-display text-[2.4rem] font-semibold leading-[1.1] tracking-[-0.02em] text-ink xl:text-[2.8rem]">
+                        Know what is public about you.
                     </h2>
-                    <p class="mt-5 max-w-sm font-body text-sm leading-relaxed text-[#A6B0BC]">
-                        Public sources only. No passwords requested. Consent is recorded for every identity you choose to scan.
+                    <p class="mt-5 max-w-sm text-sm leading-relaxed text-body">
+                        We check public sources only, record your consent for every identity, and never ask for a password.
                     </p>
 
-                    <div class="mt-8 space-y-3 border-t border-white/[0.08] pt-6 font-mono text-[10px] text-[#A6B0BC]">
+                    <div class="mt-8 space-y-3 border-t border-line pt-6 text-sm text-body">
                         <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[15px] text-[#4ADE9B]">verified_user</span>
-                            <span>Consent-gated reconnaissance</span>
+                            <span class="material-symbols-outlined text-[15px] text-success">verified_user</span>
+                            <span>Consent recorded for every scan</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[15px] text-[#55D6E8]">dns</span>
+                            <span class="material-symbols-outlined text-[15px] text-accent">dns</span>
                             <span>Evidence stored per finding</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[15px] text-[#E9B45D]">key_off</span>
-                            <span>Passwordless email access</span>
+                            <span class="material-symbols-outlined text-[15px] text-warning">key_off</span>
+                            <span>No passwords, ever</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-10 flex items-center justify-between border-t border-white/[0.06] pt-5 font-mono text-[9px] text-[#5D6B7A]">
-                    <span>WhatsMyName CC BY-SA 4.0</span>
-                    <span>user-scanner MIT</span>
+                <div class="mt-10 flex items-center justify-between border-t border-line pt-5 text-xs text-faint">
+                    <span>Discovery: WhatsMyName (CC BY-SA 4.0)</span>
+                    <span>user-scanner (MIT)</span>
                 </div>
             </div>
         </aside>
 
         <!-- Access form -->
-        <main class="relative flex items-center justify-center bg-[#080A0D]/30 px-5 py-10 sm:px-8 lg:col-span-7">
+        <main class="relative flex items-center justify-center bg-canvas/30 px-5 py-10 sm:px-8 lg:col-span-7">
             <div class="pointer-events-none absolute inset-0 app-grid opacity-30 lg:hidden" aria-hidden="true"></div>
             <div class="relative w-full max-w-md">
                 <a href="{{ route('home') }}" class="mb-9 flex items-center gap-2.5 lg:hidden">
-                    <span class="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-[#101419] text-[#55D6E8]">
+                    <span class="flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-surface text-accent">
                         <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </span>
-                    <span class="font-mono text-base font-bold tracking-[0.14em] text-white">TRACE<span class="text-[#55D6E8]">LESS</span></span>
+                    <span class="font-display text-lg font-semibold tracking-tight text-ink">TraceLess</span>
                 </a>
 
                 @if(session('status'))
-                    <div class="mb-5 rounded-lg border border-[#4ADE9B]/25 bg-[#4ADE9B]/[0.08] px-4 py-3 font-body text-sm text-[#4ADE9B]">{{ session('status') }}</div>
+                    <div class="mb-5 rounded-lg border border-[#4ADE9B]/25 bg-success/[0.08] px-4 py-3 font-body text-sm text-success">{{ session('status') }}</div>
                 @endif
 
                 {{ $slot ?? '' }}
                 @yield('content')
 
-                <p class="mt-8 border-t border-white/[0.06] pt-5 text-center font-mono text-[10px] leading-relaxed text-[#5D6B7A]">
+                <p class="mt-8 border-t border-line pt-5 text-center font-mono text-[10px] leading-relaxed text-faint">
                     By continuing you agree to the
-                    <a href="{{ route('terms') }}" class="text-[#55D6E8] hover:underline">terms</a> and
-                    <a href="{{ route('privacy') }}" class="text-[#55D6E8] hover:underline">privacy policy</a>.
+                    <a href="{{ route('terms') }}" class="text-accent hover:underline">terms</a> and
+                    <a href="{{ route('privacy') }}" class="text-accent hover:underline">privacy policy</a>.
                 </p>
             </div>
         </main>

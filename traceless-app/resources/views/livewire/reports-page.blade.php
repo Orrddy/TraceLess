@@ -19,7 +19,7 @@
                 <p class="mono-label">Report type</p>
                 <div class="mt-3 grid gap-2 sm:grid-cols-2">
                     <button type="button" wire:click="$set('type', 'snapshot')"
-                            class="rounded-2xl border p-4 text-left transition {{ $type === 'snapshot' ? 'border-electric-blue/40 bg-electric-blue/[.06] shadow-glass-sm' : 'border-hairline bg-white/60 hover:bg-white' }}">
+                            class="rounded-2xl border p-4 text-left transition {{ $type === 'snapshot' ? 'border-electric-blue/40 bg-electric-blue/[.06] shadow-glass-sm' : 'border-hairline bg-elevated hover:bg-elevated' }}">
                         <span class="flex items-center justify-between">
                             <span class="font-body text-sm font-medium text-ink">Snapshot report</span>
                             <span class="material-symbols-outlined text-[17px] {{ $type === 'snapshot' ? 'text-electric-blue' : 'text-muted' }}">photo_camera</span>
@@ -27,7 +27,7 @@
                         <span class="mt-1 block font-body text-[11px] leading-snug text-muted">Current score, all active findings and removal progress.</span>
                     </button>
                     <button type="button" wire:click="$set('type', 'deep_scan')"
-                            class="rounded-2xl border p-4 text-left transition {{ $type === 'deep_scan' ? 'border-electric-blue/40 bg-electric-blue/[.06] shadow-glass-sm' : 'border-hairline bg-white/60 hover:bg-white' }} {{ $isDeepScan ? '' : 'opacity-70' }}">
+                            class="rounded-2xl border p-4 text-left transition {{ $type === 'deep_scan' ? 'border-electric-blue/40 bg-electric-blue/[.06] shadow-glass-sm' : 'border-hairline bg-elevated hover:bg-elevated' }} {{ $isDeepScan ? '' : 'opacity-70' }}">
                         <span class="flex items-center justify-between">
                             <span class="font-body text-sm font-medium text-ink">Deep report</span>
                             <span class="material-symbols-outlined text-[17px] {{ $type === 'deep_scan' ? 'text-electric-blue' : 'text-muted' }}">travel_explore</span>
@@ -62,7 +62,7 @@
                     @php($summary = json_decode($report->summary ?? '{}', true) ?: [])
                     <div class="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                         <div class="flex items-start gap-3">
-                            <span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-hairline bg-white text-electric-blue">
+                            <span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-hairline bg-elevated text-electric-blue">
                                 <span class="material-symbols-outlined text-[17px]">description</span>
                             </span>
                             <div>
@@ -95,7 +95,7 @@
             </div>
         </div>
 
-        <div class="flex items-start gap-2 rounded-xl border border-hairline bg-white/50 px-4 py-3">
+        <div class="flex items-start gap-2 rounded-xl border border-hairline bg-elevated px-4 py-3">
             <span class="material-symbols-outlined text-[16px] text-muted">verified_user</span>
             <p class="font-body text-[11px] leading-relaxed text-muted">Reports contain public-source findings only. TraceLess never includes passwords or private credentials. Removal outcomes are not guaranteed and scores are estimates.</p>
         </div>

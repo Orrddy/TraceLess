@@ -2,9 +2,9 @@
     @if(!$profile)
         <!-- Identity Initialization Banner -->
         <div class="ops-card p-10 text-center max-w-xl mx-auto space-y-4">
-            <span class="material-symbols-outlined text-4xl text-[#55D6E8]">fingerprint</span>
-            <h2 class="font-display text-2xl font-semibold tracking-[-0.02em] text-white">Establish your monitored identity</h2>
-            <p class="text-sm text-[#A6B0BC] leading-relaxed">
+            <span class="material-symbols-outlined text-4xl text-accent">fingerprint</span>
+            <h2 class="font-display text-2xl font-semibold tracking-[-0.02em] text-ink">Establish your monitored identity</h2>
+            <p class="text-sm text-body leading-relaxed">
                 Before deploying automated OSINT discovery, link your target identifiers under explicit legal authorization.
             </p>
             <div class="pt-2">
@@ -16,14 +16,14 @@
         </div>
     @else
         <!-- Identity Header / Operational Status Bar -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-line">
             <div class="space-y-1">
                 <div class="flex items-center gap-2">
                     <span class="ops-badge ops-badge-cyan">PROFILE ACTIVE</span>
-                    <span class="font-mono text-[10px] text-[#5D6B7A]">ID: TR-{{ str_pad($profile->id, 5, '0', STR_PAD_LEFT) }}</span>
+                    <span class="font-mono text-[10px] text-faint">ID: TR-{{ str_pad($profile->id, 5, '0', STR_PAD_LEFT) }}</span>
                 </div>
-                <h1 class="font-display text-2xl font-semibold tracking-[-0.03em] text-white sm:text-3xl">{{ $profile->full_name }}</h1>
-                <div class="font-mono text-xs text-[#A6B0BC] flex items-center gap-4">
+                <h1 class="font-display text-2xl font-semibold tracking-[-0.03em] text-ink sm:text-3xl">{{ $profile->full_name }}</h1>
+                <div class="font-mono text-xs text-body flex items-center gap-4">
                     <span>Target: {{ $profile->primary_email ?? 'No Primary Email' }}</span>
                     <span>Region: {{ $profile->region ?? 'Global' }}</span>
                 </div>
@@ -45,47 +45,47 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <!-- Privacy Score Dial -->
             <div class="ops-card p-5 flex flex-col justify-between">
-                <div class="flex items-center justify-between text-xs font-mono text-[#A6B0BC]">
+                <div class="flex items-center justify-between text-xs font-mono text-body">
                     <span>POSTURE INDEX</span>
-                    <span class="material-symbols-outlined text-[16px] text-[#55D6E8]">speed</span>
+                    <span class="material-symbols-outlined text-[16px] text-accent">speed</span>
                 </div>
                 <div class="my-4 flex items-baseline gap-2">
-                    <span class="font-mono text-4xl font-bold text-white">{{ $scoreData['privacy_score'] ?? $profile->privacy_score }}</span>
-                    <span class="font-mono text-xs text-[#5D6B7A]">/ 100</span>
+                    <span class="font-mono text-4xl font-bold text-ink">{{ $scoreData['privacy_score'] ?? $profile->privacy_score }}</span>
+                    <span class="font-mono text-xs text-faint">/ 100</span>
                 </div>
-                <div class="w-full h-1.5 bg-[#080A0D] rounded-full overflow-hidden">
+                <div class="w-full h-1.5 bg-canvas rounded-full overflow-hidden">
                     <div class="h-full bg-gradient-to-r from-[#55D6E8] to-[#4ADE9B]" style="width: {{ $scoreData['privacy_score'] ?? $profile->privacy_score }}%"></div>
                 </div>
-                <div class="mt-3 font-mono text-[9px] text-[#5D6B7A] leading-tight">
+                <div class="mt-3 font-mono text-[9px] text-faint leading-tight">
                     {{ $scoreData['disclaimer'] ?? 'Score is an estimate for prioritizing action.' }}
                 </div>
             </div>
 
             <!-- Total Findings -->
             <div class="ops-card p-5 flex flex-col justify-between">
-                <div class="flex items-center justify-between text-xs font-mono text-[#A6B0BC]">
+                <div class="flex items-center justify-between text-xs font-mono text-body">
                     <span>INDEXED NODES</span>
-                    <span class="material-symbols-outlined text-[16px] text-[#A6B0BC]">hub</span>
+                    <span class="material-symbols-outlined text-[16px] text-body">hub</span>
                 </div>
-                <div class="my-4 font-mono text-4xl font-bold text-white">
+                <div class="my-4 font-mono text-4xl font-bold text-ink">
                     {{ $scoreData['total_findings'] ?? 0 }}
                 </div>
-                <div class="font-mono text-[10px] text-[#A6B0BC] flex items-center justify-between">
+                <div class="font-mono text-[10px] text-body flex items-center justify-between">
                     <span>Public Accounts & Traces</span>
-                    <a href="{{ route('findings') }}" class="text-[#55D6E8] hover:underline">View →</a>
+                    <a href="{{ route('findings') }}" class="text-accent hover:underline">View →</a>
                 </div>
             </div>
 
             <!-- Elevated Risk Alerts -->
             <div class="ops-card p-5 flex flex-col justify-between">
-                <div class="flex items-center justify-between text-xs font-mono text-[#A6B0BC]">
+                <div class="flex items-center justify-between text-xs font-mono text-body">
                     <span>ELEVATED THREATS</span>
-                    <span class="material-symbols-outlined text-[16px] text-[#EF6262]">warning</span>
+                    <span class="material-symbols-outlined text-[16px] text-danger">warning</span>
                 </div>
-                <div class="my-4 font-mono text-4xl font-bold text-[#EF6262]">
+                <div class="my-4 font-mono text-4xl font-bold text-danger">
                     {{ ($scoreData['critical_count'] ?? 0) + ($scoreData['high_count'] ?? 0) }}
                 </div>
-                <div class="font-mono text-[10px] text-[#A6B0BC] flex items-center justify-between">
+                <div class="font-mono text-[10px] text-body flex items-center justify-between">
                     <span>High-risk records</span>
                     <span class="ops-badge ops-badge-coral text-[8px]">ACTION REQ</span>
                 </div>
@@ -93,16 +93,16 @@
 
             <!-- Removals In-Flight -->
             <div class="ops-card p-5 flex flex-col justify-between">
-                <div class="flex items-center justify-between text-xs font-mono text-[#A6B0BC]">
+                <div class="flex items-center justify-between text-xs font-mono text-body">
                     <span>OPT-OUT QUEUE</span>
-                    <span class="material-symbols-outlined text-[16px] text-[#4ADE9B]">task_alt</span>
+                    <span class="material-symbols-outlined text-[16px] text-success">task_alt</span>
                 </div>
-                <div class="my-4 font-mono text-4xl font-bold text-[#4ADE9B]">
-                    {{ $activeTasks->where('status', 'removed')->count() }}<span class="text-sm font-normal text-[#5D6B7A]">/{{ $activeTasks->count() }}</span>
+                <div class="my-4 font-mono text-4xl font-bold text-success">
+                    {{ $activeTasks->where('status', 'removed')->count() }}<span class="text-sm font-normal text-faint">/{{ $activeTasks->count() }}</span>
                 </div>
-                <div class="font-mono text-[10px] text-[#A6B0BC] flex items-center justify-between">
+                <div class="font-mono text-[10px] text-body flex items-center justify-between">
                     <span>Remediated Listings</span>
-                    <a href="{{ route('removals') }}" class="text-[#55D6E8] hover:underline">Removals →</a>
+                    <a href="{{ route('removals') }}" class="text-accent hover:underline">Removals →</a>
                 </div>
             </div>
         </div>
@@ -111,30 +111,30 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Findings Feed -->
             <div class="lg:col-span-8 ops-card p-6 space-y-4">
-                <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
-                    <div class="flex items-center gap-2 font-mono text-xs font-semibold text-white">
-                        <span class="material-symbols-outlined text-[#55D6E8] text-[16px]">radar</span>
+                <div class="flex items-center justify-between border-b border-line pb-3">
+                    <div class="flex items-center gap-2 font-mono text-xs font-semibold text-ink">
+                        <span class="material-symbols-outlined text-accent text-[16px]">radar</span>
                         <span>RECENT DISCOVERED NODES</span>
                     </div>
-                    <a href="{{ route('findings') }}" class="font-mono text-[11px] text-[#55D6E8] hover:underline">Full Report →</a>
+                    <a href="{{ route('findings') }}" class="font-mono text-[11px] text-accent hover:underline">Full Report →</a>
                 </div>
 
                 @if($recentFindings->count())
-                    <div class="divide-y divide-white/[0.06]">
+                    <div class="divide-y divide-line">
                         @foreach($recentFindings as $f)
                             <div class="py-3 flex items-center justify-between gap-4 font-mono text-xs">
                                 <div class="flex items-center gap-3">
                                     <span class="material-symbols-outlined text-[18px] 
-                                        @if($f->risk === 'critical') text-[#EF6262]
-                                        @elseif($f->risk === 'high') text-[#E9B45D]
-                                        @else text-[#55D6E8] @endif">
+                                        @if($f->risk === 'critical') text-danger
+                                        @elseif($f->risk === 'high') text-warning
+                                        @else text-accent @endif">
                                         @if($f->category === 'data_broker') corporate_fare
                                         @elseif($f->category === 'public_paste') article
                                         @else account_box @endif
                                     </span>
                                     <div>
-                                        <div class="text-white font-medium">{{ $f->source }}</div>
-                                        <div class="text-[10px] text-[#5D6B7A]">{{ $f->identifier_value }} // {{ str_replace('_', ' ', strtoupper($f->category)) }}</div>
+                                        <div class="text-ink font-medium">{{ $f->source }}</div>
+                                        <div class="text-[10px] text-faint">{{ $f->identifier_value }} // {{ str_replace('_', ' ', strtoupper($f->category)) }}</div>
                                     </div>
                                 </div>
 
@@ -146,7 +146,7 @@
                                         {{ strtoupper($f->risk) }}
                                     </span>
                                     @if($f->url)
-                                        <a href="{{ $f->url }}" target="_blank" rel="noopener" class="text-[#A6B0BC] hover:text-white" title="Open source">
+                                        <a href="{{ $f->url }}" target="_blank" rel="noopener" class="text-body hover:text-ink" title="Open source">
                                             <span class="material-symbols-outlined text-[16px]">open_in_new</span>
                                         </a>
                                     @endif
@@ -155,7 +155,7 @@
                         @endforeach
                     </div>
                 @else
-                    <div class="py-12 text-center font-mono text-xs text-[#5D6B7A]">
+                    <div class="py-12 text-center font-mono text-xs text-faint">
                         No intelligence nodes detected. Click "Execute Recon Scan" above.
                     </div>
                 @endif
@@ -163,9 +163,9 @@
 
             <!-- Credential Exposures Sidepanel -->
             <div class="lg:col-span-4 ops-card p-6 space-y-4">
-                <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
-                    <div class="flex items-center gap-2 font-mono text-xs font-semibold text-white">
-                        <span class="material-symbols-outlined text-[#E9B45D] text-[16px]">vpn_key</span>
+                <div class="flex items-center justify-between border-b border-line pb-3">
+                    <div class="flex items-center gap-2 font-mono text-xs font-semibold text-ink">
+                        <span class="material-symbols-outlined text-warning text-[16px]">vpn_key</span>
                         <span>BREACH METADATA</span>
                     </div>
                     <span class="ops-badge ops-badge-faint text-[9px]">ZERO PASSWORDS</span>
@@ -174,30 +174,30 @@
                 @if($credentialExposures->count())
                     <div class="space-y-3 font-mono text-xs">
                         @foreach($credentialExposures as $c)
-                            <div class="p-3 rounded bg-[#080A0D] border border-white/5 space-y-2">
+                            <div class="p-3 rounded bg-canvas border border-line space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-white font-semibold">{{ $c->service_name }}</span>
+                                    <span class="text-ink font-semibold">{{ $c->service_name }}</span>
                                     @if($c->is_resolved)
-                                        <span class="text-[#4ADE9B] text-[10px]">RESOLVED</span>
+                                        <span class="text-success text-[10px]">RESOLVED</span>
                                     @else
                                         <button wire:click="markResolved({{ $c->id }})" class="ops-badge ops-badge-amber text-[9px] hover:bg-[#E9B45D]/20">
                                             Fix & Rotate
                                         </button>
                                     @endif
                                 </div>
-                                <div class="text-[10px] text-[#A6B0BC]">Exposed: {{ $c->email }}</div>
-                                <div class="text-[9px] text-[#5D6B7A]">Date: {{ $c->breach_date ?? 'Archived' }}</div>
+                                <div class="text-[10px] text-body">Exposed: {{ $c->email }}</div>
+                                <div class="text-[9px] text-faint">Date: {{ $c->breach_date ?? 'Archived' }}</div>
                             </div>
                         @endforeach
                     </div>
                 @else
                     @if(config('traceless.breach.provider'))
-                        <div class="py-12 text-center font-mono text-xs text-[#4ADE9B]">
+                        <div class="py-12 text-center font-mono text-xs text-success">
                             ✓ No active credential exposures found across public disclosure lists.
                         </div>
                     @else
-                        <div class="py-12 text-center font-mono text-xs leading-relaxed text-[#5D6B7A]">
-                            <span class="mb-2 block text-[#E9B45D]">PROVIDER NOT CONFIGURED</span>
+                        <div class="py-12 text-center font-mono text-xs leading-relaxed text-faint">
+                            <span class="mb-2 block text-warning">PROVIDER NOT CONFIGURED</span>
                             Breach metadata is not enabled in this environment. TraceLess shows nothing here rather than infer or invent exposures.
                         </div>
                     @endif

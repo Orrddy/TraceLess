@@ -1,166 +1,151 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="#080A0D">
-    <title>{{ $title ?? 'TraceLess // Privacy Command Center' }}</title>
-    <meta name="description" content="TraceLess secure user dashboard and privacy posture command center.">
+    <meta name="theme-color" content="#ffffff">
+    <title>{{ $title ?? 'TraceLess — Privacy dashboard' }}</title>
+    <meta name="description" content="TraceLess privacy dashboard: your public exposure, credential risk and removal progress in one place.">
+
+    <script>
+        // Resolve the theme before paint so there is no flash.
+        (() => {
+            const stored = localStorage.getItem('traceless-theme');
+            const dark = stored ? stored === 'dark' : false;
+            document.documentElement.classList.toggle('dark', dark);
+        })();
+    </script>
 
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="terminal-bg font-sans text-[#F1F4F7] min-h-screen antialiased selection:bg-[#55D6E8]/20 selection:text-white"
+<body class="min-h-screen bg-canvas text-ink antialiased"
       x-data="{ mobileNav: false, toast: false, toastMsg: '' }"
       @notify.window="toastMsg = $event.detail.message || 'Saved'; toast = true; setTimeout(() => toast = false, 4000)"
       @toast.window="toastMsg = $event.detail.message || 'Saved'; toast = true; setTimeout(() => toast = false, 4000)">
 
-    <!-- Desktop Sidebar (260px tactical rail) -->
-    <aside class="hidden lg:flex fixed inset-y-0 left-0 z-40 w-[260px] flex-col border-r border-white/[0.08] bg-[#0A0D12]">
-        <!-- Brand & Tactical Terminal Header -->
-        <div class="px-6 py-5 border-b border-white/[0.08]">
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
-                <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#101419] border border-white/10 text-[#55D6E8]">
-                    <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2">
+    <!-- Sidebar -->
+    <aside class="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-line bg-elevated lg:flex">
+        <div class="flex h-16 items-center border-b border-line px-5">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
+                <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-white">
+                    <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M12 8v4M12 16h.01" stroke-linecap="round"/>
                     </svg>
                 </span>
-                <div class="flex flex-col leading-none">
-                    <span class="font-mono text-base font-bold tracking-wider text-white">TRACE<span class="text-[#55D6E8]">LESS</span></span>
-                    <span class="font-mono text-[8px] uppercase tracking-[0.2em] text-[#A6B0BC]/60 mt-1">OPS COMMAND</span>
-                </div>
+                <span class="font-display text-lg font-semibold tracking-tight text-ink">TraceLess</span>
             </a>
         </div>
 
-        <!-- Tactical ASCII Status Block -->
-        <div class="px-4 py-3 mx-4 my-3 rounded bg-[#080A0D] border border-white/5 font-mono text-[9px] text-[#5D6B7A] leading-tight select-none">
-            STATUS: ENCRYPTED // TR-782<br>
-            EXPOSURE: ACTIVE SENTRY<br>
-            ENCLAVE: {{ config('traceless.demo_mode') ? 'DEMO ADAPTER' : 'LOCAL PYTHON' }}
-        </div>
+        <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" aria-label="Main navigation">
+            <p class="px-3 pb-1 text-xs font-medium uppercase tracking-wide text-faint">Monitoring</p>
 
-        <!-- Primary Navigation -->
-        <nav class="flex-1 overflow-y-auto px-3 space-y-1 font-mono text-[11px]" aria-label="Command Navigation">
-            <div class="px-3 pt-3 pb-1 text-[9px] uppercase tracking-widest text-[#5D6B7A]">Command Operations</div>
-            
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('dashboard') ? 'bg-[#171D24] text-[#55D6E8] border border-[#55D6E8]/30 font-semibold' : 'text-[#A6B0BC] hover:bg-white/5 hover:text-white' }}">
-                <span class="material-symbols-outlined text-[17px]">space_dashboard</span>
-                <span>OVERVIEW</span>
+            <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'nav-link-active font-semibold' : '' }}">
+                <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                <span>Overview</span>
             </a>
 
-            <a href="{{ route('identity') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('identity*') ? 'bg-[#171D24] text-[#55D6E8] border border-[#55D6E8]/30 font-semibold' : 'text-[#A6B0BC] hover:bg-white/5 hover:text-white' }}">
-                <span class="material-symbols-outlined text-[17px]">fingerprint</span>
-                <span>DIGITAL FOOTPRINT</span>
+            <a href="{{ route('identity') }}" class="nav-link {{ request()->routeIs('identity*') ? 'nav-link-active font-semibold' : '' }}">
+                <span class="material-symbols-outlined text-[20px]">fingerprint</span>
+                <span>Digital footprint</span>
             </a>
 
-            <a href="{{ route('findings') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('findings*') ? 'bg-[#171D24] text-[#55D6E8] border border-[#55D6E8]/30 font-semibold' : 'text-[#A6B0BC] hover:bg-white/5 hover:text-white' }}">
-                <span class="material-symbols-outlined text-[17px]">radar</span>
-                <span>EXPOSURE REPORT</span>
+            <a href="{{ route('findings') }}" class="nav-link {{ request()->routeIs('findings*') ? 'nav-link-active font-semibold' : '' }}">
+                <span class="material-symbols-outlined text-[20px]">search</span>
+                <span>Exposure report</span>
             </a>
 
-            <a href="{{ route('credentials') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('credentials*') ? 'bg-[#171D24] text-[#55D6E8] border border-[#55D6E8]/30 font-semibold' : 'text-[#A6B0BC] hover:bg-white/5 hover:text-white' }}">
-                <span class="material-symbols-outlined text-[17px]">vpn_key</span>
-                <span>CREDENTIAL MONITOR</span>
+            <a href="{{ route('credentials') }}" class="nav-link {{ request()->routeIs('credentials*') ? 'nav-link-active font-semibold' : '' }}">
+                <span class="material-symbols-outlined text-[20px]">key</span>
+                <span>Credential monitor</span>
             </a>
 
-            <a href="{{ route('removals') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('removals*') ? 'bg-[#171D24] text-[#55D6E8] border border-[#55D6E8]/30 font-semibold' : 'text-[#A6B0BC] hover:bg-white/5 hover:text-white' }}">
-                <span class="material-symbols-outlined text-[17px]">delete_sweep</span>
-                <span>REMOVAL GUIDANCE</span>
+            <a href="{{ route('removals') }}" class="nav-link {{ request()->routeIs('removals*') ? 'nav-link-active font-semibold' : '' }}">
+                <span class="material-symbols-outlined text-[20px]">delete</span>
+                <span>Removal guidance</span>
             </a>
 
-            <div class="px-3 pt-4 pb-1 text-[9px] uppercase tracking-widest text-[#5D6B7A]">Intelligence</div>
-
-            <a href="{{ route('monitoring') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('monitoring*') || request()->routeIs('alerts*') ? 'bg-[#171D24] text-[#55D6E8] border border-[#55D6E8]/30 font-semibold' : 'text-[#A6B0BC] hover:bg-white/5 hover:text-white' }}">
-                <span class="material-symbols-outlined text-[17px]">sensors</span>
-                <span>CONTINUOUS MONITORING</span>
+            <a href="{{ route('monitoring') }}" class="nav-link {{ request()->routeIs('monitoring*') || request()->routeIs('alerts*') ? 'nav-link-active font-semibold' : '' }}">
+                <span class="material-symbols-outlined text-[20px]">notifications_active</span>
+                <span>Monitoring</span>
             </a>
 
-            <a href="{{ route('reports') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('reports*') ? 'bg-[#171D24] text-[#55D6E8] border border-[#55D6E8]/30 font-semibold' : 'text-[#A6B0BC] hover:bg-white/5 hover:text-white' }}">
-                <span class="material-symbols-outlined text-[17px]">description</span>
-                <span>ACTIVITY LOG</span>
+            <p class="px-3 pb-1 pt-4 text-xs font-medium uppercase tracking-wide text-faint">Account</p>
+
+            <a href="{{ route('reports') }}" class="nav-link {{ request()->routeIs('reports*') ? 'nav-link-active font-semibold' : '' }}">
+                <span class="material-symbols-outlined text-[20px]">description</span>
+                <span>Reports</span>
             </a>
 
-            <a href="{{ route('settings') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('settings*') ? 'bg-[#171D24] text-[#55D6E8] border border-[#55D6E8]/30 font-semibold' : 'text-[#A6B0BC] hover:bg-white/5 hover:text-white' }}">
-                <span class="material-symbols-outlined text-[17px]">settings</span>
-                <span>SETTINGS</span>
+            <a href="{{ route('settings') }}" class="nav-link {{ request()->routeIs('settings*') ? 'nav-link-active font-semibold' : '' }}">
+                <span class="material-symbols-outlined text-[20px]">settings</span>
+                <span>Settings</span>
             </a>
         </nav>
 
-        <!-- Identity Posture Mini-card -->
         @php $sidebarProfile = auth()->user()->latestProfile(); @endphp
-        <div class="p-4 border-t border-white/[0.08] bg-[#080A0D]/60">
+        <div class="border-t border-line p-4">
             @if($sidebarProfile)
-                <div class="flex items-center justify-between mb-2 font-mono text-[9px] text-[#A6B0BC]">
-                    <span>POSTURE SCORE</span>
-                    <span class="text-[#55D6E8] font-bold">{{ $sidebarProfile->privacy_score }}/100</span>
+                <div class="mb-1.5 flex items-center justify-between text-xs text-muted">
+                    <span>Privacy score</span>
+                    <span class="font-semibold text-ink">{{ $sidebarProfile->privacy_score }}/100</span>
                 </div>
-                <div class="w-full h-1.5 bg-[#171D24] rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-[#55D6E8] to-[#4ADE9B]" style="width: {{ $sidebarProfile->privacy_score }}%"></div>
+                <div class="h-1.5 w-full overflow-hidden rounded-full bg-surface">
+                    <div class="h-full rounded-full bg-accent" style="width: {{ $sidebarProfile->privacy_score }}%"></div>
                 </div>
-                <div class="mt-3 flex items-center justify-between font-mono text-[9px] text-[#5D6B7A]">
-                    <span class="truncate max-w-[130px]">{{ $sidebarProfile->full_name }}</span>
-                    <span class="text-[#4ADE9B]">ACTIVE</span>
-                </div>
+                <p class="mt-2 truncate text-xs text-faint">{{ $sidebarProfile->full_name }}</p>
             @else
-                <div class="text-[10px] text-[#A6B0BC] font-mono mb-2">No identity mapped.</div>
-                <a href="{{ route('identity.create') }}" class="text-[10px] font-mono text-[#55D6E8] hover:underline flex items-center gap-1">
-                    Setup Identity →
-                </a>
+                <p class="text-xs text-muted">No identity yet.</p>
+                <a href="{{ route('identity.create') }}" class="mt-1 inline-block text-xs font-medium text-accent hover:underline">Create an identity →</a>
             @endif
         </div>
     </aside>
 
-    <!-- Main Workspace -->
-    <div class="lg:pl-[260px] min-h-screen flex flex-col">
-        <!-- Compact Top Command Bar -->
-        <header class="sticky top-0 z-30 border-b border-white/[0.08] bg-[#080A0D]/90 backdrop-blur-md">
-            <div class="flex h-14 items-center justify-between px-4 sm:px-6 lg:px-8">
-                <!-- Left: Mobile Trigger & Search Bar -->
-                <div class="flex items-center gap-3 flex-1 max-w-md">
-                    <button class="lg:hidden p-1.5 rounded text-[#A6B0BC] hover:text-white" @click="mobileNav = true">
+    <!-- Main column -->
+    <div class="flex min-h-screen flex-col lg:pl-64">
+        <header class="sticky top-0 z-30 border-b border-line bg-canvas/90 backdrop-blur">
+            <div class="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-1 items-center gap-3">
+                    <button class="rounded-lg p-2 text-body hover:bg-surface lg:hidden" @click="mobileNav = true" aria-label="Open navigation">
                         <span class="material-symbols-outlined text-[20px]">menu</span>
                     </button>
 
-                    <form action="{{ route('findings') }}" method="GET" class="hidden sm:flex items-center gap-2 w-full px-3 py-1.5 rounded-lg bg-[#101419] border border-white/10 text-xs text-[#A6B0BC] focus-within:border-[#55D6E8]/40">
-                        <span class="material-symbols-outlined text-[16px] text-[#5D6B7A]">search</span>
-                        <input type="search" name="search" value="{{ request('search') }}" placeholder="Search exposure records, handles, sources..." class="w-full bg-transparent border-0 p-0 text-xs text-white placeholder-[#5D6B7A] focus:ring-0 outline-none font-mono">
+                    <form action="{{ route('findings') }}" method="GET" class="hidden w-full max-w-md items-center gap-2 rounded-lg border border-line bg-surface px-3 py-2 text-sm text-body focus-within:border-accent sm:flex">
+                        <span class="material-symbols-outlined text-[18px] text-faint">search</span>
+                        <input type="search" name="search" value="{{ request('search') }}" placeholder="Search findings, handles, sources…"
+                               class="w-full border-0 bg-transparent p-0 text-sm text-ink placeholder:text-faint focus:ring-0" aria-label="Search findings">
                     </form>
                 </div>
 
-                <!-- Right: Status Signals & Action -->
-                <div class="flex items-center gap-4">
-                    <div class="hidden xl:flex items-center gap-2 font-mono text-[9px] text-[#5D6B7A]">
-                        @if(config('traceless.demo_mode'))
-                            <span class="ops-badge ops-badge-amber">DEMO MODE</span>
-                            <span>DETERMINISTIC LOCAL CATALOG</span>
-                        @else
-                            <span class="ops-badge ops-badge-emerald">LIVE</span>
-                            <span>PYTHON SCANNER CONNECTED</span>
-                        @endif
-                    </div>
+                <div class="flex items-center gap-2">
+                    <button type="button"
+                            class="rounded-lg p-2 text-body hover:bg-surface"
+                            aria-label="Toggle dark mode"
+                            x-data="{ dark: document.documentElement.classList.contains('dark') }"
+                            @click="dark = !dark; document.documentElement.classList.toggle('dark', dark); localStorage.setItem('traceless-theme', dark ? 'dark' : 'light')">
+                        <span class="material-symbols-outlined text-[20px]" x-text="dark ? 'light_mode' : 'dark_mode'">dark_mode</span>
+                    </button>
 
-                    <a href="{{ route('scans.create') }}" class="btn-ops-primary py-1.5 px-3 text-[10px]">
-                        <span class="material-symbols-outlined text-[14px]">radar</span>
-                        <span>Deploy Scan</span>
+                    <a href="{{ route('scans.create') }}" class="btn-primary">
+                        <span class="material-symbols-outlined text-[18px]">search</span>
+                        <span class="hidden sm:inline">New scan</span>
                     </a>
 
-                    <!-- User menu -->
-                    <div class="flex items-center gap-2 font-mono text-xs">
-                        <span class="h-7 w-7 rounded bg-[#171D24] border border-white/10 flex items-center justify-center font-bold text-[#55D6E8] text-[11px]">
+                    <div class="ml-1 flex items-center gap-2">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-surface text-xs font-semibold text-body">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                         </span>
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                        <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="text-[10px] text-[#A6B0BC] hover:text-white transition-colors" title="Sign out">
-                                <span class="material-symbols-outlined text-[18px]">logout</span>
+                            <button type="submit" class="rounded-lg p-2 text-body hover:bg-surface" title="Sign out" aria-label="Sign out">
+                                <span class="material-symbols-outlined text-[20px]">logout</span>
                             </button>
                         </form>
                     </div>
@@ -168,40 +153,48 @@
             </div>
         </header>
 
-        <!-- Main Workspace Body -->
         <main class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
             {{ $slot ?? '' }}
             @yield('content')
         </main>
 
-        <!-- Tactical Bottom Status Strip -->
-        <footer class="border-t border-white/[0.06] bg-[#080A0D] px-6 py-4 font-mono text-[10px] text-[#5D6B7A] flex flex-col sm:flex-row items-center justify-between gap-2">
-            <div>CONFIDENTIAL // TRACELESS INTELLIGENCE ENGINE V4.9</div>
-            <div>ATTRIBUTION: WHATSMYNAME (CC BY-SA 4.0) & USER-SCANNER (MIT)</div>
+        <footer class="border-t border-line px-6 py-4 text-xs text-faint">
+            <div class="flex flex-col items-center justify-between gap-2 sm:flex-row">
+                <span>TraceLess · public-source privacy monitoring</span>
+                <span>Discovery uses WhatsMyName (CC BY-SA 4.0) and user-scanner (MIT)</span>
+            </div>
         </footer>
     </div>
 
-    <!-- Mobile Drawer -->
-    <div x-cloak x-show="mobileNav" class="fixed inset-0 z-50 lg:hidden" role="dialog">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="mobileNav = false"></div>
-        <div class="relative h-full w-[260px] bg-[#0A0D12] border-r border-white/10 p-5 flex flex-col justify-between">
+    <!-- Mobile navigation -->
+    <div x-cloak x-show="mobileNav" class="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-ink/40" @click="mobileNav = false"></div>
+        <div class="relative flex h-full w-72 flex-col justify-between border-r border-line bg-elevated p-5">
             <div>
-                <div class="flex items-center justify-between mb-6">
-                    <span class="font-mono text-sm font-bold text-white">TRACE<span class="text-[#55D6E8]">LESS</span></span>
-                    <button @click="mobileNav = false" class="text-[#A6B0BC] hover:text-white"><span class="material-symbols-outlined">close</span></button>
+                <div class="mb-6 flex items-center justify-between">
+                    <span class="font-display text-lg font-semibold text-ink">TraceLess</span>
+                    <button @click="mobileNav = false" class="rounded-lg p-1.5 text-body hover:bg-surface" aria-label="Close navigation">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
                 </div>
-                <nav class="space-y-1 font-mono text-xs">
-                    <a href="{{ route('dashboard') }}" class="block px-3 py-2 text-[#A6B0BC] hover:text-white">OVERVIEW</a>
-                    <a href="{{ route('identity') }}" class="block px-3 py-2 text-[#A6B0BC] hover:text-white">DIGITAL FOOTPRINT</a>
-                    <a href="{{ route('findings') }}" class="block px-3 py-2 text-[#A6B0BC] hover:text-white">EXPOSURE REPORT</a>
-                    <a href="{{ route('credentials') }}" class="block px-3 py-2 text-[#A6B0BC] hover:text-white">CREDENTIAL MONITOR</a>
-                    <a href="{{ route('removals') }}" class="block px-3 py-2 text-[#A6B0BC] hover:text-white">REMOVAL GUIDANCE</a>
-                    <a href="{{ route('monitoring') }}" class="block px-3 py-2 text-[#A6B0BC] hover:text-white">CONTINUOUS MONITORING</a>
-                    <a href="{{ route('settings') }}" class="block px-3 py-2 text-[#A6B0BC] hover:text-white">SETTINGS</a>
+                <nav class="space-y-1">
+                    <a href="{{ route('dashboard') }}" class="nav-link">Overview</a>
+                    <a href="{{ route('identity') }}" class="nav-link">Digital footprint</a>
+                    <a href="{{ route('findings') }}" class="nav-link">Exposure report</a>
+                    <a href="{{ route('credentials') }}" class="nav-link">Credential monitor</a>
+                    <a href="{{ route('removals') }}" class="nav-link">Removal guidance</a>
+                    <a href="{{ route('monitoring') }}" class="nav-link">Monitoring</a>
+                    <a href="{{ route('reports') }}" class="nav-link">Reports</a>
+                    <a href="{{ route('settings') }}" class="nav-link">Settings</a>
                 </nav>
             </div>
-            <a href="{{ route('scans.create') }}" class="btn-ops-primary w-full text-center py-2 text-xs">Deploy Scan</a>
+            <a href="{{ route('scans.create') }}" class="btn-primary w-full">New scan</a>
         </div>
+    </div>
+
+    <!-- Toast -->
+    <div x-cloak x-show="toast" x-transition class="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 rounded-lg border border-line bg-elevated px-4 py-2.5 text-sm text-ink shadow-lg">
+        <span x-text="toastMsg"></span>
     </div>
 
     @livewireScripts
