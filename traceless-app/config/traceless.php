@@ -65,6 +65,15 @@ return [
         'provider' => env('TRACELESS_BREACH_PROVIDER'),
     ],
 
+    /*
+    | IP exposure lookup. Keyless ipinfo works for low volume; a token raises
+    | the limit. This returns network and location signals, never a fraud score.
+    */
+    'ip_lookup' => [
+        'endpoint' => env('TRACELESS_IP_ENDPOINT', 'https://ipinfo.io'),
+        'token' => env('TRACELESS_IP_TOKEN'),
+    ],
+
     'retention' => [
         // Days after which raw scan telemetry and downloaded report files expire.
         'scan_telemetry_days' => (int) env('TRACELESS_RETENTION_SCAN_DAYS', 365),

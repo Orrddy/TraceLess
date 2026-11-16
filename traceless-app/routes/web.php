@@ -17,6 +17,7 @@ use App\Livewire\Scans\ScanCreate;
 use App\Livewire\Scans\ScanProgress;
 use App\Livewire\Scans\ScansIndex;
 use App\Livewire\Settings\SettingsPage;
+use App\Livewire\Tools\IpCheck;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -86,4 +87,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/settings', SettingsPage::class)->name('settings');
     Route::get('/account/export', AccountExportController::class)->name('account.export');
+
+    // Self-service tools. The password check runs entirely in the browser.
+    Route::view('/tools/password-check', 'pages.password-check')->name('password.check');
+    Route::get('/tools/ip-check', IpCheck::class)->name('ip.check');
 });

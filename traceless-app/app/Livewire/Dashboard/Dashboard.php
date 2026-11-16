@@ -8,7 +8,9 @@ use App\Models\Finding;
 use App\Models\IdentityProfile;
 use App\Models\RemovalTask;
 use App\Models\Scan;
+use App\Services\AuditService;
 use App\Services\ConsentService;
+use App\Services\DataResetService;
 use App\Services\RiskScoringService;
 use App\Services\ScanOrchestrator;
 use Illuminate\Support\Facades\Auth;
@@ -102,6 +104,32 @@ class Dashboard extends Component
             ->map(fn ($scan) => ['label' => $scan->completed_at?->format('M d') ?? '—', 'value' => $scan->findings_count])
             ->values()
             ->all();
+    }
+
+    /**
+     * Clear every scan artefact for the identity so a fresh deep scan starts from
+     * a known state. The identity and its consent record are kept on purpose.
+     */
+    public function resetForNewScan(DataResetService $reset): void
+    {
+        if (! $this->profile) {
+            return;
+        }
+
+        Gate::authorize('update', $this->profile);
+
+        $counts = $reset->purgeProfileData($this->profile->id);
+
+        app(AuditService::class)->log(
+            Auth::id(),
+            'profile_reset',
+            "Cleared {$counts['scans']} scans and {$counts['findings']} findings for a fresh scan.",
+            request()->ip(),
+        );
+        app(RiskScoringService::class)->recalculateAndPersist($this->profile->id);
+
+        $this->dispatch('notify', message: 'Data cleared. Start a new scan when ready.');
+        $this->redirectRoute('scans.create');
     }
 
     public function triggerQuickScan(ScanOrchestrator $orchestrator, ConsentService $consent)

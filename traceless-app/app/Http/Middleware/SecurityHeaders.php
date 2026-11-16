@@ -53,7 +53,7 @@ class SecurityHeaders
             "font-src 'self' https://fonts.gstatic.com data:",
             "img-src 'self' data:",
             "media-src 'self'",
-            "connect-src 'self' ws: wss:",
+            "connect-src 'self' ws: wss: https://api.pwnedpasswords.com https://ipinfo.io",
             "object-src 'none'",
             "base-uri 'self'",
             "form-action 'self'",

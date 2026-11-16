@@ -34,6 +34,13 @@
                     <span class="material-symbols-outlined text-[16px]">radar</span>
                     <span>Run a scan</span>
                 </button>
+
+                <button wire:click="resetForNewScan"
+                        wire:confirm="Delete every scan, finding, report and removal task for this identity? Your account and consent record are kept."
+                        class="btn-secondary text-xs py-2.5 px-3">
+                    <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+                    <span>Reset data</span>
+                </button>
                 <a href="{{ route('reports') }}" class="btn-ops-secondary text-xs py-2.5 px-3">
                     <span class="material-symbols-outlined text-[16px]">article</span>
                     <span>Dossier</span>

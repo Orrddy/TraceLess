@@ -77,6 +77,18 @@
                 <span>Monitoring</span>
             </a>
 
+            <p class="px-3 pb-1 pt-4 font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-faint">Tools</p>
+
+            <a href="{{ route('password.check') }}" class="nav-link {{ request()->routeIs('password.check') ? 'nav-link-active font-semibold' : '' }}">
+                <span class="material-symbols-outlined text-[20px]">password</span>
+                <span>Password check</span>
+            </a>
+
+            <a href="{{ route('ip.check') }}" class="nav-link {{ request()->routeIs('ip.check') ? 'nav-link-active font-semibold' : '' }}">
+                <span class="material-symbols-outlined text-[20px]">public</span>
+                <span>IP check</span>
+            </a>
+
             <p class="px-3 pb-1 pt-4 font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-faint">Account</p>
 
             <a href="{{ route('reports') }}" class="nav-link {{ request()->routeIs('reports*') ? 'nav-link-active font-semibold' : '' }}">
@@ -186,6 +198,8 @@
                     <a href="{{ route('credentials') }}" class="nav-link">Credential monitor</a>
                     <a href="{{ route('removals') }}" class="nav-link">Removal guidance</a>
                     <a href="{{ route('monitoring') }}" class="nav-link">Monitoring</a>
+                    <a href="{{ route('password.check') }}" class="nav-link">Password check</a>
+                    <a href="{{ route('ip.check') }}" class="nav-link">IP check</a>
                     <a href="{{ route('reports') }}" class="nav-link">Reports</a>
                     <a href="{{ route('settings') }}" class="nav-link">Settings</a>
                 </nav>

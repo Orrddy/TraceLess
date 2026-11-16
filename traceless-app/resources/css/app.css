@@ -227,6 +227,34 @@
         color: #fff;
     }
     .btn-danger:hover { background: rgb(var(--c-danger)); color: #fff; transform: translateY(-1px); }
+    .btn:active,
+    .btn-primary:active,
+    .btn-secondary:active,
+    .btn-ghost:active,
+    .btn-danger:active,
+    .btn-ops-primary:active,
+    .btn-ops-secondary:active {
+        transform: translateY(1px);
+        box-shadow: none;
+    }
+
+    .btn-primary:active,
+    .btn-ops-primary:active {
+        background-color: rgb(var(--c-accent) / 0.82);
+        border-color: rgb(var(--c-accent) / 0.82);
+    }
+
+    .btn-secondary:active,
+    .btn-ops-secondary:active {
+        background-color: rgb(var(--c-surface));
+        border-color: rgb(var(--c-muted) / 0.6);
+    }
+
+    .btn-danger:active {
+        background-color: rgb(var(--c-danger) / 0.82);
+        border-color: rgb(var(--c-danger) / 0.82);
+    }
+
     .btn:disabled, .btn-primary:disabled, .btn-secondary:disabled, .btn-danger:disabled { opacity: .55; }
 
     /* Forms --------------------------------------------------------------- */
@@ -325,7 +353,13 @@
         color: #fff;
     }
     .nav-link-active .material-symbols-outlined { color: rgb(var(--c-cyan)); }
-    .nav-link-active:hover { background: linear-gradient(90deg, rgb(var(--c-accent) / .22), rgb(var(--c-accent) / .06)); color: #fff; }
+    .nav-link-active:hover {
+    border-color: rgb(var(--c-cyan) / .45);
+    background: linear-gradient(90deg, rgb(var(--c-accent) / .3), rgb(var(--c-accent) / .08));
+    color: #fff;
+    transform: translateX(2px);
+    box-shadow: inset 2px 0 0 rgb(var(--c-cyan)), 0 0 24px -12px rgb(var(--c-cyan) / .8);
+}
 
     .marketing-nav-link {
         display: inline-flex;
