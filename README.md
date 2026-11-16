@@ -44,6 +44,7 @@ no scan runs without a recorded ownership attestation.
 | 2026-11-15 | Verification screen: code no longer shown on-screen, six digits auto-submit, resend countdown ticks |
 | 2026-11-15 | Live scanning: every monitored username is checked, 5 dataset name mismatches fixed (19 → 23 sources), large pages truncate instead of failing |
 | 2026-11-16 | Backend recovery: dead scans no longer lock an account, credential page stops claiming "all clear", report links are signed, and destructive database commands are blocked against the Neon production branch |
+| 2026-11-16 | Local development moved to SQLite (Neon production branch no longer shared) and every response now carries CSP, nosniff, frame denial, referrer and permissions policies, with HSTS over TLS |
 | 2026-11-15 | Consolidated documentation into this README and removed the design/export assets |
 
 ### Verified right now
