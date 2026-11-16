@@ -129,6 +129,63 @@ class ToolsAndResetTest extends TestCase
             ->assertSee('rate limiting');
     }
 
+    public function test_the_ip_check_shows_abuse_reports_when_configured(): void
+    {
+        config(['traceless.ip_lookup.abuseipdb_key' => 'test-key']);
+
+        Http::fake([
+            'ipinfo.io/*' => Http::response([
+                'ip' => '8.8.8.8', 'city' => 'Mountain View', 'country' => 'US', 'org' => 'AS15169 Google',
+            ], 200),
+            'api.abuseipdb.com/*' => Http::response([
+                'data' => [
+                    'ipAddress' => '8.8.8.8',
+                    'abuseConfidenceScore' => 82,
+                    'totalReports' => 14,
+                    'numDistinctUsers' => 9,
+                    'usageType' => 'Data Center/Web Hosting/Transit',
+                    'isp' => 'Google LLC',
+                    'isTor' => false,
+                    'isWhitelisted' => false,
+                    'lastReportedAt' => '2026-11-01T10:00:00+00:00',
+                ],
+            ], 200),
+        ]);
+
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test(IpCheck::class)
+            ->set('ip', '8.8.8.8')
+            ->call('check')
+            ->assertSee('Confidence 82/100')
+            ->assertSee('14')
+            ->assertSee('Data Center/Web Hosting/Transit')
+            ->assertSet('abuseError', null);
+    }
+
+    public function test_a_failed_abuse_lookup_keeps_the_location_result(): void
+    {
+        config(['traceless.ip_lookup.abuseipdb_key' => 'test-key']);
+
+        Http::fake([
+            'ipinfo.io/*' => Http::response([
+                'ip' => '8.8.8.8', 'city' => 'Mountain View', 'country' => 'US',
+            ], 200),
+            'api.abuseipdb.com/*' => Http::response(['errors' => []], 500),
+        ]);
+
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test(IpCheck::class)
+            ->set('ip', '8.8.8.8')
+            ->call('check')
+            ->assertSee('Mountain View')
+            ->assertSee('Abuse reports unavailable')
+            ->assertSee('500');
+    }
+
     public function test_resetting_clears_scan_data_but_keeps_the_identity_and_consent(): void
     {
         $profile = $this->profile();

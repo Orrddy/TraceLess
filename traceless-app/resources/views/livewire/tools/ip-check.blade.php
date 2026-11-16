@@ -69,6 +69,57 @@
                             <dd class="mt-1 font-mono text-sm text-ink">{{ $result['org'] ?? 'Not reported' }}</dd>
                         </div>
                     </dl>
+
+                    @if($abuse)
+                        @php
+                            $score = $abuse['score'];
+                            $badge = $score >= 75 ? 'badge-critical' : ($score >= 25 ? 'badge-amber' : ($score > 0 ? 'badge-low' : 'badge-emerald'));
+                        @endphp
+
+                        <div class="border-t border-line pt-4">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-semibold text-ink">Abuse reports</p>
+                                <span class="badge {{ $badge }}">Confidence {{ $score }}/100</span>
+                            </div>
+
+                            <dl class="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <div>
+                                    <dt class="text-xs uppercase tracking-wide text-faint">Reports (90 days)</dt>
+                                    <dd class="mt-1 text-sm text-ink">{{ $abuse['reports'] }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-xs uppercase tracking-wide text-faint">Distinct reporters</dt>
+                                    <dd class="mt-1 text-sm text-ink">{{ $abuse['distinct_reporters'] }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-xs uppercase tracking-wide text-faint">Usage type</dt>
+                                    <dd class="mt-1 text-sm text-ink">{{ $abuse['usage_type'] ?? 'Not reported' }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-xs uppercase tracking-wide text-faint">Network owner</dt>
+                                    <dd class="mt-1 text-sm text-ink">{{ $abuse['isp'] ?? 'Not reported' }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-xs uppercase tracking-wide text-faint">Tor exit</dt>
+                                    <dd class="mt-1 text-sm {{ $abuse['is_tor'] ? 'text-warning' : 'text-ink' }}">{{ $abuse['is_tor'] ? 'Yes' : 'No' }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-xs uppercase tracking-wide text-faint">Last reported</dt>
+                                    <dd class="mt-1 text-sm text-ink">{{ $abuse['last_reported_at'] ? \Illuminate\Support\Carbon::parse($abuse['last_reported_at'])->diffForHumans() : 'Never' }}</dd>
+                                </div>
+                            </dl>
+
+                            <p class="mt-3 text-xs leading-relaxed text-muted">
+                                Confidence is the share of AbuseIPDB reporters who flagged this address in the last 90 days.
+                                It is not a fraud score, and a clean result does not prove the network is safe.
+                            </p>
+                        </div>
+                    @elseif($abuseError)
+                        <div class="rounded-control border border-warning/30 bg-warning/[0.06] p-4" role="status">
+                            <p class="text-sm font-medium text-warning">Abuse reports unavailable</p>
+                            <p class="mt-1 text-xs leading-relaxed text-body">{{ $abuseError }}</p>
+                        </div>
+                    @endif
                 </div>
             @endif
         </section>

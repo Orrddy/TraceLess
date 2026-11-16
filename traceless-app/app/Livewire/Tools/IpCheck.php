@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tools;
 
+use App\Services\AbuseIpdbService;
 use App\Services\AuditService;
 use App\Services\IpReputationService;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,12 @@ class IpCheck extends Component
 
     public ?array $result = null;
 
+    /** AbuseIPDB signal, when a key is configured. */
+    public ?array $abuse = null;
+
     public ?string $error = null;
+
+    public ?string $abuseError = null;
 
     public function mount(): void
     {
@@ -23,7 +29,7 @@ class IpCheck extends Component
         $this->ip = (string) request()->ip();
     }
 
-    public function check(IpReputationService $lookup): void
+    public function check(IpReputationService $lookup, AbuseIpdbService $abuse): void
     {
         $this->validate([
             'ip' => ['nullable', 'ip'],
@@ -31,6 +37,8 @@ class IpCheck extends Component
 
         $this->error = null;
         $this->result = null;
+        $this->abuse = null;
+        $this->abuseError = null;
 
         try {
             $this->result = $lookup->lookup($this->ip !== '' ? $this->ip : null);
@@ -40,10 +48,19 @@ class IpCheck extends Component
             return;
         }
 
+        if (config('traceless.ip_lookup.abuseipdb_key')) {
+            try {
+                $this->abuse = $abuse->check($this->result['ip']);
+            } catch (Throwable $exception) {
+                // The geo half succeeded, so keep it and report the missing half.
+                $this->abuseError = $exception->getMessage();
+            }
+        }
+
         app(AuditService::class)->log(
             Auth::id(),
             'ip_lookup',
-            'IP exposure lookup run for '.$this->ip.'.',
+            'IP exposure lookup run for '.$this->result['ip'].'.',
             request()->ip(),
         );
     }

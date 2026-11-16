@@ -72,6 +72,10 @@ return [
     'ip_lookup' => [
         'endpoint' => env('TRACELESS_IP_ENDPOINT', 'https://ipinfo.io'),
         'token' => env('TRACELESS_IP_TOKEN'),
+        // AbuseIPDB adds the community abuse signal. Empty disables that half of
+        // the check and the UI says so instead of implying it ran.
+        'abuseipdb_key' => env('TRACELESS_ABUSEIPDB_KEY'),
+        'abuseipdb_endpoint' => env('TRACELESS_ABUSEIPDB_ENDPOINT', 'https://api.abuseipdb.com/api/v2'),
     ],
 
     'retention' => [
