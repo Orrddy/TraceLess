@@ -48,7 +48,11 @@
                 <div>
                     <label for="phone" class="label mb-1.5">Phone number</label>
                     <input id="phone" type="text" wire:model="phone_number" class="input"
-                           placeholder="+1 555 010 2030" autocomplete="tel" />
+                           placeholder="+234 801 234 5678" autocomplete="tel" />
+                    <p class="mt-2 text-xs leading-relaxed text-faint">
+                        Deep scans can check whether this number is registered on services. Some may send a
+                        verification code, so use a number you own.
+                    </p>
                     @error('phone_number') <p class="mt-1 text-xs text-danger">{{ $message }}</p> @enderror
                 </div>
             </div>

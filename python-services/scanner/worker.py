@@ -628,9 +628,92 @@ class ScannerService:
         }
 
     def _scan_phone(self, identifier_value: str) -> Dict[str, Any]:
+        """Ask services whether the number is registered, via the vendored phonsint."""
+
+        try:
+            import phone_bridge as bridge
+        except Exception:  # noqa: BLE001 - optional dependency
+            return {
+                "status": "error",
+                "message": "The phone scanner is not installed on this host.",
+            }
+
+        try:
+            payload = bridge.scan_phone(identifier_value)
+        except Exception as exc:  # noqa: BLE001 - never leak stack traces
+            return {
+                "status": "error",
+                "message": f"The phone scanner failed to complete: {type(exc).__name__}.",
+            }
+
+        if payload.get("status") != "success":
+            return payload
+
+        e164 = _text(payload.get("e164")) or identifier_value
+        findings: List[Dict[str, Any]] = []
+        sources: List[Dict[str, Any]] = []
+
+        for row in payload.get("rows", []):
+            outcome = _text(row.get("outcome")) or STATUS_UNKNOWN
+            if outcome not in (STATUS_FOUND, STATUS_NOT_FOUND, STATUS_UNKNOWN, STATUS_SKIPPED):
+                outcome = STATUS_UNKNOWN
+
+            source_name = _text(row.get("source")) or "Unknown source"
+            checked_url = _text(row.get("url"))
+
+            sources.append(
+                {
+                    "name": source_name,
+                    "category": "public_directory",
+                    "outcome": outcome,
+                    "checked_url": checked_url,
+                    "http_status": None,
+                    "rule": "account_probe",
+                    "reason": row.get("reason"),
+                    "elapsed_ms": None,
+                }
+            )
+
+            if outcome != STATUS_FOUND:
+                continue
+
+            findings.append(
+                {
+                    "source": source_name,
+                    "category": "public_directory",
+                    "identifier_type": "phone",
+                    "identifier_value": e164,
+                    "url": checked_url,
+                    "confidence": 0.7,
+                    "risk": "moderate",
+                    "removal_method": "manual_instructions",
+                    "status": "needs_user_action",
+                    "title": f"Phone number registered on {source_name}",
+                    "description": "The service responded as if an account exists for this number.",
+                    "action_guidance": (
+                        f"Review the account on {source_name}. Remove it if it is unused, and check what "
+                        "the account shares with other people."
+                    ),
+                    "verification_status": "unverified",
+                    "evidence": {
+                        "rule": "account_probe",
+                        "checked_url": checked_url,
+                        "provider": "phonsint",
+                        "reason": row.get("reason"),
+                        "checked_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                    },
+                }
+            )
+
         return {
-            "status": "error",
-            "message": "Phone number checks are not configured on this host.",
+            "status": "success",
+            "identifier": e164,
+            "identifier_type": "phone",
+            "checked_count": len(sources),
+            "total_found": len(findings),
+            "findings": findings,
+            "sources": sources,
+            "attributions": ATTRIBUTIONS,
         }
 
 

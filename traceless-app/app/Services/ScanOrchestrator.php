@@ -277,6 +277,18 @@ class ScanOrchestrator
                 ->values();
 
             $identifiers = $identifiers->merge($emails->map(fn ($value) => ['email', $value]));
+
+            $phones = $profile->publicIdentifiers()
+                ->where('type', 'phone')
+                ->where('is_monitored', true)
+                ->pluck('value')
+                ->map(fn ($value) => trim((string) $value))
+                ->filter()
+                ->unique()
+                ->take(max(1, (int) config('traceless.scan.max_phones', 1)))
+                ->values();
+
+            $identifiers = $identifiers->merge($phones->map(fn ($value) => ['phone', $value]));
         }
 
         if ($identifiers->isEmpty()) {

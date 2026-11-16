@@ -54,6 +54,8 @@ return [
         'max_usernames' => (int) env('TRACELESS_MAX_USERNAMES', 5),
         // Deep scans also check the primary email; one keeps runtime bounded.
         'max_emails' => (int) env('TRACELESS_MAX_EMAILS', 1),
+        // One number keeps the probe sweep bounded; more would multiply runtime.
+        'max_phones' => (int) env('TRACELESS_MAX_PHONES', 1),
         // A scan that has not been touched for this long is treated as dead.
         'stale_minutes' => (int) env('TRACELESS_SCAN_STALE_MINUTES', 15),
     ],

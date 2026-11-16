@@ -34,6 +34,7 @@ class DeepScanTest extends TestCase
 
         $profile->publicIdentifiers()->create(['type' => 'username', 'value' => 'janedoe', 'is_monitored' => true]);
         $profile->publicIdentifiers()->create(['type' => 'email', 'value' => 'jane@example.com', 'is_monitored' => true]);
+        $profile->publicIdentifiers()->create(['type' => 'phone', 'value' => '+12025550143', 'is_monitored' => true]);
 
         return $profile;
     }
@@ -79,13 +80,18 @@ class DeepScanTest extends TestCase
             ->once()
             ->with('email', 'jane@example.com', true, 'deep')
             ->andReturn($this->report('Letterboxd', 'email'));
+        $mock->shouldReceive('scanReport')
+            ->once()
+            ->with('phone', '+12025550143', true, 'deep')
+            ->andReturn($this->report('Zoho', 'phone'));
         $this->app->instance(PythonScannerClient::class, $mock);
 
         $orchestrator = app(ScanOrchestrator::class);
         $orchestrator->executeScan($orchestrator->queueScan($profile, 'deep_scan'));
 
-        $this->assertSame(2, Finding::count());
+        $this->assertSame(3, Finding::count());
         $this->assertDatabaseHas('findings', ['source' => 'Letterboxd', 'identifier_type' => 'email', 'verification_status' => 'unverified']);
+        $this->assertDatabaseHas('findings', ['source' => 'Zoho', 'identifier_type' => 'phone', 'verification_status' => 'unverified']);
         $this->assertDatabaseHas('scan_sources', ['name' => 'GitHub']);
         $this->assertDatabaseHas('scan_sources', ['name' => 'Letterboxd']);
     }
@@ -125,6 +131,9 @@ class DeepScanTest extends TestCase
         $mock->shouldReceive('scanReport')
             ->with('email', 'jane@example.com', true, 'deep')
             ->andThrow(new \RuntimeException('Email probe failed.'));
+        $mock->shouldReceive('scanReport')
+            ->with('phone', '+12025550143', true, 'deep')
+            ->andReturn(['findings' => [], 'sources' => []]);
         $this->app->instance(PythonScannerClient::class, $mock);
 
         $orchestrator = app(ScanOrchestrator::class);
