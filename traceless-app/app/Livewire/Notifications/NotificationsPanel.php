@@ -4,6 +4,7 @@ namespace App\Livewire\Notifications;
 
 use App\Models\Alert;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class NotificationsPanel extends Component
@@ -12,10 +13,10 @@ class NotificationsPanel extends Component
 
     public function markRead(int $id): void
     {
-        $alert = Alert::find($id);
-        if ($alert && $alert->identityProfile?->user_id === Auth::id()) {
-            $alert->update(['is_read' => true, 'read_at' => now()]);
-        }
+        $alert = Alert::findOrFail($id);
+        Gate::authorize('update', $alert);
+
+        $alert->update(['is_read' => true, 'read_at' => now()]);
     }
 
     public function markAllRead(): void

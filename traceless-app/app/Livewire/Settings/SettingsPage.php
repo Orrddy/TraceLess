@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\AuditService;
 use App\Services\OtpService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -62,6 +63,10 @@ class SettingsPage extends Component
         }
 
         $otp = app(OtpService::class);
+
+        if (! $this->allowOtpRequest('email-change', 'email')) {
+            return;
+        }
 
         if ($wait = $otp->secondsUntilResend($this->email, EmailOtp::PURPOSE_CHANGE_EMAIL)) {
             $this->addError('email', "Please wait {$wait} seconds before requesting another code.");
@@ -155,6 +160,10 @@ class SettingsPage extends Component
     {
         $user = Auth::user();
         $otp = app(OtpService::class);
+
+        if (! $this->allowOtpRequest('delete-account', 'delete_code')) {
+            return;
+        }
 
         if ($wait = $otp->secondsUntilResend($user->email, EmailOtp::PURPOSE_DELETE_ACCOUNT)) {
             $this->addError('delete_code', "Please wait {$wait} seconds before requesting another code.");
@@ -258,6 +267,25 @@ class SettingsPage extends Component
         }
 
         return redirect('/')->with('status', 'Your account and associated data have been deleted.');
+    }
+
+    /**
+     * Account-change codes are limited per user, independently of the per-address
+     * resend cooldown, so the form cannot be used to spray a mailbox.
+     */
+    private function allowOtpRequest(string $bucket, string $errorKey): bool
+    {
+        $key = 'settings-otp:'.$bucket.':'.Auth::id();
+
+        if (RateLimiter::tooManyAttempts($key, 3)) {
+            $this->addError($errorKey, 'Too many code requests. Try again in '.RateLimiter::availableIn($key).' seconds.');
+
+            return false;
+        }
+
+        RateLimiter::hit($key, 600);
+
+        return true;
     }
 
     public function render()

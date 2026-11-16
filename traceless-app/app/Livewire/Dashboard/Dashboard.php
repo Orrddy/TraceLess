@@ -12,6 +12,7 @@ use App\Services\ConsentService;
 use App\Services\RiskScoringService;
 use App\Services\ScanOrchestrator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 
@@ -144,11 +145,11 @@ class Dashboard extends Component
 
     public function dismissAlert(int $alertId): void
     {
-        $alert = Alert::find($alertId);
-        if ($alert && $alert->identity_profile_id === $this->profile?->id) {
-            $alert->update(['is_read' => true, 'read_at' => now()]);
-            $this->loadData();
-        }
+        $alert = Alert::findOrFail($alertId);
+        Gate::authorize('update', $alert);
+
+        $alert->update(['is_read' => true, 'read_at' => now()]);
+        $this->loadData();
     }
 
     public function render()
