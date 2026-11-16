@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Settings;
 
+use App\Models\AuditLog;
+use App\Models\ConsentRecord;
 use App\Models\EmailOtp;
 use App\Models\User;
 use App\Services\AuditService;
@@ -223,6 +225,24 @@ class SettingsPage extends Component
         $userId = $user->id;
 
         app(AuditService::class)->log($userId, 'account_deleted', 'User requested account deletion.', request()->ip());
+
+        // Consent records cascade with the profile, but TraceLess must be able to
+        // prove consent was recorded. Copy the evidence into the audit trail
+        // (which survives the account) before anything is deleted.
+        foreach (ConsentRecord::where('user_id', $userId)->get() as $consent) {
+            AuditLog::create([
+                'user_id' => null,
+                'action' => 'consent_evidence_retained',
+                'details' => 'Consent on record for profile #'.$consent->identity_profile_id
+                    .' agreed at '.$consent->agreed_at?->toIso8601String()
+                    .': '.$consent->consent_text,
+                'ip_address' => null,
+            ]);
+        }
+
+        // Personal data does not outlive the account: strip IP addresses from the
+        // audit rows that remain, keeping only the action and its timestamp.
+        AuditLog::where('user_id', $userId)->update(['ip_address' => null]);
 
         EmailOtp::where('email', $user->email)->delete();
         $user->notifications()->delete();

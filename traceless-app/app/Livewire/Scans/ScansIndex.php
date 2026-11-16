@@ -6,6 +6,7 @@ use App\Models\IdentityProfile;
 use App\Models\Scan;
 use App\Services\ScanOrchestrator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -25,7 +26,7 @@ class ScansIndex extends Component
     public function cancel(int $scanId, ScanOrchestrator $orchestrator): void
     {
         $scan = Scan::findOrFail($scanId);
-        abort_unless($scan->identityProfile->user_id === Auth::id(), 403);
+        Gate::authorize('cancel', $scan);
         if ($scan->isActive()) {
             $orchestrator->cancel($scan);
             $this->dispatch('notify', message: 'Scan cancelled.');

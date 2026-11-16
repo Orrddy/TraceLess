@@ -6,7 +6,7 @@ use App\Enums\RemovalStatus;
 use App\Models\RemovalInstruction;
 use App\Models\RemovalTask;
 use App\Services\RemovalWorkflowService;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -22,7 +22,7 @@ class RemovalShow extends Component
 
     public function mount(RemovalTask $removal): void
     {
-        abort_unless($removal->identityProfile->user_id === Auth::id(), 403);
+        Gate::authorize('view', $removal);
         $this->task = $removal->load(['finding', 'identityProfile']);
         $this->instruction = RemovalInstruction::where('source_identifier', str($removal->source_name)->slug()->toString())->first();
         $this->notes = (string) $removal->notes;
@@ -31,7 +31,7 @@ class RemovalShow extends Component
 
     public function updateStatus(string $status, RemovalWorkflowService $workflow): void
     {
-        abort_unless($this->task->identityProfile->user_id === Auth::id(), 403);
+        Gate::authorize('update', $this->task);
         $workflow->updateStatus($this->task, $status, $this->notes ?: null);
         $this->task->refresh();
         $this->statusDraft = $this->task->status;
@@ -46,7 +46,7 @@ class RemovalShow extends Component
 
     public function saveNotes(): void
     {
-        abort_unless($this->task->identityProfile->user_id === Auth::id(), 403);
+        Gate::authorize('update', $this->task);
         $this->validate(['notes' => 'nullable|string|max:2000']);
         $this->task->update(['notes' => strip_tags($this->notes)]);
         $this->dispatch('notify', message: 'Notes saved.');

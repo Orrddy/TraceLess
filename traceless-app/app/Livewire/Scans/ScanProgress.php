@@ -5,7 +5,7 @@ namespace App\Livewire\Scans;
 use App\Models\Finding;
 use App\Models\Scan;
 use App\Services\ScanOrchestrator;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class ScanProgress extends Component
@@ -16,13 +16,13 @@ class ScanProgress extends Component
 
     public function mount(Scan $scan): void
     {
-        abort_unless($scan->identityProfile->user_id === Auth::id(), 403);
+        Gate::authorize('view', $scan);
         $this->scan = $scan;
     }
 
     public function cancel(ScanOrchestrator $orchestrator): void
     {
-        abort_unless($this->scan->identityProfile->user_id === Auth::id(), 403);
+        Gate::authorize('cancel', $this->scan);
 
         if ($this->scan->isActive()) {
             $orchestrator->cancel($this->scan);

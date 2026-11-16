@@ -6,6 +6,7 @@ use App\Models\Finding;
 use App\Models\IdentityProfile;
 use App\Services\RiskScoringService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -53,7 +54,7 @@ class FindingsIndex extends Component
     public function markNotMine(int $findingId, RiskScoringService $scorer): void
     {
         $finding = Finding::findOrFail($findingId);
-        abort_unless($finding->identityProfile->user_id === Auth::id(), 403);
+        Gate::authorize('update', $finding);
         $finding->update(['status' => 'could_not_verify']);
         $scorer->recalculateAndPersist($finding->identity_profile_id);
     }

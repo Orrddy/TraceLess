@@ -40,15 +40,24 @@ class PruneTraceLessData extends Command
         }
 
         $scanCount = (clone $scans)->count();
-        // Findings and sources cascade with their scan (findings set null on scan
-        // delete by schema, so prune orphaned findings explicitly first).
+
+        // Findings belong to their scan. Deleting the scan while keeping newer
+        // findings orphaned them (scan_id is nullOnDelete), so they could never
+        // be pruned afterwards. Remove them together, oldest scan first.
         $scansToDelete = (clone $scans)->pluck('id');
-        Finding::whereIn('scan_id', $scansToDelete)->where('created_at', '<', $scanCutoff)->delete();
+        Finding::whereIn('scan_id', $scansToDelete)->delete();
         Scan::whereIn('id', $scansToDelete)->delete();
 
         $reportCount = (clone $reports)->delete();
         $auditCount = (clone $audits)->delete();
         $otpCount = (clone $otps)->delete();
+
+        AuditLog::create([
+            'user_id' => null,
+            'action' => 'retention_purge',
+            'details' => "Pruned {$scanCount} scans, {$reportCount} reports, {$otpCount} expired codes and {$auditCount} audit records.",
+            'ip_address' => null,
+        ]);
 
         $this->info("Pruned {$scanCount} scans, {$reportCount} reports, {$otpCount} expired codes and {$auditCount} audit records.");
 

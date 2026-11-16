@@ -6,12 +6,13 @@ use App\Models\Report;
 use App\Services\AuditService;
 use App\Services\ReportService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ReportDownloadController extends Controller
 {
     public function __invoke(Request $request, Report $report, ReportService $reports, AuditService $audit)
     {
-        abort_unless($report->identityProfile->user_id === $request->user()->id, 403);
+        Gate::authorize('download', $report);
         abort_unless(hash_equals((string) $report->download_token, (string) $request->query('token')), 403);
 
         $report->increment('download_count');

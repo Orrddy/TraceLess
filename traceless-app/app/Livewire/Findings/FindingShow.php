@@ -9,6 +9,7 @@ use App\Services\AuditService;
 use App\Services\RemovalWorkflowService;
 use App\Services\RiskScoringService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class FindingShow extends Component
@@ -21,7 +22,7 @@ class FindingShow extends Component
 
     public function mount(Finding $finding): void
     {
-        abort_unless($finding->identityProfile->user_id === Auth::id(), 403);
+        Gate::authorize('view', $finding);
         $this->finding = $finding->load(['removalTask', 'scan', 'identityProfile']);
         $this->instruction = RemovalInstruction::where('source_identifier', str($finding->source)->slug()->toString())->first();
         $this->notes = (string) $finding->removalTask?->notes;
@@ -29,7 +30,7 @@ class FindingShow extends Component
 
     public function startRemoval(RemovalWorkflowService $workflow): void
     {
-        abort_unless($this->finding->identityProfile->user_id === Auth::id(), 403);
+        Gate::authorize('update', $this->finding);
 
         $task = $this->finding->removalTask;
         if (! $task) {
@@ -51,7 +52,7 @@ class FindingShow extends Component
 
     public function markRemoved(RemovalWorkflowService $workflow): void
     {
-        abort_unless($this->finding->identityProfile->user_id === Auth::id(), 403);
+        Gate::authorize('update', $this->finding);
         if ($task = $this->finding->removalTask) {
             $workflow->updateStatus($task, 'removed', $this->notes ?: 'User confirmed removal.');
             $this->finding->refresh();
@@ -60,7 +61,7 @@ class FindingShow extends Component
 
     public function markNotMine(RiskScoringService $scorer): void
     {
-        abort_unless($this->finding->identityProfile->user_id === Auth::id(), 403);
+        Gate::authorize('update', $this->finding);
         $this->finding->update(['status' => 'could_not_verify', 'last_checked_at' => now()]);
         $scorer->recalculateAndPersist($this->finding->identity_profile_id);
         app(AuditService::class)->log(Auth::id(), 'finding_marked_not_mine', "Finding #{$this->finding->id} marked as not matching.", request()->ip());
@@ -69,7 +70,7 @@ class FindingShow extends Component
 
     public function saveNotes(): void
     {
-        abort_unless($this->finding->identityProfile->user_id === Auth::id(), 403);
+        Gate::authorize('update', $this->finding);
         $this->validate(['notes' => 'nullable|string|max:2000']);
         $this->finding->removalTask?->update(['notes' => strip_tags($this->notes)]);
         $this->dispatch('notify', message: 'Removal notes saved.');

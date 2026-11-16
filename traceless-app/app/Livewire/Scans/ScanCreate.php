@@ -9,6 +9,7 @@ use App\Services\AuditService;
 use App\Services\ConsentService;
 use App\Services\ScanOrchestrator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 
@@ -42,7 +43,7 @@ class ScanCreate extends Component
         ]);
 
         $profile = IdentityProfile::findOrFail($this->profile_id);
-        abort_unless($profile->user_id === Auth::id(), 403);
+        Gate::authorize('view', $profile);
 
         if (! $consent->hasValidConsent($profile)) {
             $this->addError('consent_confirmed', 'A valid consent record is required for this identity.');

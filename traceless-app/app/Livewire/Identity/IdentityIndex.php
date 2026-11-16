@@ -6,6 +6,7 @@ use App\Models\IdentityProfile;
 use App\Models\PublicIdentifier;
 use App\Services\RiskScoringService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class IdentityIndex extends Component
@@ -105,7 +106,7 @@ class IdentityIndex extends Component
     protected function owned(?int $id): IdentityProfile
     {
         $profile = IdentityProfile::findOrFail($id);
-        abort_unless($profile->user_id === Auth::id(), 403);
+        Gate::authorize('update', $profile);
 
         return $profile;
     }
