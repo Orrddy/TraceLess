@@ -93,6 +93,9 @@ return [
             'weekly' => 7,
             'monthly' => 30,
         ],
+        // When true, the dispatcher only runs for users with an active Deep Scan
+        // plan. Keep false until subscriptions can actually be purchased.
+        'enforce_plan' => (bool) env('TRACELESS_MONITORING_ENFORCE_PLAN', false),
     ],
 
     'broadcasting' => [

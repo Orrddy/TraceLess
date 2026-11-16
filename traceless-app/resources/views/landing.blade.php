@@ -44,8 +44,9 @@
             <source src="{{ asset('assets/videos/hero-intro.mp4') }}" type="video/mp4">
         </video>
 
+        <canvas data-ambient-canvas class="ambient-canvas" aria-hidden="true"></canvas>
         <div class="video-hero-overlay"></div>
-        <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-canvas/40 via-transparent to-canvas" aria-hidden="true"></div>
+        <div class="hero-vignette pointer-events-none absolute inset-0 bg-gradient-to-b from-canvas/25 via-transparent to-canvas" aria-hidden="true"></div>
 
         {{-- Quiet status row --}}
         <div class="relative z-10 w-full px-5 pt-4 sm:px-10">
@@ -72,8 +73,13 @@
 
         {{-- Hero copy --}}
         <div class="relative z-10 mx-auto my-auto w-full max-w-[1440px] px-5 py-10 sm:px-10">
-            <div class="max-w-3xl space-y-6">
-                <h1 class="font-display text-[2.6rem] font-semibold leading-[1.02] tracking-[-0.035em] text-ink sm:text-6xl lg:text-[4.5rem]">
+            <div class="grid items-end gap-10 lg:grid-cols-12 lg:gap-14">
+            <div class="max-w-3xl space-y-6 lg:col-span-8">
+                <div class="flex items-center gap-3 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-cyan">
+                    <span class="hero-rule"></span>
+                    <span>Public exposure intelligence / 01</span>
+                </div>
+                <h1 class="font-display text-[2.9rem] font-semibold leading-[.94] tracking-[-0.06em] text-ink sm:text-6xl lg:text-[5.8rem] xl:text-[6.8rem]">
                     Your digital footprint.<br>
                     <span class="text-accent">Under your control.</span>
                 </h1>
@@ -107,6 +113,29 @@
                         <span>Consent recorded per identity</span>
                     </div>
                 </div>
+            </div>
+
+            <aside class="hero-signal-card hidden p-5 lg:col-span-4 lg:block" aria-label="Illustrative privacy scan signal">
+                <div class="relative z-10 flex items-center justify-between border-b border-line/80 pb-4 font-mono text-[10px] uppercase tracking-[0.12em] text-muted">
+                    <span>Live signal</span>
+                    <span class="flex items-center gap-1.5 text-cyan"><span class="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_12px_rgb(var(--c-cyan))]"></span>Active</span>
+                </div>
+                <div class="relative z-10 py-7">
+                    <div class="font-mono text-[11px] uppercase tracking-[0.13em] text-muted">Identity surface</div>
+                    <div class="mt-2 flex items-end gap-2">
+                        <span class="font-display text-6xl font-semibold leading-none tracking-[-0.07em] text-ink">73</span>
+                        <span class="mb-1.5 font-mono text-xs text-body">/ 100</span>
+                    </div>
+                    <div class="mt-5 h-1.5 overflow-hidden rounded-full bg-canvas/90">
+                        <div class="h-full w-[73%] rounded-full bg-gradient-to-r from-cyan via-accent to-violet shadow-[0_0_16px_rgb(var(--c-cyan)/.72)]"></div>
+                    </div>
+                </div>
+                <div class="relative z-10 space-y-3 border-t border-line/80 pt-4 font-mono text-[10px]">
+                    <div class="flex items-center justify-between"><span class="text-body">Verified signals</span><span class="text-ink">14 nodes</span></div>
+                    <div class="flex items-center justify-between"><span class="text-body">Removal paths</span><span class="text-success">2 ready</span></div>
+                    <div class="flex items-center justify-between"><span class="text-body">Private data</span><span class="text-cyan">never queried</span></div>
+                </div>
+            </aside>
             </div>
         </div>
 

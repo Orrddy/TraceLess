@@ -4,52 +4,52 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#05070c">
     <title>{{ $title ?? 'TraceLess · Know what is public about you' }}</title>
     <meta name="description" content="TraceLess finds the personal information that is publicly available about you, explains the risk, and gives you a removal path for each record.">
 
     <script>
         (() => {
             const stored = localStorage.getItem('traceless-theme');
-            document.documentElement.classList.toggle('dark', stored === 'dark');
+            document.documentElement.classList.toggle('dark', stored === null || stored === 'dark');
         })();
     </script>
 
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="min-h-screen bg-canvas text-ink antialiased"
+<body class="min-h-screen bg-canvas text-ink antialiased ops-shell"
       x-data="{ mobileNav: false }">
 
-    <header class="sticky top-0 z-50 border-b border-line bg-canvas/90 backdrop-blur">
-        <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <header class="ops-marketing-bar sticky top-0 z-50 border-b">
+        <div class="mx-auto flex h-[4.5rem] max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-10">
             <div class="flex items-center gap-8">
-                <a href="{{ route('home') }}" class="flex items-center gap-2.5">
-                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-white">
+                <a href="{{ route('home') }}" class="group flex items-center gap-2.5" aria-label="TraceLess home">
+                    <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan/40 bg-accent text-white shadow-[0_0_26px_rgb(var(--c-accent)/.32)] transition-transform duration-300 group-hover:scale-105">
                         <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </span>
-                    <span class="font-display text-lg font-semibold tracking-tight text-ink">TraceLess</span>
+                    <span class="font-display text-lg font-semibold tracking-[-0.045em] text-ink">TraceLess</span>
                 </a>
 
-                <nav class="hidden items-center gap-6 text-sm text-body md:flex" aria-label="Site navigation">
-                    <a href="{{ route('home') }}#how-it-works" class="hover:text-ink">How it works</a>
-                    <a href="{{ route('home') }}#capabilities" class="hover:text-ink">What we check</a>
-                    <a href="{{ route('security') }}" class="hover:text-ink">Security</a>
-                    <a href="{{ route('privacy') }}" class="hover:text-ink">Privacy</a>
+                <nav class="hidden items-center gap-6 md:flex" aria-label="Site navigation">
+                    <a href="{{ route('home') }}#how-it-works" class="marketing-nav-link"><span class="material-symbols-outlined">account_tree</span><span>How it works</span></a>
+                    <a href="{{ route('home') }}#capabilities" class="marketing-nav-link"><span class="material-symbols-outlined">radar</span><span>What we check</span></a>
+                    <a href="{{ route('security') }}" class="marketing-nav-link"><span class="material-symbols-outlined">shield_lock</span><span>Security</span></a>
+                    <a href="{{ route('privacy') }}" class="marketing-nav-link"><span class="material-symbols-outlined">visibility_off</span><span>Privacy</span></a>
                 </nav>
             </div>
 
             <div class="flex items-center gap-2">
                 <button type="button"
-                        class="rounded-lg p-2 text-body hover:bg-surface"
+                        class="rounded-lg border border-transparent p-2 text-body transition hover:border-line hover:bg-elevated/50 hover:text-ink"
                         aria-label="Toggle dark mode"
                         x-data="{ dark: document.documentElement.classList.contains('dark') }"
                         @click="dark = !dark; document.documentElement.classList.toggle('dark', dark); localStorage.setItem('traceless-theme', dark ? 'dark' : 'light')">
@@ -71,8 +71,8 @@
         @yield('content')
     </main>
 
-    <footer class="border-t border-line bg-surface">
-        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+    <footer class="border-t border-line bg-surface/50 backdrop-blur-sm">
+        <div class="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-10">
             <div class="grid gap-8 md:grid-cols-4">
                 <div>
                     <p class="font-display text-base font-semibold text-ink">TraceLess</p>

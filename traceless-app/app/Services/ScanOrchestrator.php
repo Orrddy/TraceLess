@@ -195,9 +195,10 @@ class ScanOrchestrator
                 'completed_at' => now(),
             ]);
 
-            if (config('traceless.demo_mode')) {
-                $this->emitMonitoringAlerts($profile, $scan, $inserted + $reappeared);
-            }
+            // Demo and live scans both advance the monitoring clock and notify the
+            // user when something new appears. Without this, "continuous
+            // monitoring" is a promise the product never delivers on.
+            $this->emitMonitoringAlerts($profile, $scan, $inserted + $reappeared);
 
             event(new ScanCompleted($scan->fresh()));
             $scan->identityProfile->user->notify(new ScanCompletedNotification($scan->fresh()));
@@ -391,6 +392,7 @@ class ScanOrchestrator
             ]);
 
             if ($wasRemoved) {
+                $this->reopenOrCreateRemovalTask($profile, $existing);
                 $this->createReappearanceAlert($profile, $existing);
 
                 return [false, true];
@@ -562,6 +564,31 @@ class ScanOrchestrator
         }
     }
 
+    /**
+     * A record that comes back needs work again. Reopen the existing task rather
+     * than claiming a new one exists while leaving the old one closed.
+     */
+    protected function reopenOrCreateRemovalTask(IdentityProfile $profile, Finding $finding): void
+    {
+        $task = $finding->removalTask;
+
+        if (! $task) {
+            $this->ensureRemovalTask($profile, $finding);
+
+            return;
+        }
+
+        $task->update([
+            'status' => 'ready_to_remove',
+            'completed_at' => null,
+            'requested_at' => null,
+            'notes' => trim(
+                ($task->notes ? $task->notes."\n" : '')
+                .'Reappeared on '.now()->toDateString().'; task reopened automatically.'
+            ),
+        ]);
+    }
+
     protected function createReappearanceAlert(IdentityProfile $profile, Finding $finding): void
     {
         $this->createAlert(
@@ -569,7 +596,7 @@ class ScanOrchestrator
             'reappeared',
             'high',
             'Removed information reappeared',
-            "{$finding->source} is publishing your information again. A new removal task is ready.",
+            "{$finding->source} is publishing your information again. Its removal task has been reopened.",
             route('findings.show', $finding)
         );
     }

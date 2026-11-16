@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#05070c">
     <title>{{ $title ?? 'TraceLess · Privacy dashboard' }}</title>
     <meta name="description" content="TraceLess privacy dashboard: your public exposure, credential risk and removal progress in one place.">
 
@@ -12,7 +12,7 @@
         // Resolve the theme before paint so there is no flash.
         (() => {
             const stored = localStorage.getItem('traceless-theme');
-            const dark = stored ? stored === 'dark' : false;
+            const dark = stored ? stored === 'dark' : true;
             document.documentElement.classList.toggle('dark', dark);
         })();
     </script>
@@ -20,32 +20,32 @@
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="min-h-screen bg-canvas text-ink antialiased"
+<body class="app-grid min-h-screen bg-canvas text-ink antialiased ops-shell"
       x-data="{ mobileNav: false, toast: false, toastMsg: '' }"
       @notify.window="toastMsg = $event.detail.message || 'Saved'; toast = true; setTimeout(() => toast = false, 4000)"
       @toast.window="toastMsg = $event.detail.message || 'Saved'; toast = true; setTimeout(() => toast = false, 4000)">
 
     <!-- Sidebar -->
-    <aside class="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-line bg-elevated lg:flex">
-        <div class="flex h-16 items-center border-b border-line px-5">
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
-                <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-white">
+    <aside class="ops-sidebar fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-line lg:flex">
+        <div class="flex h-[4.5rem] items-center border-b border-line px-5">
+            <a href="{{ route('dashboard') }}" class="group flex items-center gap-2.5">
+                <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan/40 bg-accent text-white shadow-[0_0_26px_rgb(var(--c-accent)/.32)] transition-transform duration-300 group-hover:scale-105">
                     <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </span>
-                <span class="font-display text-lg font-semibold tracking-tight text-ink">TraceLess</span>
+                <span class="font-display text-lg font-semibold tracking-[-0.045em] text-ink">TraceLess</span>
             </a>
         </div>
 
         <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" aria-label="Main navigation">
-            <p class="px-3 pb-1 text-xs font-medium uppercase tracking-wide text-faint">Monitoring</p>
+            <p class="px-3 pb-1 font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-faint">Monitoring</p>
 
             <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'nav-link-active font-semibold' : '' }}">
                 <span class="material-symbols-outlined text-[20px]">dashboard</span>
@@ -77,7 +77,7 @@
                 <span>Monitoring</span>
             </a>
 
-            <p class="px-3 pb-1 pt-4 text-xs font-medium uppercase tracking-wide text-faint">Account</p>
+            <p class="px-3 pb-1 pt-4 font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-faint">Account</p>
 
             <a href="{{ route('reports') }}" class="nav-link {{ request()->routeIs('reports*') ? 'nav-link-active font-semibold' : '' }}">
                 <span class="material-symbols-outlined text-[20px]">description</span>
@@ -110,14 +110,14 @@
 
     <!-- Main column -->
     <div class="flex min-h-screen flex-col lg:pl-64">
-        <header class="sticky top-0 z-30 border-b border-line bg-canvas/90 backdrop-blur">
-            <div class="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <header class="ops-topbar sticky top-0 z-30 border-b">
+            <div class="flex h-[4.5rem] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-1 items-center gap-3">
-                    <button class="rounded-lg p-2 text-body hover:bg-surface lg:hidden" @click="mobileNav = true" aria-label="Open navigation">
+                    <button class="rounded-lg border border-transparent p-2 text-body transition hover:border-line hover:bg-elevated/50 hover:text-ink lg:hidden" @click="mobileNav = true" aria-label="Open navigation">
                         <span class="material-symbols-outlined text-[20px]">menu</span>
                     </button>
 
-                    <form action="{{ route('findings') }}" method="GET" class="hidden w-full max-w-md items-center gap-2 rounded-lg border border-line bg-surface px-3 py-2 text-sm text-body focus-within:border-accent sm:flex">
+                    <form action="{{ route('findings') }}" method="GET" class="hidden w-full max-w-md items-center gap-2 rounded-xl border border-line bg-elevated/40 px-3 py-2 text-sm text-body shadow-inner transition focus-within:border-cyan focus-within:bg-elevated/65 sm:flex">
                         <span class="material-symbols-outlined text-[18px] text-faint">search</span>
                         <input type="search" name="search" value="{{ request('search') }}" placeholder="Search findings, handles, sources…"
                                class="w-full border-0 bg-transparent p-0 text-sm text-ink placeholder:text-faint focus:ring-0" aria-label="Search findings">
@@ -126,7 +126,7 @@
 
                 <div class="flex items-center gap-2">
                     <button type="button"
-                            class="rounded-lg p-2 text-body hover:bg-surface"
+                            class="rounded-lg border border-transparent p-2 text-body transition hover:border-line hover:bg-elevated/50 hover:text-ink"
                             aria-label="Toggle dark mode"
                             x-data="{ dark: document.documentElement.classList.contains('dark') }"
                             @click="dark = !dark; document.documentElement.classList.toggle('dark', dark); localStorage.setItem('traceless-theme', dark ? 'dark' : 'light')">
@@ -139,12 +139,12 @@
                     </a>
 
                     <div class="ml-1 flex items-center gap-2">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-surface text-xs font-semibold text-body">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full border border-line bg-elevated/70 text-xs font-semibold text-body">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                         </span>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="rounded-lg p-2 text-body hover:bg-surface" title="Sign out" aria-label="Sign out">
+                            <button type="submit" class="rounded-lg border border-transparent p-2 text-body transition hover:border-line hover:bg-elevated/50 hover:text-ink" title="Sign out" aria-label="Sign out">
                                 <span class="material-symbols-outlined text-[20px]">logout</span>
                             </button>
                         </form>
@@ -153,12 +153,12 @@
             </div>
         </header>
 
-        <main class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+        <main class="flex-1 px-4 py-7 sm:px-6 lg:px-8">
             {{ $slot ?? '' }}
             @yield('content')
         </main>
 
-        <footer class="border-t border-line px-6 py-4 text-xs text-faint">
+        <footer class="border-t border-line bg-canvas/50 px-6 py-4 font-mono text-[10px] text-faint backdrop-blur-sm">
             <div class="flex flex-col items-center justify-between gap-2 sm:flex-row">
                 <span>TraceLess · public-source privacy monitoring</span>
                 <span>Discovery uses WhatsMyName (CC BY-SA 4.0) and user-scanner (MIT)</span>
@@ -169,7 +169,7 @@
     <!-- Mobile navigation -->
     <div x-cloak x-show="mobileNav" class="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
         <div class="absolute inset-0 bg-ink/40" @click="mobileNav = false"></div>
-        <div class="relative flex h-full w-72 flex-col justify-between border-r border-line bg-elevated p-5">
+        <div class="ops-sidebar relative flex h-full w-72 flex-col justify-between border-r border-line p-5">
             <div>
                 <div class="mb-6 flex items-center justify-between">
                     <span class="font-display text-lg font-semibold text-ink">TraceLess</span>
@@ -193,7 +193,7 @@
     </div>
 
     <!-- Toast -->
-    <div x-cloak x-show="toast" x-transition class="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 rounded-lg border border-line bg-elevated px-4 py-2.5 text-sm text-ink shadow-lg">
+    <div x-cloak x-show="toast" x-transition class="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 rounded-xl border border-line bg-elevated/90 px-4 py-2.5 text-sm text-ink shadow-2xl backdrop-blur-xl">
         <span x-text="toastMsg"></span>
     </div>
 
