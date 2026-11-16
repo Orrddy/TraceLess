@@ -119,16 +119,13 @@
                         const prefix = hex.slice(0, 5);
                         const suffix = hex.slice(5);
 
-                        const response = await fetch('https://api.pwnedpasswords.com/range/' + prefix, {
-                            headers: { 'Add-Padding': 'true' },
-                        });
+                        const response = await fetch('https://api.pwnedpasswords.com/range/' + prefix);
 
                         if (!response.ok) {
                             throw new Error('The service replied with status ' + response.status + '. Try again in a moment.');
                         }
 
-                        const body = await response.text();
-                        const match = body
+                        const body = await response.text();                        const match = body
                             .split('\n')
                             .map((line) => line.trim().split(':'))
                             .find((parts) => parts[0] === suffix);

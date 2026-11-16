@@ -12,7 +12,8 @@
                     <input id="ip" type="text" wire:model="ip" inputmode="decimal" class="input font-mono"
                            autocomplete="off" spellcheck="false" placeholder="203.0.113.10" />
                     <p class="mt-2 text-xs leading-relaxed text-faint">
-                        Pre-filled with the address this session is using. You can check any public address.
+                        Pre-filled with the address this session is using. Local and private addresses have no public
+                        record, so the check falls back to the public address your network is actually using.
                     </p>
                     @error('ip') <p class="mt-1 text-xs text-danger">{{ $message }}</p> @enderror
                 </div>
@@ -37,6 +38,13 @@
                         <p class="font-mono text-sm text-ink">{{ $result['ip'] }}</p>
                         <span class="badge badge-neutral">Lookup complete</span>
                     </div>
+
+                    @if($result['auto'] ?? false)
+                        <p class="text-xs leading-relaxed text-muted">
+                            The address entered is local or private, so this is the public address your network is
+                            currently using.
+                        </p>
+                    @endif
 
                     <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>

@@ -1,4 +1,4 @@
-<div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" wire:poll.20s>
+<div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" wire:poll.60s>
     <button @click="open = !open"
             class="relative flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-elevated text-body transition hover:bg-surface"
             :aria-expanded="open" aria-label="Notifications">

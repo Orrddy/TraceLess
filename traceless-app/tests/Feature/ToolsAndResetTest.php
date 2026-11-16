@@ -63,7 +63,7 @@ class ToolsAndResetTest extends TestCase
     {
         Http::fake([
             'ipinfo.io/*' => Http::response([
-                'ip' => '203.0.113.10',
+                'ip' => '8.8.8.8',
                 'city' => 'Lagos',
                 'region' => 'Lagos',
                 'country' => 'NG',
@@ -76,11 +76,33 @@ class ToolsAndResetTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(IpCheck::class)
-            ->set('ip', '203.0.113.10')
+            ->set('ip', '8.8.8.8')
             ->call('check')
             ->assertSee('Lagos')
             ->assertSee('AS37027 Example Networks')
             ->assertSet('error', null);
+    }
+
+    public function test_a_private_address_falls_back_to_the_public_one(): void
+    {
+        Http::fake([
+            'ipinfo.io/json*' => Http::response([
+                'ip' => '41.203.72.10',
+                'city' => 'Lagos',
+                'country' => 'NG',
+                'org' => 'AS37027 Example Networks',
+            ], 200),
+        ]);
+
+        $user = User::factory()->create();
+
+        Livewire::actingAs($user)
+            ->test(IpCheck::class)
+            ->set('ip', '127.0.0.1')
+            ->call('check')
+            ->assertSet('error', null)
+            ->assertSee('41.203.72.10')
+            ->assertSee('local or private');
     }
 
     public function test_the_ip_check_rejects_an_invalid_address(): void
@@ -102,9 +124,9 @@ class ToolsAndResetTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(IpCheck::class)
-            ->set('ip', '203.0.113.10')
+            ->set('ip', '8.8.8.8')
             ->call('check')
-            ->assertSee('429');
+            ->assertSee('rate limiting');
     }
 
     public function test_resetting_clears_scan_data_but_keeps_the_identity_and_consent(): void

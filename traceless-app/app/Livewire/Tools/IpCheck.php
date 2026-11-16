@@ -26,14 +26,14 @@ class IpCheck extends Component
     public function check(IpReputationService $lookup): void
     {
         $this->validate([
-            'ip' => ['required', 'ip'],
+            'ip' => ['nullable', 'ip'],
         ]);
 
         $this->error = null;
         $this->result = null;
 
         try {
-            $this->result = $lookup->lookup($this->ip);
+            $this->result = $lookup->lookup($this->ip !== '' ? $this->ip : null);
         } catch (Throwable $exception) {
             $this->error = $exception->getMessage();
 
