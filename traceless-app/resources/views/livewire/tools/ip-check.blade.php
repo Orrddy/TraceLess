@@ -13,7 +13,7 @@
                            autocomplete="off" spellcheck="false" placeholder="203.0.113.10" />
                     <p class="mt-2 text-xs leading-relaxed text-faint">
                         Pre-filled with the address this session is using. Local and private addresses have no public
-                        record, so the check falls back to the public address your network is actually using.
+                        record, so the check falls back to the public address this server reaches the internet from.
                     </p>
                     @error('ip') <p class="mt-1 text-xs text-danger">{{ $message }}</p> @enderror
                 </div>
@@ -41,8 +41,9 @@
 
                     @if($result['auto'] ?? false)
                         <p class="text-xs leading-relaxed text-muted">
-                            The address entered is local or private, so this is the public address your network is
-                            currently using.
+                            The address entered is local or private, so this is the public address this server reaches
+                            the internet from. On your own machine that is your network; on a hosted deployment it is the
+                            hosting provider's address.
                         </p>
                     @endif
 

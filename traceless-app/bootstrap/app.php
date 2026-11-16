@@ -13,6 +13,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Behind a load balancer, proxy or CDN, request()->ip() is the proxy's
+        // address unless the proxy is trusted. Without this, every visitor looks
+        // like the server itself.
+        $proxies = env('TRUSTED_PROXIES');
+
+        if (is_string($proxies) && $proxies !== '') {
+            $middleware->trustProxies(at: $proxies === '*' ? '*' : array_map('trim', explode(',', $proxies)));
+        }
+
         // Browser hardening (CSP, nosniff, frame denial, HSTS over TLS).
         $middleware->append(SecurityHeaders::class);
     })
