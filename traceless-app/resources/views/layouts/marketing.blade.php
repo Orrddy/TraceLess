@@ -16,6 +16,7 @@
     </script>
 
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -30,14 +31,7 @@
     <header class="ops-marketing-bar sticky top-0 z-50 border-b">
         <div class="mx-auto flex h-[4.5rem] max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-10">
             <div class="flex items-center gap-8">
-                <a href="{{ route('home') }}" class="group flex items-center gap-2.5" aria-label="TraceLess home">
-                    <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan/40 bg-accent text-white shadow-[0_0_26px_rgb(var(--c-accent)/.32)] transition-transform duration-300 group-hover:scale-105">
-                        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </span>
-                    <span class="font-display text-lg font-semibold tracking-[-0.045em] text-ink">TraceLess</span>
-                </a>
+                <x-brand-logo :href="route('home')" />
 
                 <nav class="hidden items-center gap-6 md:flex" aria-label="Site navigation">
                     <a href="{{ route('home') }}#how-it-works" class="marketing-nav-link"><span class="material-symbols-outlined">account_tree</span><span>How it works</span></a>

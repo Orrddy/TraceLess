@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="TraceLess">
+  <g fill="none" stroke-linecap="round">
+    <circle cx="24" cy="24" r="9" stroke="#0B0F18" stroke-width="3.4"
+            stroke-dasharray="45.24 11.31" transform="rotate(-72 24 24)"/>
+    <circle cx="24" cy="24" r="16" stroke="#0B0F18" stroke-width="3"
+            stroke-dasharray="64.79 35.74" transform="rotate(48 24 24)" opacity="0.85"/>
+    <circle cx="24" cy="24" r="21.5" stroke="#0B0F18" stroke-width="2.4"
+            stroke-dasharray="1.4 8.2" transform="rotate(-20 24 24)" opacity="0.65"/>
+  </g>
+  <circle cx="24" cy="24" r="3" fill="#0B0F18"/>
+</svg>

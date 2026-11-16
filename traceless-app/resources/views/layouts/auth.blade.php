@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#05070c">
     <title>@yield('title', 'TraceLess · Secure access')</title>
 
     <script>
@@ -15,6 +15,7 @@
     </script>
 
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -42,18 +43,7 @@
             <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(85,214,232,0.12),transparent_55%),radial-gradient(circle_at_90%_90%,rgba(74,222,155,0.06),transparent_50%)]" aria-hidden="true"></div>
 
             <div class="relative flex flex-1 flex-col p-10 xl:p-14">
-                <a href="{{ route('home') }}" class="flex items-center gap-3">
-                    <span class="flex h-10 w-10 items-center justify-center rounded-lg border border-line bg-surface text-accent">
-                        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M12 8v4M12 16h.01" stroke-linecap="round"/>
-                        </svg>
-                    </span>
-                    <span class="flex flex-col leading-tight">
-                        <span class="font-display text-lg font-semibold tracking-tight text-ink">TraceLess</span>
-                        <span class="mt-0.5 text-xs text-faint">Account access</span>
-                    </span>
-                </a>
+                <x-brand-logo :href="route('home')" size="lg" tagline="Account access" />
 
                 <div class="mt-auto max-w-md">
                     <div class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-medium text-body">
@@ -95,14 +85,7 @@
         <main class="relative flex items-center justify-center bg-canvas/30 px-5 py-10 sm:px-8 lg:col-span-7">
             <div class="pointer-events-none absolute inset-0 app-grid opacity-30 lg:hidden" aria-hidden="true"></div>
             <div class="relative w-full max-w-md">
-                <a href="{{ route('home') }}" class="mb-9 flex items-center gap-2.5 lg:hidden">
-                    <span class="flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-surface text-accent">
-                        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </span>
-                    <span class="font-display text-lg font-semibold tracking-tight text-ink">TraceLess</span>
-                </a>
+                <x-brand-logo :href="route('home')" size="sm" class="mb-9 lg:hidden" />
 
                 @if(session('status'))
                     <div class="mb-5 rounded-lg border border-[#4ADE9B]/25 bg-success/[0.08] px-4 py-3 font-body text-sm text-success">{{ session('status') }}</div>

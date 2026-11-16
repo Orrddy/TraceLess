@@ -18,6 +18,7 @@
     </script>
 
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -34,14 +35,7 @@
     <!-- Sidebar -->
     <aside class="ops-sidebar fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-line lg:flex">
         <div class="flex h-[4.5rem] items-center border-b border-line px-5">
-            <a href="{{ route('dashboard') }}" class="group flex items-center gap-2.5">
-                <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan/40 bg-accent text-white shadow-[0_0_26px_rgb(var(--c-accent)/.32)] transition-transform duration-300 group-hover:scale-105">
-                    <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </span>
-                <span class="font-display text-lg font-semibold tracking-[-0.045em] text-ink">TraceLess</span>
-            </a>
+            <x-brand-logo :href="route('dashboard')" />
         </div>
 
         <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" aria-label="Main navigation">
@@ -186,7 +180,7 @@
         <div class="ops-sidebar relative flex h-full w-72 flex-col justify-between border-r border-line p-5">
             <div>
                 <div class="mb-6 flex items-center justify-between">
-                    <span class="font-display text-lg font-semibold text-ink">TraceLess</span>
+                    <x-brand-logo :href="route('dashboard')" size="sm" />
                     <button @click="mobileNav = false" class="rounded-lg p-1.5 text-body hover:bg-surface" aria-label="Close navigation">
                         <span class="material-symbols-outlined">close</span>
                     </button>
