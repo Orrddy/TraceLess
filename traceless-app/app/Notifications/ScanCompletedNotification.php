@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Models\Scan;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class ScanCompletedNotification extends Notification
@@ -14,7 +15,7 @@ class ScanCompletedNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'mail'];
     }
 
     public function toArray(object $notifiable): array
@@ -29,5 +30,14 @@ class ScanCompletedNotification extends Notification
             'url' => route('scans.show', $this->scan),
             'severity' => 'low',
         ];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+            ->subject('Your TraceLess scan is complete')
+            ->line("Scan #{$this->scan->id} finished with {$this->scan->findings_count} public findings.")
+            ->line('Review the evidence before starting any removal request.')
+            ->action('Open TraceLess', route('scans.show', $this->scan));
     }
 }

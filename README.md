@@ -47,6 +47,7 @@ no scan runs without a recorded ownership attestation.
 | 2026-11-16 | Local development moved to SQLite (Neon production branch no longer shared) and every response now carries CSP, nosniff, frame denial, referrer and permissions policies, with HSTS over TLS |
 | 2026-11-16 | All five authorization policies enforced through Gate (plus a new AlertPolicy), retention no longer orphans findings, deletion strips audit IPs and keeps consent evidence, and account-change codes are rate limited per user |
 | 2026-11-16 | Monitoring is real: live scans now raise alerts and advance the schedule, subscriptions with no next run are picked up, failures back off instead of retrying hourly, and a reappearing record reopens its removal task |
+| 2026-11-16 | Notifications reach the user: alerts, scan completion and removal updates are emailed as well as stored, and the in-app alert panel is now mounted in the app shell |
 | 2026-11-15 | Consolidated documentation into this README and removed the design/export assets |
 
 ### Verified right now

@@ -125,6 +125,8 @@
                 </div>
 
                 <div class="flex items-center gap-2">
+                    <livewire:notifications.notifications-panel />
+
                     <button type="button"
                             class="rounded-lg border border-transparent p-2 text-body transition hover:border-line hover:bg-elevated/50 hover:text-ink"
                             aria-label="Toggle dark mode"

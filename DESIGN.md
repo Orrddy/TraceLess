@@ -1,152 +1,151 @@
 # TraceLess design direction
 
-The file antislop reads for direction. `antislop.md` is the filter; this is the soul.
-It records what the product is, what it should feel like, and the dials every screen
-holds. When a decision is not covered here, the answer is "what makes the evidence
-easier to trust", not "what looks modern".
+## Dark futuristic / cinematic tech
 
-**Dial: ENERGY 1 / RHYTHM 2 / MOTION 1**
+TraceLess is a privacy and digital-footprint product that must feel capable,
+premium, and calm. The interface should communicate a serious modern tool, not
+an alarm, a hacker terminal, or an untrustworthy surveillance product.
 
----
+This document is the visual source of truth for the November 2026 redesign.
+It replaces the previous light, report-like direction.
 
-## What the product is
+## Preservation rule
 
-TraceLess tells a person what is publicly known about them, shows the evidence behind
-every claim, and gives them a path to remove it. The differentiator is not detection,
-it is **proof**: each finding carries the rule that matched, the HTTP status, the URL
-checked, and a hash of the response.
+This is a presentation-layer design system. Existing features, routes, APIs,
+data structures, scan logic, consent controls, reports, integrations, and
+access policies stay intact.
 
-That is the design brief. This is not a spy product and not a hacker terminal. It is a
-**record of public facts, presented calmly enough to act on**. The closest reference
-points are a well-made research report, a bank statement, and a legal disclosure, not
-a monitoring dashboard from a movie.
+The full-screen hero video at
+`traceless-app/public/assets/videos/hero-intro.mp4` is part of the visual
+identity. Keep its source, full-screen placement, playback behavior, and role
+as the primary hero background. Use overlays and foreground composition to
+improve it; never replace it with a new video, static image, or 3D scene.
 
-Audience: a worried individual, often not technical, who arrived after finding
-something about themselves. They are anxious. The interface should lower the
-temperature, not raise it.
+## Visual personality
 
-## What it must never look like
+Think: cinematic creative-technology studio meets an evidence-led privacy
+product.
 
-- A hacker terminal: ASCII, monospace headings, "RECON", "ENCLAVE", scan lines, grids.
-- A cyber-security dark theme with cyan glow and telemetry strips.
-- A generic SaaS template: gradient hero, three feature cards, pill eyebrow, fake logos.
-- An alarm: red everywhere, pulsing dots, threat language.
+- Deep-black, near-black, and charcoal foundations
+- Oversized modern sans-serif typography
+- Fine technical details, not fake terminal content
+- Electric blue and cyan used as focused evidence/action accents
+- Dark translucent panels, refined borders, and soft depth
+- Icon-led navigation with labels retained where they aid comprehension
+- Generous space and asymmetry on marketing surfaces
+- High signal, low visual noise in dashboards
 
-## Identity motif: the evidence line
-
-Every verified finding carries a **2px accent rule on its left edge** and a **monospace
-evidence value** (status code, rule name, or the first characters of the response hash).
-Nothing else in the product uses a left rule, and nothing else uses monospace.
-
-- The rule appears **only when there is evidence**: a verified record. An unverified or
-  unknown record has no rule, because the absence is information.
-- This is a state marker, not decoration. If a row has no evidence, it gets no line.
-- The score is presented as an **estimate** with that word visible, never as a gauge of safety.
-
-Reason, written down as R-31 requires: the product's only real claim is proof, so the
-proof gets the one repeated visual gesture. A left edge is read before text is read.
+Avoid generic neon, large rainbow gradients, dense dashboard cards, hooded
+hacker imagery, fake threat counters, or alert-red decoration.
 
 ## Palette
 
-Neutral paper plus ink plus one accent. Status colours are semantic only.
+| Role | Value | Usage |
+| --- | --- | --- |
+| Canvas | `#030509` | Page and deep backdrop |
+| Surface | `#090C14` | Grouped regions |
+| Elevated | `#0F141F` | Cards, drawers, controls |
+| Line | `#2F3A4D` | Hairline separation |
+| Ink | `#F6F8FC` | Main text |
+| Body | `#B4BECF` | Explanations |
+| Muted | `#94A0B5` | Secondary metadata |
+| Accent | `#6CB1FF` | Primary actions and links |
+| Cyan | `#52E0FF` | Evidence, active scans, focus |
+| Violet | `#9F7AEA` | Secondary depth only |
+| Success | `#4ADE80` | Completed/verified status |
+| Warning | `#FBBF24` | Attention or unknown state |
+| Danger | `#FB7185` | Critical exposure only |
 
-| Role | Light | Dark | Reason |
-|---|---|---|---|
-| Canvas | #FAFAF9 | #0B0F14 | Warm near-white, not clinical #FFF: a document, not a screen |
-| Surface | #F4F4F2 | #111720 | Grouping without borders |
-| Elevated | #FFFFFF | #161D26 | Cards and modals sit above the page |
-| Line | #E2E6EC | #26303C | Hairline, 1px, used to separate, never to decorate |
-| Ink | #0C1116 | #ECF1F6 | Primary text, 17:1 |
-| Body | #475569 | #AEBAC7 | Paragraphs, 7.6:1 |
-| Muted | #526071 | #94A3B8 | Secondary labels, 6.3:1 |
-| Faint | #64748B | #8494A6 | Tertiary and hints, 4.8:1. AA floor, never lighter |
-| Accent | #1D4ED8 | #7AA2FF | One accent. Institutional blue: trust and links, not "AI blue" |
-| Success | #047857 | #34D399 | Removed, verified, safe |
-| Warning | #B45309 | #F5B85B | Needs attention, unverified |
-| Danger | #B91C1C | #F87171 | Critical exposure only, never for decoration |
-
-Rules:
-
-1. **One accent.** Links, primary buttons, focus rings, the evidence line. Nowhere else.
-2. **Status colour appears only with a status word.** No colour-only meaning.
-3. **No gradients, no glow, no coloured shadows.** A surface is flat or it has one
-   soft neutral shadow.
-4. **Faint is the AA floor.** If a label needs to be lighter than #64748B, it should
-   not be text.
+Status colours always appear with a written status. Use colour sparingly;
+information and proof are more important than decoration.
 
 ## Typography
 
-| Use | Face | Reason |
-|---|---|---|
-| Display, page titles | Schibsted Grotesk | A newsroom face: editorial authority, not the default Inter/Geist |
-| UI, body, labels | Inter | Chosen for legibility at 13-15px in dense tables, not for style |
-| Evidence values only | JetBrains Mono | Status codes, rules and hashes are data; monospace signals "verbatim" |
+- **Display and page titles:** Space Grotesk, bold, tight tracking, oversized
+  where the marketing narrative needs impact.
+- **UI and body:** Inter, chosen for dense product interfaces and accessibility.
+- **Evidence and machine-readable metadata:** JetBrains Mono only.
 
-Rules:
+Hero headings may use 72–108px desktop scale. Product headings should be
+readable rather than theatrical. Never use monospace for ordinary prose or
+large headings.
 
-- No monospace headings. No uppercase labels with wide letter-spacing. Labels are
-  sentence case, 12-13px, medium weight.
-- One `h1` per page, sentence case, at most 40px. Headings state the finding or the
-  action, never a mood.
-- Numbers in tables use tabular figures.
+## Surfaces and depth
 
-## Layout
+Use dark glass materials deliberately:
 
-- One focal point per screen: the score on the dashboard, the finding on its detail
-  page, the scan action on the create page. Everything else defers.
-- The app shell is grouped: "Monitoring" (overview, footprint, exposure, credentials,
-  removal) and "Account" (reports, settings). The active item is marked by weight and
-  a tinted background, not colour alone.
-- Content max-width 1152px. Cards are 12px radius; controls 8px; pills only for status
-  badges. Nothing else is pill-shaped.
-- Section rhythm varies (RHYTHM 2): a page does not repeat the same card grid twice in
-  a row. Density is a tool: the dashboard is dense, the landing page is spacious.
+- 18–20px corner radius for primary cards and panels
+- Low-opacity dark fills with a 1px low-contrast border
+- Subtle top-edge highlight on elevated objects
+- Deep neutral shadows, never bright coloured card shadows
+- Backdrop blur only where it supports visual layering
+
+Cards must remain legible in front of the hero video and over the ambient
+background. Do not cover the video with a giant opaque panel.
+
+## Hero composition
+
+- Video is the dominant visual layer.
+- Use cinematic black gradient overlays for content readability.
+- Add a lightweight, pointer-responsive particle/evidence layer above the
+  video and below the content. It must not interact with the video itself.
+- Build the heading on a clear left-aligned editorial axis.
+- Use one compact live-signal panel on large screens only.
+- Keep the required trust facts prominent: public data only, no passwords,
+  and consent per identity.
+
+## Navigation
+
+- Use a glassy dark top bar for marketing pages and a dark, elevated sidebar
+  for the app.
+- Navigation items use an outline icon before the label.
+- Preserve labels in the product sidebar. Icon-only controls must have an
+  accessible name and native tooltip/title.
+- Active routes receive a fine cyan evidence edge and a restrained blue fill.
+- Hover motion is short and subtle: a 1–2px shift, border response, and text
+  contrast change.
 
 ## Motion
 
-MOTION 1. Hover, focus, and state transitions only, 120-180ms, ease-out.
+Motion should establish polish, context, and state—not perform for its own sake.
 
-- No entrance animations, no parallax, no pulsing dots, no endless loops.
-- The one moving thing in the product is the scan progress indicator, because it
-  reflects real work. It stops when the work stops.
-- `prefers-reduced-motion` disables all of it.
+- 180–320ms transitions for buttons, cards, navigation, drawers, and modals
+- Soft depth/opacity reveals when meaningful content enters the viewport
+- Slow scan-line and particle movement only in decorative or active-scan areas
+- No strobing, flashing, looping alert pulses, or aggressive parallax
+- Honour `prefers-reduced-motion`; remove decorative canvas animation entirely
+  and reduce all other transitions
 
-## Copy
+## Responsive performance
 
-Voice: **plain, specific, unexcited**. A person explaining something important.
+- Preserve video playback behavior, but use its existing mobile fallback rules
+  and crop the video deliberately on small screens.
+- Decorative interaction must be lightweight and disabled below tablet width
+  and for reduced-motion preferences.
+- Do not add duplicate rendering frameworks or heavyweight 3D libraries unless
+  a measurable product need exists.
+- On mobile, prioritize readable evidence, large targets, and scan/removal
+  actions over decoration.
 
-- Say what happened and what to do: "12 public profiles found. 4 need your action."
-- Never: "Execute Recon Scan", "enclave", "intelligence nodes", "dossier", "deploy".
-- Never invent numbers, testimonials, or security claims. If a number has no source,
-  it does not appear.
-- Say "estimate" when it is an estimate, and "unknown" when it is unknown. The product's
-  honesty is the brand.
-- No em dashes. Commas, colons, full stops, parentheses.
-- Buttons use verbs the user performs: "Run a scan", "Start removal", "Download report".
+## Accessibility
 
-## Landing page
+- Maintain WCAG-friendly contrast for every text and status combination.
+- Never communicate risk or completion through colour alone.
+- Use visible keyboard focus states.
+- Keep all icon-only actions labelled for assistive technology.
+- Use readable body sizes and preserve user zoom.
 
-One job: explain the product in one screen and get the visitor to start a scan.
+## Content tone
 
-- Hero keeps the owner's video, under a calm scrim, with one headline, one sentence,
-  one primary action, and the honest limits stated once ("public sources only", "no
-  passwords", "removal is not guaranteed").
-- No eyebrow pill, no decorative status dot, no fake dashboard screenshot.
-- Sections follow the real story: what gets checked, how verification works, what
-  removal involves, what the product cannot do. No testimonials, no logo bar.
+Use evidence-first, calm language:
 
-## Accessibility (non-negotiable)
+- “Public data only”
+- “No passwords requested”
+- “Verified against the source”
+- “Removal is not guaranteed”
+- “Scores help prioritise action”
 
-- WCAG AA everywhere, measured, not assumed: 4.5:1 body text, 3:1 large text.
-- Every control reaches by keyboard, visible focus ring, `cursor: pointer`.
-- Status is never colour alone: every badge carries a word.
-- Tap targets 44px on mobile. No horizontal scroll at 390px.
-- Every media element has dimensions and a reserved box.
-
-## What the next pass must do
-
-1. Apply this palette and type scale to every screen (the tokens exist; the copy and
-   mono leftovers do not).
-2. Put the evidence line on verified findings only.
-3. Replace the remaining costume vocabulary with plain language.
-4. Vary section rhythm on the landing page so it stops reading as a template.
+Do not promise complete removal from the internet or claim a specific future
+hacker outbreak. Explain that public exposure can support phishing,
+impersonation, and automated scams without using fear as the primary design
+device.
