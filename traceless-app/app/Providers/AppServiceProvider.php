@@ -3,7 +3,10 @@
 namespace App\Providers;
 
 use App\Database\NeonPostgresConnector;
+use App\Support\DestructiveCommandGuard;
 use App\Support\ProductionSafetyGuard;
+use Illuminate\Console\Events\CommandStarting;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,5 +29,8 @@ class AppServiceProvider extends ServiceProvider
         // Refuse to run production with development conveniences enabled.
         // No-op in local, testing and any non-production environment.
         (new ProductionSafetyGuard)->enforce();
+
+        // Refuse data-destroying commands against the Neon production branch.
+        Event::listen(CommandStarting::class, fn (CommandStarting $event) => (new DestructiveCommandGuard)->handle($event));
     }
 }

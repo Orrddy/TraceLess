@@ -64,10 +64,25 @@
                 </div>
             </div>
         @empty
-            <div class="ops-card p-12 text-center font-mono text-xs text-success space-y-2">
-                <span class="material-symbols-outlined text-4xl">verified</span>
-                <div>All monitored identifiers are clear of active public credential breach records.</div>
-            </div>
+            @if($demoMode)
+                <div class="ops-card p-12 text-center space-y-2">
+                    <span class="material-symbols-outlined text-4xl text-warning">science</span>
+                    <div class="font-medium text-ink">No demo exposures for this identity</div>
+                    <p class="mx-auto max-w-md text-sm leading-relaxed text-muted">This is demo data, not a real check. Configure a breach provider and switch to live mode to see actual exposure.</p>
+                </div>
+            @elseif(! $provider)
+                <div class="ops-card p-12 text-center space-y-2">
+                    <span class="material-symbols-outlined text-4xl text-warning">key_off</span>
+                    <div class="font-medium text-ink">Credential monitoring is not configured</div>
+                    <p class="mx-auto max-w-md text-sm leading-relaxed text-muted">No breach-metadata provider is connected, so nothing is being checked here. TraceLess shows nothing rather than imply your credentials are clear.</p>
+                </div>
+            @else
+                <div class="ops-card p-12 text-center space-y-2">
+                    <span class="material-symbols-outlined text-4xl text-success">verified</span>
+                    <div class="font-medium text-ink">No credential exposure found</div>
+                    <p class="mx-auto max-w-md text-sm leading-relaxed text-muted">Checked against {{ $provider }}. Absence of a record is not a guarantee, so keep multi-factor authentication on.</p>
+                </div>
+            @endif
         @endforelse
     </div>
 </div>

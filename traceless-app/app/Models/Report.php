@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\URL;
 
 class Report extends Model
 {
@@ -37,8 +38,16 @@ class Report extends Model
         return $this->belongsTo(IdentityProfile::class);
     }
 
-    public function downloadUrl(): string
+    /**
+     * The download route is behind the `signed` middleware, so this must return
+     * a signed URL. Used by the ReportGenerated broadcast, which may be consumed
+     * long after generation, hence the generous default lifetime.
+     */
+    public function downloadUrl(int $ttlMinutes = 1440): string
     {
-        return route('reports.download', ['report' => $this->id, 'token' => $this->download_token]);
+        return URL::temporarySignedRoute('reports.download', now()->addMinutes($ttlMinutes), [
+            'report' => $this->id,
+            'token' => $this->download_token,
+        ]);
     }
 }

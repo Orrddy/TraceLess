@@ -89,6 +89,12 @@ class IdentityProfile extends Model
 
     public function activeScan(): ?Scan
     {
-        return $this->scans()->whereNotIn('status', ['completed', 'failed', 'cancelled'])->latest()->first();
+        // A scan that stopped reporting is not "active"; treat it as gone so a
+        // dead worker can never block the account from scanning again.
+        return $this->scans()
+            ->whereNotIn('status', ['completed', 'failed', 'cancelled'])
+            ->where('updated_at', '>=', now()->subMinutes((int) config('traceless.scan.stale_minutes', 15)))
+            ->latest()
+            ->first();
     }
 }

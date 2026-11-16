@@ -50,6 +50,8 @@ return [
         // Live scans check every monitored username. Each one runs the worker
         // as a separate process, so the count bounds the wall-clock time.
         'max_usernames' => (int) env('TRACELESS_MAX_USERNAMES', 5),
+        // A scan that has not been touched for this long is treated as dead.
+        'stale_minutes' => (int) env('TRACELESS_SCAN_STALE_MINUTES', 15),
     ],
 
     /*
