@@ -1,84 +1,147 @@
-<div class="max-w-2xl mx-auto py-8">
-    <div class="ops-card p-8 space-y-6">
-        <!-- Header -->
-        <div class="border-b border-line pb-5 space-y-1">
-            <div class="ops-badge ops-badge-cyan">PROVISIONING // STEP 01</div>
-            <h1 class="text-2xl font-bold text-ink tracking-tight">Configure Monitored Identity</h1>
-            <p class="font-mono text-xs text-body">
-                TraceLess performs authorized OSINT scans strictly on publicly discoverable indices.
+<div class="mx-auto max-w-3xl space-y-6">
+    <x-page-header
+        eyebrow="New identity"
+        title="Configure your footprint"
+        description="Names, one email, a phone number and the usernames you use. Consent is recorded before anything is scanned." />
+
+    <form wire:submit.prevent="saveAndScan" class="space-y-6">
+        <!-- Names -->
+        <section class="card p-6">
+            <h2 class="text-sm font-semibold text-ink">Names</h2>
+            <p class="mt-1 text-xs leading-relaxed text-body">
+                Your current name first, then any previous names or variants you have used.
             </p>
-        </div>
 
-        <form wire:submit.prevent="saveAndScan" class="space-y-6 font-mono text-xs">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Legal / Full Name -->
-                <div class="space-y-1.5">
-                    <label class="block text-body">Target Full Name *</label>
-                    <input type="text" wire:model="full_name" placeholder="e.g. Alex Vance" class="ops-input w-full">
-                    @error('full_name') <span class="text-danger text-[10px] block">{{ $message }}</span> @enderror
-                </div>
-
-                <!-- Primary Email -->
-                <div class="space-y-1.5">
-                    <label class="block text-body">Primary Email *</label>
-                    <input type="email" wire:model="primary_email" placeholder="alex@domain.com" class="ops-input w-full">
-                    @error('primary_email') <span class="text-danger text-[10px] block">{{ $message }}</span> @enderror
-                </div>
-
-                <!-- Phone -->
-                <div class="space-y-1.5">
-                    <label class="block text-body">Phone (Optional)</label>
-                    <input type="text" wire:model="phone_number" placeholder="+1 (555) 019-2834" class="ops-input w-full">
-                </div>
-
-                <!-- Region -->
-                <div class="space-y-1.5">
-                    <label class="block text-body">Region / Locality</label>
-                    <input type="text" wire:model="region" placeholder="San Francisco, CA" class="ops-input w-full">
-                </div>
+            <div class="mt-4 flex flex-col gap-2 sm:flex-row">
+                <input type="text" wire:model="name_input" wire:keydown.enter.prevent="addName"
+                       class="input flex-1" placeholder="e.g. Alex Vance" autocomplete="name" />
+                <button type="button" wire:click="addName" class="btn-secondary shrink-0">Add name</button>
             </div>
+            @error('name_input') <p class="mt-1 text-xs text-danger">{{ $message }}</p> @enderror
+            @error('names') <p class="mt-1 text-xs text-danger">{{ $message }}</p> @enderror
 
-            <!-- Online Handles -->
-            <div class="space-y-2">
-                <label class="block text-body">Known Usernames & Online Handles</label>
-                <div class="flex gap-2">
-                    <input type="text" wire:model="username_input" wire:keydown.enter.prevent="addUsername" placeholder="e.g. alexvance, avance_dev" class="ops-input flex-1">
-                    <button type="button" wire:click="addUsername" class="btn-ops-secondary py-2.5 px-4 text-xs">
-                        Add Handle
-                    </button>
-                </div>
-
-                <!-- Chips -->
-                <div class="flex flex-wrap gap-2 pt-1">
-                    @foreach($usernames as $idx => $uname)
-                        <span class="ops-badge ops-badge-cyan">
-                            @<span>{{ $uname }}</span>
-                            <button type="button" wire:click="removeUsername({{ $idx }})" class="hover:text-danger ml-1">&times;</button>
-                        </span>
+            @if(count($names) > 0)
+                <ul class="mt-3 flex flex-wrap gap-2">
+                    @foreach($names as $index => $name)
+                        <li class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-sm text-ink">
+                            {{ $name }}
+                            <button type="button" wire:click="removeName({{ $index }})"
+                                    class="text-faint hover:text-danger" aria-label="Remove {{ $name }}">&times;</button>
+                        </li>
                     @endforeach
+                </ul>
+            @endif
+        </section>
+
+        <!-- Contact -->
+        <section class="card p-6">
+            <h2 class="text-sm font-semibold text-ink">Contact</h2>
+
+            <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                <div>
+                    <label for="email" class="label mb-1.5">Email</label>
+                    <input id="email" type="email" wire:model="primary_email" class="input"
+                           placeholder="you@example.com" autocomplete="email" />
+                    @error('primary_email') <p class="mt-1 text-xs text-danger">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="phone" class="label mb-1.5">Phone number</label>
+                    <input id="phone" type="text" wire:model="phone_number" class="input"
+                           placeholder="+1 555 010 2030" autocomplete="tel" />
+                    @error('phone_number') <p class="mt-1 text-xs text-danger">{{ $message }}</p> @enderror
                 </div>
             </div>
+        </section>
 
-            <!-- Mandatory Consent Gate -->
-            <div class="p-4 rounded-lg bg-canvas border border-[#E9B45D]/30 space-y-2">
-                <div class="flex items-start gap-3">
-                    <input type="checkbox" id="consent" wire:model="consent_confirmed" class="mt-1 rounded bg-surface border-white/20 text-accent focus:ring-0">
-                    <label for="consent" class="font-sans text-xs text-body leading-relaxed cursor-pointer">
-                        <strong class="text-ink font-mono">Explicit Authorization & Ownership:</strong>
-                        I certify that I am the verified owner of this personal information, or have received explicit legal authorization to perform an OSINT privacy assessment on their behalf.
-                    </label>
+        <!-- Usernames -->
+        <section class="card p-6">
+            <h2 class="text-sm font-semibold text-ink">Usernames</h2>
+            <p class="mt-1 text-xs leading-relaxed text-body">
+                Every handle you use publicly. These are what the live scan actually checks.
+            </p>
+
+            <div class="mt-4 flex flex-col gap-2 sm:flex-row">
+                <input type="text" wire:model="username_input" wire:keydown.enter.prevent="addUsername"
+                       class="input flex-1" placeholder="e.g. alexvance" autocomplete="off" spellcheck="false" />
+                <button type="button" wire:click="addUsername" class="btn-secondary shrink-0">Add username</button>
+            </div>
+            @error('username_input') <p class="mt-1 text-xs text-danger">{{ $message }}</p> @enderror
+
+            @if(count($usernames) > 0)
+                <ul class="mt-3 flex flex-wrap gap-2">
+                    @foreach($usernames as $index => $username)
+                        <li class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 font-mono text-sm text-ink">
+                            &#64;{{ $username }}
+                            <button type="button" wire:click="removeUsername({{ $index }})"
+                                    class="text-faint hover:text-danger" aria-label="Remove {{ $username }}">&times;</button>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </section>
+
+        <!-- Quick checks -->
+        <section class="card p-6">
+            <h2 class="text-sm font-semibold text-ink">Quick checks</h2>
+            <p class="mt-1 text-xs leading-relaxed text-body">
+                Optional. Both run outside the scan and neither stores a password.
+            </p>
+
+            <div class="mt-4 grid gap-3 sm:grid-cols-2">
+                <a href="{{ route('password.check') }}" class="flex items-start gap-3 rounded-control border border-line bg-surface p-4 hover:border-accent">
+                    <span class="material-symbols-outlined text-[20px] text-accent" aria-hidden="true">password</span>
+                    <span>
+                        <span class="block text-sm font-medium text-ink">Password checker</span>
+                        <span class="mt-0.5 block text-xs leading-relaxed text-body">See if a password appeared in a known breach.</span>
+                    </span>
+                </a>
+
+                <div class="rounded-control border border-line bg-surface p-4">
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-[20px] text-accent" aria-hidden="true">public</span>
+                        <div class="min-w-0 flex-1">
+                            <span class="block text-sm font-medium text-ink">IP checker</span>
+                            @if($detected_ip)
+                                <p class="mt-1 font-mono text-xs text-ink">{{ $detected_ip }}</p>
+                                <a href="{{ route('ip.check') }}" class="mt-1 inline-block text-xs font-medium text-accent hover:underline">See what it reveals</a>
+                            @else
+                                <p class="mt-0.5 text-xs leading-relaxed text-body">What the network you are on reveals.</p>
+                                <button type="button" wire:click="detectIp" wire:loading.attr="disabled"
+                                        class="mt-2 text-xs font-medium text-accent hover:underline">
+                                    <span wire:loading.remove wire:target="detectIp">Get my IP</span>
+                                    <span wire:loading wire:target="detectIp">Checking…</span>
+                                </button>
+                                @if($ip_error)
+                                    <p class="mt-1 text-xs text-warning">{{ $ip_error }}</p>
+                                @endif
+                            @endif
+                        </div>
+                    </div>
                 </div>
-                @error('consent_confirmed') <span class="text-danger text-[10px] block">{{ $message }}</span> @enderror
             </div>
+        </section>
 
-            <!-- Submit -->
-            <div class="pt-2 flex items-center justify-between">
-                <a href="{{ route('dashboard') }}" class="text-faint hover:text-ink">Cancel</a>
-                <button type="submit" class="btn-ops-primary py-3 px-6 text-xs">
-                    <span>Deploy Footprint Scan</span>
-                    <span class="material-symbols-outlined text-[16px]">radar</span>
-                </button>
+        <!-- Consent -->
+        <section class="card border-warning/30 p-6">
+            <div class="flex items-start gap-3">
+                <input type="checkbox" id="consent" wire:model="consent_confirmed"
+                       class="mt-0.5 rounded border-line text-accent focus:ring-accent" />
+                <label for="consent" class="text-xs leading-relaxed text-body">
+                    <span class="font-medium text-ink">I own this information or have permission to check it.</span>
+                    I understand TraceLess looks at public sources only, never asks for passwords, and that removal
+                    cannot be guaranteed for every source.
+                </label>
             </div>
-        </form>
-    </div>
+            @error('consent_confirmed') <p class="mt-2 text-xs text-danger">{{ $message }}</p> @enderror
+        </section>
+
+        <div class="flex items-center justify-between">
+            <a href="{{ route('dashboard') }}" class="text-sm text-body hover:text-ink">Cancel</a>
+            <button type="submit" class="btn-primary">
+                <span class="material-symbols-outlined text-[18px]" aria-hidden="true">radar</span>
+                <span>Save and scan</span>
+            </button>
+        </div>
+    </form>
 </div>
