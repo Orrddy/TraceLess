@@ -87,7 +87,7 @@ class ScanOrchestrator
                     'started_at' => $scan->started_at ?? now(),
                 ]);
 
-            $report = $this->discoverFindings($profile);
+            $report = $this->discoverFindings($profile, $scan->type === 'deep_scan' ? 'deep' : 'curated');
             $findings = $report['findings'];
             $grouped = collect($findings)->groupBy('source');
 
@@ -244,7 +244,7 @@ class ScanOrchestrator
     /**
      * @return array{findings: array<int, array<string, mixed>>, sources: array<int, array<string, mixed>>|null}
      */
-    protected function discoverFindings(IdentityProfile $profile): array
+    protected function discoverFindings(IdentityProfile $profile, string $mode = 'curated'): array
     {
         if (config('traceless.demo_mode')) {
             return ['findings' => $this->demoAdapter->findingsFor($profile), 'sources' => null];
@@ -260,17 +260,47 @@ class ScanOrchestrator
             ->take(max(1, (int) config('traceless.scan.max_usernames', 5)))
             ->values();
 
-        if ($usernames->isEmpty()) {
+        $identifiers = $usernames->map(fn ($value) => ['username', $value]);
+
+        // A deep scan also probes the address itself. Those checks prove an
+        // account exists rather than exposing data, so the worker marks every
+        // result unverified and the UI presents it that way.
+        if ($mode === 'deep') {
+            $emails = $profile->publicIdentifiers()
+                ->where('type', 'email')
+                ->where('is_monitored', true)
+                ->pluck('value')
+                ->map(fn ($value) => trim((string) $value))
+                ->filter()
+                ->unique()
+                ->take(max(1, (int) config('traceless.scan.max_emails', 1)))
+                ->values();
+
+            $identifiers = $identifiers->merge($emails->map(fn ($value) => ['email', $value]));
+        }
+
+        if ($identifiers->isEmpty()) {
             return ['findings' => [], 'sources' => []];
         }
 
         $findings = [];
         $sources = [];
 
-        // Every monitored handle is checked, not just the first. Each call is a
-        // separate worker process, so the cap in config keeps runtime bounded.
-        foreach ($usernames as $username) {
-            $report = $this->pythonScanner->scanReport('username', $username, true);
+        // Every monitored identifier is checked. Each call is its own worker
+        // process, and the caps in config keep the runtime bounded.
+        foreach ($identifiers as [$type, $value]) {
+            try {
+                $report = $this->pythonScanner->scanReport($type, $value, true, $mode);
+            } catch (\Throwable $exception) {
+                // One identifier failing must not discard the others.
+                \Illuminate\Support\Facades\Log::warning('scan_identifier_failed', [
+                    'type' => $type,
+                    'mode' => $mode,
+                    'reason' => get_class($exception),
+                ]);
+
+                continue;
+            }
 
             foreach ($report['findings'] ?? [] as $finding) {
                 $findings[] = $finding;

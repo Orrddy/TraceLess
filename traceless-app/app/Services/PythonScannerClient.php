@@ -32,14 +32,14 @@ class PythonScannerClient
      *
      * @return array{findings: array<int, array<string, mixed>>, sources: array<int, array<string, mixed>>}
      */
-    public function scanReport(string $identifierType, string $identifier, bool $consent): array
+    public function scanReport(string $identifierType, string $identifier, bool $consent, string $mode = 'curated'): array
     {
         if (! $consent) {
             throw new RuntimeException('Consent is required before scanning.');
         }
 
-        if ($identifierType !== 'username') {
-            throw new RuntimeException('Only public usernames can be verified by the scanner.');
+        if (! in_array($identifierType, ['username', 'email', 'phone'], true)) {
+            throw new RuntimeException('This identifier type cannot be verified by the scanner.');
         }
 
         $script = config('traceless.python.scanner');
@@ -47,14 +47,21 @@ class PythonScannerClient
             throw new RuntimeException('Scanner worker is not installed.');
         }
 
-        $result = Process::timeout((int) config('traceless.python.timeout', 90))
-            ->run([
-                config('traceless.python.binary', 'python'),
-                $script,
-                $identifierType,
-                $identifier,
-                'true',
-            ]);
+        $deep = $mode === 'deep';
+        $arguments = [
+            config('traceless.python.binary', 'python'),
+            $script,
+            $identifierType,
+            $identifier,
+            'true',
+        ];
+
+        if ($deep) {
+            $arguments[] = '--deep';
+        }
+
+        $result = Process::timeout((int) config($deep ? 'traceless.python.deep_timeout' : 'traceless.python.timeout', $deep ? 420 : 90))
+            ->run($arguments);
 
         if (! $result->successful()) {
             Log::warning('python_scanner_failed', [

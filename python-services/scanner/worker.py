@@ -425,7 +425,11 @@ class ScannerService:
 
     # ------------------------------------------------------------------ scan
     def scan(
-        self, identifier_type: str, identifier_value: str, consent_verified: bool = False
+        self,
+        identifier_type: str,
+        identifier_value: str,
+        consent_verified: bool = False,
+        mode: str = "curated",
     ) -> Dict[str, Any]:
         if not consent_verified:
             return {
@@ -433,11 +437,20 @@ class ScannerService:
                 "message": "Consent not confirmed. TraceLess requires explicit ownership authorization.",
             }
 
+        if identifier_type == "email":
+            return self._scan_deep(identifier_type, identifier_value)
+
+        if identifier_type == "phone":
+            return self._scan_phone(identifier_value)
+
         if identifier_type != "username":
             return {
                 "status": "error",
-                "message": "Only public usernames can be verified. Emails and passwords are never sent to sources.",
+                "message": "Only public usernames, emails and phone numbers can be checked.",
             }
+
+        if mode == "deep":
+            return self._scan_deep(identifier_type, identifier_value)
 
         slug = _slug_identifier(identifier_value)
         if slug is None:
@@ -511,6 +524,116 @@ class ScannerService:
         }
 
 
+    # ------------------------------------------------------- deep adapters
+    def _scan_deep(self, identifier_type: str, identifier_value: str) -> Dict[str, Any]:
+        """Run the vendored user-scanner (username categories or email modules).
+
+        These are account probes, not page fetches, so every finding is marked
+        unverified: it shows an account exists, not that personal data is exposed.
+        """
+
+        try:
+            import user_scanner_bridge as bridge
+        except Exception:  # noqa: BLE001 - optional dependency
+            return {
+                "status": "error",
+                "message": "The deep scanner is not installed on this host.",
+            }
+
+        try:
+            if identifier_type == "email":
+                rows = bridge.scan_email(identifier_value)
+            else:
+                rows = bridge.scan_username(identifier_value, bridge.categories_from_env())
+        except Exception as exc:  # noqa: BLE001 - never leak stack traces
+            return {
+                "status": "error",
+                "message": f"The deep scanner failed to complete: {type(exc).__name__}.",
+            }
+
+        is_email = identifier_type == "email"
+        findings: List[Dict[str, Any]] = []
+        sources: List[Dict[str, Any]] = []
+
+        for row in rows:
+            outcome = _text(row.get("outcome")) or STATUS_UNKNOWN
+            if outcome not in (STATUS_FOUND, STATUS_NOT_FOUND, STATUS_UNKNOWN, STATUS_SKIPPED):
+                outcome = STATUS_UNKNOWN
+
+            source_name = _text(row.get("source")) or "Unknown source"
+            checked_url = _text(row.get("url"))
+            category = "public_directory" if is_email else _normalize_category(row.get("category"))
+
+            sources.append(
+                {
+                    "name": source_name,
+                    "category": category,
+                    "outcome": outcome,
+                    "checked_url": checked_url,
+                    "http_status": None,
+                    "rule": "account_probe",
+                    "reason": row.get("reason"),
+                    "elapsed_ms": None,
+                }
+            )
+
+            if outcome != STATUS_FOUND:
+                continue
+
+            findings.append(
+                {
+                    "source": source_name,
+                    "category": category,
+                    "identifier_type": identifier_type,
+                    "identifier_value": identifier_value,
+                    "url": checked_url,
+                    "confidence": 0.7 if is_email else 0.8,
+                    "risk": "moderate",
+                    "removal_method": "manual_instructions",
+                    "status": "needs_user_action",
+                    "title": (
+                        f"Account registered with this email on {source_name}"
+                        if is_email
+                        else f"Public profile on {source_name}"
+                    ),
+                    "description": (
+                        "The service responded as if an account exists for this address."
+                        if is_email
+                        else "The service responded as if this handle has a public profile."
+                    ),
+                    "action_guidance": (
+                        f"Review the account on {source_name}. Remove it if it is unused, or reduce what "
+                        "the profile makes public."
+                    ),
+                    "verification_status": "unverified",
+                    "evidence": {
+                        "rule": "account_probe",
+                        "checked_url": checked_url,
+                        "provider": "user-scanner",
+                        "reason": row.get("reason"),
+                        "checked_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                    },
+                }
+            )
+
+        return {
+            "status": "success",
+            "identifier": identifier_value,
+            "identifier_type": identifier_type,
+            "checked_count": len(rows),
+            "total_found": len(findings),
+            "findings": findings,
+            "sources": sources,
+            "attributions": ATTRIBUTIONS,
+        }
+
+    def _scan_phone(self, identifier_value: str) -> Dict[str, Any]:
+        return {
+            "status": "error",
+            "message": "Phone number checks are not configured on this host.",
+        }
+
+
 def _flag(args: List[str], name: str, default: Optional[str] = None) -> Optional[str]:
     if name in args:
         try:
@@ -535,7 +658,7 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
             json.dumps(
                 {
                     "status": "error",
-                    "message": "Usage: worker.py <id_type> <id_value> [consent:true|false] [--offline]",
+                    "message": "Usage: worker.py <id_type> <id_value> [consent:true|false] [--deep] [--offline]",
                 }
             )
         )
@@ -556,7 +679,8 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
     )
 
     try:
-        payload = service.scan(identifier_type, identifier_value, consent_verified=consent)
+        mode = "deep" if "--deep" in args else "curated"
+        payload = service.scan(identifier_type, identifier_value, consent_verified=consent, mode=mode)
     except Exception:  # noqa: BLE001 - never leak stack traces to the caller
         payload = {"status": "error", "message": "Scanner failed to complete."}
 

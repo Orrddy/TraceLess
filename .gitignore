@@ -43,3 +43,6 @@ traceless-app/.tmp_ping.php
 python-services/upstream/
 python-services/**/__pycache__/
 python-services/**/*.pyc
+
+# Local Python environment for the scanner service
+python-services/.venv/

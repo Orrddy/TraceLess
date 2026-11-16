@@ -79,14 +79,14 @@ class MultiUsernameScanTest extends TestCase
 
         $scanner = Mockery::mock(PythonScannerClient::class);
         $scanner->shouldReceive('scanReport')
-            ->with('username', 'alpha', true)
+            ->with('username', 'alpha', true, 'curated')
             ->once()
             ->andReturn($this->reportFor('alpha', 'GitHub', [
                 ['name' => 'GitHub', 'category' => 'developer_profile', 'outcome' => 'found', 'http_status' => 200],
                 ['name' => 'Reddit', 'category' => 'social_profile', 'outcome' => 'not_found'],
             ]));
         $scanner->shouldReceive('scanReport')
-            ->with('username', 'beta', true)
+            ->with('username', 'beta', true, 'curated')
             ->once()
             ->andReturn($this->reportFor('beta', 'Keybase', [
                 ['name' => 'GitHub', 'category' => 'developer_profile', 'outcome' => 'not_found'],

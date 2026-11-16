@@ -24,6 +24,8 @@ return [
         'scanner' => env('TRACELESS_SCANNER_SCRIPT', base_path('../python-services/scanner/worker.py')),
         'ai' => env('TRACELESS_AI_SCRIPT', base_path('../python-services/local-ai/safety_engine.py')),
         'timeout' => (int) env('TRACELESS_PYTHON_TIMEOUT', 90),
+        // Deep scans probe hundreds of sources and run in the queue.
+        'deep_timeout' => (int) env('TRACELESS_PYTHON_DEEP_TIMEOUT', 420),
         'max_findings' => (int) env('TRACELESS_MAX_FINDINGS', 250),
     ],
 
@@ -50,6 +52,8 @@ return [
         // Live scans check every monitored username. Each one runs the worker
         // as a separate process, so the count bounds the wall-clock time.
         'max_usernames' => (int) env('TRACELESS_MAX_USERNAMES', 5),
+        // Deep scans also check the primary email; one keeps runtime bounded.
+        'max_emails' => (int) env('TRACELESS_MAX_EMAILS', 1),
         // A scan that has not been touched for this long is treated as dead.
         'stale_minutes' => (int) env('TRACELESS_SCAN_STALE_MINUTES', 15),
     ],
