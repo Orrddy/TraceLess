@@ -19,7 +19,9 @@ class RunScanJob implements ShouldQueue
     public int $tries = 1;
 
     // Live scans run the worker once per monitored username; allow for several.
-    public int $timeout = 300;
+    // Deep scans probe hundreds of sources (username categories, email modules
+    // and phone modules), so the budget has to cover minutes, not seconds.
+    public int $timeout = 600;
 
     public function __construct(public Scan $scan) {}
 
