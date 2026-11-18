@@ -1,0 +1,35 @@
+# Caddy config for one weeny.cloud release.
+#
+# `run.sh` exports APP_ROOT and PHP_SOCKET before calling this file, so the same
+# config works for every release directory and for a local copy.
+#
+# weeny terminates TLS in front of the app, so this server speaks plain HTTP on
+# :8080 only. Do not add automatic HTTPS here; the outer proxy owns certificates.
+
+:8080 {
+	root * {$APP_ROOT}/public
+
+	encode gzip
+
+	php_fastcgi unix/{$PHP_SOCKET} {
+		# Slow boots on small instances; give the app room without hanging forever.
+		read_timeout 120s
+		write_timeout 120s
+	}
+
+	file_server
+
+	# Health probe used by `weeny push --health`.
+	handle /up {
+		respond "ok" 200
+	}
+
+	header {
+		-Server
+	}
+
+	log {
+		output stderr
+		format console
+	}
+}

@@ -46,3 +46,6 @@ python-services/**/*.pyc
 
 # Local Python environment for the scanner service
 python-services/.venv/
+
+# Locally staged weeny release
+.release/
