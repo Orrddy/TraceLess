@@ -33,9 +33,8 @@ Write-Host '== staging application'
 # /XD /XF are relative to the source; .env must never be uploaded.
 $robocopyArgs = @(
     $AppDir, $Release, '/E', '/NFL', '/NDL', '/NJH', '/NJS',
-    '/XD', 'node_modules', '.git', 'vendor', 'storage\logs', 'tests', '.github',
-    '/XF', '.env', '.phpunit.result.cache'
-)
+    '/XD', 'node_modules', '.git', 'vendor', 'storage\logs', 'storage\framework', 'bootstrap\cache', 'tests', '.github',
+    '/XF', '.env', '.phpunit.result.cache')
 & robocopy @robocopyArgs | Out-Null
 if ($LASTEXITCODE -ge 8) { throw "robocopy failed with $LASTEXITCODE" }
 
@@ -66,8 +65,9 @@ Write-Host '== pushing'
 Push-Location $Root
 try {
     npx weeny-cloud push $Release $AppName `
-        --build 'composer install --no-dev --optimize-autoloader --no-interaction' `
+        --build 'COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader --no-interaction' `
         --health 'curl -fsS http://127.0.0.1:8080/up' `
+        --startup-timeout 180 `
         -- 'bash deploy/run.sh'
     if ($LASTEXITCODE -ne 0) { throw "weeny push failed with $LASTEXITCODE" }
 }

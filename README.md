@@ -43,13 +43,21 @@ no scan runs without a recorded ownership attestation.
 | 2026-11-15 | Made the test suite reproducible (`LOG_CHANNEL=stderr`, documented `VIEW_COMPILED_PATH`) |
 | 2026-11-15 | Verification screen: code no longer shown on-screen, six digits auto-submit, resend countdown ticks |
 | 2026-11-15 | Live scanning: every monitored username is checked, 5 dataset name mismatches fixed (19 → 23 sources), large pages truncate instead of failing |
+| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
 | 2026-11-16 | Backend recovery: dead scans no longer lock an account, credential page stops claiming "all clear", report links are signed, and destructive database commands are blocked against the Neon production branch |
+| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
 | 2026-11-16 | Local development moved to SQLite (Neon production branch no longer shared) and every response now carries CSP, nosniff, frame denial, referrer and permissions policies, with HSTS over TLS |
+| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
 | 2026-11-16 | All five authorization policies enforced through Gate (plus a new AlertPolicy), retention no longer orphans findings, deletion strips audit IPs and keeps consent evidence, and account-change codes are rate limited per user |
+| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
 | 2026-11-16 | Monitoring is real: live scans now raise alerts and advance the schedule, subscriptions with no next run are picked up, failures back off instead of retrying hourly, and a reappearing record reopens its removal task |
+| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
 | 2026-11-16 | Notifications reach the user: alerts, scan completion and removal updates are emailed as well as stored, and the in-app alert panel is now mounted in the app shell |
+| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
 | 2026-11-16 | Real brand identity: an eroding-trace mark, favicon and app icon, a single <x-brand-logo> lockup across all layouts, and BRAND.md with the colour, spacing and misuse rules |
+| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
 | 2026-11-16 | Deep scans now check emails (~200 services) and phone numbers (5 registration probes) alongside usernames, all marked unverified because they prove an account exists rather than exposing data |
+| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
 | 2026-11-16 | Self-service tools added: a client-side password breach check (the password never leaves the browser), an IP exposure check, a one-click data reset for a fresh scan, and pressed/hover feedback on navigation and buttons |
 | 2026-11-15 | Consolidated documentation into this README and removed the design/export assets |
 

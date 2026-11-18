@@ -131,6 +131,7 @@ database survive.
 | Symptom | Cause |
 | --- | --- |
 | 502 from Caddy | PHP-FPM socket missing. Run `install.sh` again, or check `ls /run/php/` |
+| 500 with a guard message despite env being set | PHP-FPM does not inherit weeny's managed env. `run.sh` materialises it into the release `.env` and makes it readable by `www-data`; if you bypass `run.sh`, web requests boot with defaults and the production guard refuses |
 | 500 on every page | `APP_KEY` missing in `weeny env` |
 | Pages load, scans never move | Queue worker down: `journalctl -u weeny-traceless`, or `storage/logs/queue.log` |
 | "deep scanner is not installed" | `TRACELESS_PYTHON_BINARY` not set or venv missing |

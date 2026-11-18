@@ -10,6 +10,9 @@
 
 set -u
 
+# systemd units often run without HOME; `set -u` would otherwise abort here.
+export HOME="${HOME:-/root}"
+
 APP_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export APP_ROOT
 export PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
@@ -18,6 +21,39 @@ LOG_DIR="$APP_ROOT/storage/logs"
 mkdir -p "$LOG_DIR"
 
 log() { printf '[run] %s\n' "$*" >&2; }
+
+# --- Environment for PHP-FPM ---------------------------------------------
+# weeny injects the managed env into this start command only. PHP-FPM is its own
+# service and does not inherit it, so without a .env file web requests boot with
+# config defaults (demo mode on) and the production guard refuses to serve.
+# Writing the release .env here is what makes the web tier see the same config.
+materialise_env() {
+	[ -n "${APP_KEY:-}" ] || { log "APP_KEY missing; relying on an existing .env"; return 0; }
+
+	vars="APP_NAME APP_ENV APP_DEBUG APP_KEY APP_URL LOG_CHANNEL LOG_LEVEL
+	DB_CONNECTION DB_URL DB_SSLMODE DB_LIBPQ_OPTIONS DB_QUEUE_RETRY_AFTER
+	SESSION_DRIVER SESSION_SECURE_COOKIE CACHE_STORE QUEUE_CONNECTION
+	TRUSTED_PROXIES TRACELESS_DEMO_MODE TRACELESS_OTP_DEMO_DISPLAY
+	TRACELESS_PYTHON_BINARY TRACELESS_SCANNER_SCRIPT TRACELESS_MAX_USERNAMES
+	TRACELESS_MAX_EMAILS TRACELESS_MAX_PHONES TRACELESS_BREACH_PROVIDER
+	MAIL_MAILER MAIL_HOST MAIL_PORT MAIL_SCHEME MAIL_USERNAME MAIL_PASSWORD
+	MAIL_FROM_ADDRESS MAIL_FROM_NAME"
+
+	umask 077
+	: >"$APP_ROOT/.env"
+	for name in $vars; do
+		eval "value=\${$name:-}"
+		[ -n "$value" ] || continue
+		escaped=$(printf '%s' "$value" | sed "s/'/\\\\'/g")
+		printf "%s='%s'\n" "$name" "$escaped" >>"$APP_ROOT/.env"
+	done
+	chmod 640 "$APP_ROOT/.env"
+	# PHP-FPM runs as www-data; a root-only .env would be invisible to the web tier.
+	chown root:www-data "$APP_ROOT/.env" 2>/dev/null || true
+	log "materialised $(wc -l <"$APP_ROOT/.env") env entries for php-fpm"
+}
+
+materialise_env
 
 # --- PHP-FPM --------------------------------------------------------------
 if ! ls /run/php/*.sock >/dev/null 2>&1; then
@@ -48,13 +84,19 @@ export TRACELESS_SCANNER_SCRIPT="${TRACELESS_SCANNER_SCRIPT:-$APP_ROOT/python-se
 # --- Writable paths -------------------------------------------------------
 # Releases arrive over ssh and can lose the write bit. Best effort only: the
 # process user may not own them, and weeny sets sane defaults.
-chmod -R u+w storage bootstrap/cache 2>/dev/null || true
 mkdir -p storage/app/public storage/framework/sessions storage/framework/views storage/framework/cache storage/logs 2>/dev/null || true
+chown -R root:www-data storage bootstrap/cache 2>/dev/null || true
+chmod -R g+rwX storage bootstrap/cache 2>/dev/null || true
 
 # --- Database -------------------------------------------------------------
 # Migrations are safe to run on every release start (they are additive and
-# `--force` is required in production). Never fail the boot because of them.
-(cd "$APP_ROOT" && php artisan migrate --force) >>"$LOG_DIR/migrate.log" 2>&1 || log "migrate failed, see storage/logs/migrate.log"
+# `--force` is required in production). Never fail the boot because of them, but
+# surface the reason in the app output: a failed first migration means every page
+# will 500, so the cause must be visible in `journalctl`/deploy output.
+if ! (cd "$APP_ROOT" && php artisan migrate --force) >>"$LOG_DIR/migrate.log" 2>&1; then
+	log "migrate failed:"
+	tail -n 30 "$LOG_DIR/migrate.log" >&2 || true
+fi
 
 (cd "$APP_ROOT" && php artisan storage:link) >>"$LOG_DIR/migrate.log" 2>&1 || true
 
