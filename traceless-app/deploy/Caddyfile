@@ -12,6 +12,12 @@
 	encode gzip
 
 	php_fastcgi unix/{$PHP_SOCKET} {
+		# weeny terminates TLS in front of this server, so Caddy only ever sees
+		# plain HTTP. Tell PHP the request was secure; otherwise Laravel builds
+		# asset() URLs as http:// and the browser blocks them as mixed content.
+		env HTTPS "on"
+		env SERVER_PORT "443"
+
 		# Slow boots on small instances; give the app room without hanging forever.
 		read_timeout 120s
 		write_timeout 120s
