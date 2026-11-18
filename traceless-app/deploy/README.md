@@ -136,6 +136,7 @@ database survive.
 | Pages load, scans never move | Queue worker down: `journalctl -u weeny-traceless`, or `storage/logs/queue.log` |
 | "deep scanner is not installed" | `TRACELESS_PYTHON_BINARY` not set or venv missing |
 | OTP never arrives | Mail env not set, or SMTP rejected; check `journalctl` for `mail` errors |
+| Page loads unstyled (HTML only) | Assets emitted as `http://` and blocked as mixed content. Caddy must tell PHP it is secure (`env HTTPS on` in `php_fastcgi`), and `ASSET_URL` should be the https origin |
 | 429 from HIBP / AbuseIPDB | Shared server IP rate limits; abuse checks are optional |
 
 ## Limits worth knowing
