@@ -6,11 +6,14 @@ use App\Models\Alert;
 use App\Models\AuditLog;
 use App\Models\Finding;
 use App\Models\IdentityProfile;
+use App\Models\OutboundEmail;
 use App\Models\RemovalTask;
 use App\Models\Scan;
 use App\Models\Subscription;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -28,6 +31,19 @@ class Overview extends Component
     public function mount(): void
     {
         abort_unless(Auth::user()?->isAdmin(), 403);
+    }
+
+    private function ageInMinutes(mixed $value): ?int
+    {
+        if (! is_string($value) || $value === '') {
+            return null;
+        }
+
+        try {
+            return (int) Carbon::parse($value)->diffInMinutes(now(), true);
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     public function render()
@@ -49,6 +65,10 @@ class Overview extends Component
             'subs_active' => Subscription::whereIn('status', ['active', 'trialing'])->count(),
             'queue_pending' => DB::table('jobs')->count(),
             'queue_failed' => DB::table('failed_jobs')->count(),
+            'queue_heartbeat_age' => $this->ageInMinutes(Cache::get('heartbeat:queue')),
+            'schedule_heartbeat_age' => $this->ageInMinutes(Cache::get('heartbeat:schedule')),
+            'email_sent_24h' => OutboundEmail::where('status', 'sent')->where('created_at', '>=', now()->subDay())->count(),
+            'email_failed_24h' => OutboundEmail::where('status', 'failed')->where('created_at', '>=', now()->subDay())->count(),
         ];
 
         return view('livewire.admin.overview', [

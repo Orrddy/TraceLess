@@ -112,6 +112,16 @@
                     <span class="material-symbols-outlined text-[20px]">history</span>
                     <span>Activity log</span>
                 </a>
+
+                <a href="{{ route('admin.failed-jobs') }}" class="nav-link {{ request()->routeIs('admin.failed-jobs') ? 'nav-link-active font-semibold' : '' }}">
+                    <span class="material-symbols-outlined text-[20px]">error</span>
+                    <span>Failed jobs</span>
+                </a>
+
+                <a href="{{ route('admin.email') }}" class="nav-link {{ request()->routeIs('admin.email') ? 'nav-link-active font-semibold' : '' }}">
+                    <span class="material-symbols-outlined text-[20px]">outgoing_mail</span>
+                    <span>Email delivery</span>
+                </a>
             @endif
         </nav>
 
@@ -219,6 +229,8 @@
                         <a href="{{ route('admin.overview') }}" class="nav-link">Admin overview</a>
                         <a href="{{ route('admin.users') }}" class="nav-link">Admin users</a>
                         <a href="{{ route('admin.activity') }}" class="nav-link">Activity log</a>
+                        <a href="{{ route('admin.failed-jobs') }}" class="nav-link">Failed jobs</a>
+                        <a href="{{ route('admin.email') }}" class="nav-link">Email delivery</a>
                     @endif
                 </nav>
             </div>

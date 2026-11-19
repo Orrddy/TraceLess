@@ -43,11 +43,19 @@ class OtpService
             'user_agent' => $userAgent ? mb_substr($userAgent, 0, 255) : null,
         ]);
 
-        Mail::to($email)->send(new OtpCodeMail(
-            code: $code,
-            purpose: $purpose,
-            expiresInMinutes: (int) config('traceless.otp.expiry_minutes', 10),
-        ));
+        try {
+            Mail::to($email)->send(new OtpCodeMail(
+                code: $code,
+                purpose: $purpose,
+                expiresInMinutes: (int) config('traceless.otp.expiry_minutes', 10),
+            ));
+        } catch (\Throwable $exception) {
+            // Sign-in codes must never fail silently. Record the transport error
+            // for the operations panel, then let the caller surface the failure.
+            app(OutboundEmailRecorder::class)->recordFailed($email, 'TraceLess sign-in code', $exception);
+
+            throw $exception;
+        }
 
         // Transient value for demo display and tests. Never persisted.
         $otp->plainCode = $code;

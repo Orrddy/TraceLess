@@ -27,6 +27,50 @@
         @endforeach
     </div>
 
+    {{-- Operational heartbeats --}}
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        @php
+            $beat = function (?int $age): array {
+                if ($age === null) return ['Never seen', 'text-danger'];
+                if ($age <= 2) return ["{$age}m ago", 'text-success'];
+                if ($age <= 15) return ["{$age}m ago", 'text-warning'];
+                return ["{$age}m ago", 'text-danger'];
+            };
+            [$queueText, $queueClass] = $beat($stats['queue_heartbeat_age']);
+            [$schedulerText, $schedulerClass] = $beat($stats['schedule_heartbeat_age']);
+        @endphp
+
+        <div class="card p-4">
+            <p class="text-[11px] uppercase tracking-wide text-faint">Queue worker</p>
+            <p class="mt-1 font-display text-xl font-semibold {{ $queueClass }}">{{ $queueText }}</p>
+            <p class="mt-1 text-[11px] text-muted">Heartbeat from the worker</p>
+        </div>
+
+        <div class="card p-4">
+            <p class="text-[11px] uppercase tracking-wide text-faint">Scheduler</p>
+            <p class="mt-1 font-display text-xl font-semibold {{ $schedulerClass }}">{{ $schedulerText }}</p>
+            <p class="mt-1 text-[11px] text-muted">Heartbeat from schedule:run</p>
+        </div>
+
+        <a href="{{ route('admin.failed-jobs') }}" class="card p-4 transition hover:border-accent/40">
+            <p class="text-[11px] uppercase tracking-wide text-faint">Failed jobs</p>
+            <p class="mt-1 font-display text-xl font-semibold {{ $stats['queue_failed'] > 0 ? 'text-danger' : 'text-ink' }}">
+                {{ number_format($stats['queue_failed']) }}
+            </p>
+            <p class="mt-1 text-[11px] text-muted">{{ number_format($stats['queue_pending']) }} pending · open console</p>
+        </a>
+
+        <a href="{{ route('admin.email') }}" class="card p-4 transition hover:border-accent/40">
+            <p class="text-[11px] uppercase tracking-wide text-faint">Email (24h)</p>
+            <p class="mt-1 font-display text-xl font-semibold text-ink">
+                {{ number_format($stats['email_sent_24h']) }} sent
+            </p>
+            <p class="mt-1 text-[11px] {{ $stats['email_failed_24h'] > 0 ? 'text-danger' : 'text-muted' }}">
+                {{ number_format($stats['email_failed_24h']) }} failed · open delivery log
+            </p>
+        </a>
+    </div>
+
     {{-- Scan pipeline + queue --}}
     <div class="grid gap-4 lg:grid-cols-3">
         <div class="card p-5">
@@ -106,7 +150,9 @@
                 <tbody>
                     @forelse($recentScans as $scan)
                         <tr>
-                            <td class="px-5 py-2 font-mono text-faint">{{ $scan->id }}</td>
+                            <td class="px-5 py-2 font-mono text-faint">
+                                <a href="{{ route('admin.scans.show', $scan) }}" class="hover:text-accent">#{{ $scan->id }}</a>
+                            </td>
                             <td class="px-5 py-2 text-ink">
                                 {{ $scan->identityProfile?->full_name ?? 'Deleted profile' }}
                                 <span class="block text-[11px] text-faint">{{ $scan->identityProfile?->user?->email }}</span>

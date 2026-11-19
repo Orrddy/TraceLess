@@ -226,9 +226,17 @@ The admin area lives at `/admin` and is only reachable by accounts whose
 
 | Page | Purpose |
 | --- | --- |
-| `/admin` | Live operational counts (users, scans by status, findings, removals, alerts, plans, queue depth) plus recent scans, accounts and audit entries |
+| `/admin` | Live operational counts (users, scans by status, findings, removals, alerts, plans), worker/scheduler heartbeats, queue and email health |
 | `/admin/users` | Search, role filter, suspend/reactivate, role changes (super admin only) |
 | `/admin/activity` | The audit log with search, action and date filters |
+| `/admin/scans/{id}` | Per-scan forensics: every source outcome and block reason, findings, the failure message, retry and cancel |
+| `/admin/failed-jobs` | Dead-letter console: exception excerpt, retry, delete, retry all |
+| `/admin/email` | Delivery log for every outbound message, with transport errors |
+
+Silent failures are covered twice over: the queue worker and scheduler write
+heartbeats shown on the dashboard, and `ops:alert` (scheduled every ten minutes)
+emails administrators when the worker goes quiet, failed jobs appear, or outgoing
+mail starts failing.
 
 **Provisioning is CLI-only** — there is no web route that can grant admin, so a
 compromised client session cannot escalate:
