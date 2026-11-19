@@ -219,6 +219,33 @@ run it from a checkout that contains both directories.
 - **Secrets** live in `.env`, which is git-ignored; the repository contains only
   `.env.example` and `.env.staging.example`.
 
+## Administration
+
+The admin area lives at `/admin` and is only reachable by accounts whose
+`users.role` is `admin` or `super_admin`.
+
+| Page | Purpose |
+| --- | --- |
+| `/admin` | Live operational counts (users, scans by status, findings, removals, alerts, plans, queue depth) plus recent scans, accounts and audit entries |
+| `/admin/users` | Search, role filter, suspend/reactivate, role changes (super admin only) |
+| `/admin/activity` | The audit log with search, action and date filters |
+
+**Provisioning is CLI-only** — there is no web route that can grant admin, so a
+compromised client session cannot escalate:
+
+```bash
+php artisan admin:promote owner@example.com --role=super_admin   # or admin
+php artisan admin:revoke owner@example.com                       # refuses to remove the last admin
+```
+
+Rules enforced in the component, not just the UI: nobody can suspend or demote
+themselves, an `admin` cannot act on a `super_admin`, role changes require
+`super_admin`, and suspended accounts lose all authenticated access (`active`
+middleware). Two bypasses were closed during the security audit: Livewire actions
+skip route middleware, so each mutating method re-checks the actor; and admin
+components can be instantiated directly through `/livewire/update`, so each one
+guards in `mount()` as well.
+
 ## Third-party attribution
 
 Public-source discovery integrates [WhatsMyName](https://github.com/WebBreacher/WhatsMyName)
