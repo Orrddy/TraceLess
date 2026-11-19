@@ -19,7 +19,21 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $fillable = [
         'name',
         'email',
+        'role',
         'last_login_at',
+        'suspended_at',
+    ];
+
+    public const ROLE_CLIENT = 'client';
+
+    public const ROLE_ADMIN = 'admin';
+
+    public const ROLE_SUPER_ADMIN = 'super_admin';
+
+    public const ROLES = [
+        self::ROLE_CLIENT,
+        self::ROLE_ADMIN,
+        self::ROLE_SUPER_ADMIN,
     ];
 
     protected $hidden = [
@@ -31,7 +45,32 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
+            'suspended_at' => 'datetime',
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_SUPER_ADMIN], true);
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === self::ROLE_SUPER_ADMIN;
+    }
+
+    public function isSuspended(): bool
+    {
+        return $this->suspended_at !== null;
+    }
+
+    public function roleLabel(): string
+    {
+        return match ($this->role) {
+            self::ROLE_SUPER_ADMIN => 'Super admin',
+            self::ROLE_ADMIN => 'Admin',
+            default => 'Client',
+        };
     }
 
     protected function email(): Attribute

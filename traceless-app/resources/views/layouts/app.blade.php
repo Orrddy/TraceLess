@@ -94,6 +94,25 @@
                 <span class="material-symbols-outlined text-[20px]">settings</span>
                 <span>Settings</span>
             </a>
+
+            @if(auth()->user()?->isAdmin())
+                <p class="px-3 pb-1 pt-4 font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-warning">Administration</p>
+
+                <a href="{{ route('admin.overview') }}" class="nav-link {{ request()->routeIs('admin.overview') ? 'nav-link-active font-semibold' : '' }}">
+                    <span class="material-symbols-outlined text-[20px]">monitoring</span>
+                    <span>Admin overview</span>
+                </a>
+
+                <a href="{{ route('admin.users') }}" class="nav-link {{ request()->routeIs('admin.users') ? 'nav-link-active font-semibold' : '' }}">
+                    <span class="material-symbols-outlined text-[20px]">group</span>
+                    <span>Users</span>
+                </a>
+
+                <a href="{{ route('admin.activity') }}" class="nav-link {{ request()->routeIs('admin.activity') ? 'nav-link-active font-semibold' : '' }}">
+                    <span class="material-symbols-outlined text-[20px]">history</span>
+                    <span>Activity log</span>
+                </a>
+            @endif
         </nav>
 
         @php $sidebarProfile = auth()->user()->latestProfile(); @endphp
@@ -196,6 +215,11 @@
                     <a href="{{ route('ip.check') }}" class="nav-link">IP check</a>
                     <a href="{{ route('reports') }}" class="nav-link">Reports</a>
                     <a href="{{ route('settings') }}" class="nav-link">Settings</a>
+                    @if(auth()->user()?->isAdmin())
+                        <a href="{{ route('admin.overview') }}" class="nav-link">Admin overview</a>
+                        <a href="{{ route('admin.users') }}" class="nav-link">Admin users</a>
+                        <a href="{{ route('admin.activity') }}" class="nav-link">Activity log</a>
+                    @endif
                 </nav>
             </div>
             <a href="{{ route('scans.create') }}" class="btn-primary w-full">New scan</a>

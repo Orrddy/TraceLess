@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\EnsureAccountActive;
+use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -13,6 +15,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Admin area guard. Access is decided server-side, never by hiding links.
+        $middleware->alias([
+            'admin' => EnsureUserIsAdmin::class,
+            'active' => EnsureAccountActive::class,
+        ]);
+
         // Behind a load balancer, proxy or CDN, request()->ip() is the proxy's
         // address unless the proxy is trusted. Without this, every visitor looks
         // like the server itself.

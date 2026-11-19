@@ -3,6 +3,9 @@
 use App\Http\Controllers\AccountExportController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReportDownloadController;
+use App\Livewire\Admin\ActivityLog;
+use App\Livewire\Admin\Overview;
+use App\Livewire\Admin\UsersIndex;
 use App\Livewire\Credentials\CredentialExposures;
 use App\Livewire\Dashboard\Dashboard;
 use App\Livewire\Findings\FindingShow;
@@ -59,7 +62,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->n
 | Authenticated command center
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
     Route::get('/identity', IdentityIndex::class)->name('identity');
@@ -91,4 +94,20 @@ Route::middleware('auth')->group(function () {
     // Self-service tools. The password check runs entirely in the browser.
     Route::view('/tools/password-check', 'pages.password-check')->name('password.check');
     Route::get('/tools/ip-check', IpCheck::class)->name('ip.check');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Administration
+|--------------------------------------------------------------------------
+|
+| Access is enforced by the `admin` middleware on these routes, and again
+| inside every mutating Livewire action: Livewire actions are dispatched
+| through /livewire/update, which does not pass through route middleware.
+|
+*/
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', Overview::class)->name('overview');
+    Route::get('/users', UsersIndex::class)->name('users');
+    Route::get('/activity', ActivityLog::class)->name('activity');
 });
