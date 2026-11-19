@@ -9,7 +9,7 @@
         </a>
     </x-page-header>
 
-    @if($errors->any())
+    @if(isset($errors) && $errors->any())
         <div class="rounded-control border border-danger/30 bg-danger/[0.07] p-4 text-sm text-danger" role="alert">
             {{ $errors->first() }}
         </div>
