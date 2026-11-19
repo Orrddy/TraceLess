@@ -126,20 +126,34 @@ Re-run `push.ps1`. A new release directory is created, migrations run on start,
 and weeny keeps the previous release for rollback. Environment values and the
 database survive.
 
-## Mail and database constraints on this host
+## Mail
 
-**Port 465 is firewalled** and the mail provider rejects SMTP auth from the server
-IP on 587, so production mail runs through **Resend's HTTPS API**:
+Production mail goes through the **DirectAdmin mailbox relay** on the DA host, not
+through this box:
 
 ```
-MAIL_MAILER=resend
-MAIL_FROM_ADDRESS=onboarding@resend.dev
-RESEND_KEY=re_...
+MAIL_MAILER=smtp
+MAIL_HOST=server3.nairahost.ng
+MAIL_PORT=587            # 465 is firewalled on this server
+MAIL_SCHEME=smtp         # STARTTLS
+MAIL_USERNAME=traceless@orrddy.store
+MAIL_PASSWORD=...        # weeny env only, never in the repo
+MAIL_FROM_ADDRESS=traceless@orrddy.store
 ```
 
-Until `wuhanrcb.net` is verified at [resend.com/domains](https://resend.com/domains),
-Resend only delivers to the account owner's address. Verify the domain and switch
-`MAIL_FROM_ADDRESS` to `traceless@wuhanrcb.net` to reach any user.
+Verified from this box with a raw `AUTH LOGIN` handshake: `235 Authentication
+succeeded`, and the app delivered codes to two different external recipients. The
+relay limits the account to `MAILMAX=100` messages per hour, which is fine for OTP
+but not for bulk mail.
+
+For deliverability the sending domain still needs DNS records even though the app
+only sends: an SPF record authorising the relay's IP (`82.38.4.100`), the DKIM TXT
+from the DirectAdmin panel, and a DMARC policy. Without SPF/DKIM, one-time codes
+usually land in spam. For inbound mail (replies, password resets initiated by the
+provider) the domain also needs `MX` and `mail` records pointing at the DA host.
+
+Resend remains a working fallback (`MAIL_MAILER=resend`, `RESEND_KEY=...`), but a
+send-only key without a verified domain only delivers to the account owner.
 
 **`DB_URL` must be Neon's direct endpoint, not the `-pooler` one.** Behind
 PHP-FPM, PgBouncer occasionally hands over a connection whose transaction was
