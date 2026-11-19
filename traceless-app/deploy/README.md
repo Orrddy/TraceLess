@@ -126,6 +126,28 @@ Re-run `push.ps1`. A new release directory is created, migrations run on start,
 and weeny keeps the previous release for rollback. Environment values and the
 database survive.
 
+## Mail and database constraints on this host
+
+**Port 465 is firewalled** and the mail provider rejects SMTP auth from the server
+IP on 587, so production mail runs through **Resend's HTTPS API**:
+
+```
+MAIL_MAILER=resend
+MAIL_FROM_ADDRESS=onboarding@resend.dev
+RESEND_KEY=re_...
+```
+
+Until `wuhanrcb.net` is verified at [resend.com/domains](https://resend.com/domains),
+Resend only delivers to the account owner's address. Verify the domain and switch
+`MAIL_FROM_ADDRESS` to `traceless@wuhanrcb.net` to reach any user.
+
+**`DB_URL` must be Neon's direct endpoint, not the `-pooler` one.** Behind
+PHP-FPM, PgBouncer occasionally hands over a connection whose transaction was
+aborted, and every later query fails with `SQLSTATE[25P02] In failed sql
+transaction`. The direct endpoint avoids it and is also the correct choice for the
+long-running queue worker. Do not set `DB_LIBPQ_OPTIONS=endpoint=...` with the
+pooled host on libpq 16 — Neon rejects it with an SNI mismatch.
+
 ## Troubleshooting
 
 | Symptom | Cause |
@@ -133,9 +155,11 @@ database survive.
 | 502 from Caddy | PHP-FPM socket missing. Run `install.sh` again, or check `ls /run/php/` |
 | 500 with a guard message despite env being set | PHP-FPM does not inherit weeny's managed env. `run.sh` materialises it into the release `.env` and makes it readable by `www-data`; if you bypass `run.sh`, web requests boot with defaults and the production guard refuses |
 | 500 on every page | `APP_KEY` missing in `weeny env` |
+| 500 only on sign-in / OTP | Mail cannot be sent: 465 is firewalled, SMTP auth is rejected from this IP, or the Resend sender is unverified |
+| `SQLSTATE[25P02] In failed sql transaction` | Poisoned pooled Neon connection; use the direct endpoint for `DB_URL` |
+| Nothing in any log | FPM discards worker stderr unless `catch_workers_output = yes`; `install.sh` sets it |
 | Pages load, scans never move | Queue worker down: `journalctl -u weeny-traceless`, or `storage/logs/queue.log` |
 | "deep scanner is not installed" | `TRACELESS_PYTHON_BINARY` not set or venv missing |
-| OTP never arrives | Mail env not set, or SMTP rejected; check `journalctl` for `mail` errors |
 | Page loads unstyled (HTML only) | Assets emitted as `http://` and blocked as mixed content. Caddy must tell PHP it is secure (`env HTTPS on` in `php_fastcgi`), and `ASSET_URL` should be the https origin |
 | 429 from HIBP / AbuseIPDB | Shared server IP rate limits; abuse checks are optional |
 

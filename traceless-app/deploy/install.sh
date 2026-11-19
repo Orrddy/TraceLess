@@ -47,6 +47,9 @@ if [ -f "$POOL" ]; then
 	sed -i 's/^pm.max_children = .*/pm.max_children = 4/' "$POOL"
 	sed -i 's/^pm.process_idle_timeout = .*/pm.process_idle_timeout = 10s/' "$POOL"
 	sed -i 's/^;pm.max_requests = .*/pm.max_requests = 500/' "$POOL"
+	# Without this, PHP worker stderr is discarded and Laravel's error log never
+	# reaches the journal or the FPM log. It is the only way to see a 500.
+	sed -i 's/^;catch_workers_output = .*/catch_workers_output = yes/' "$POOL"
 fi
 
 # Composer and artisan need more than the CLI default on a 1 GB box.
