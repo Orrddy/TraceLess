@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Finding;
 use App\Models\IdentityProfile;
-use App\Models\Scan;
 use App\Models\User;
 use App\Services\ConsentService;
 use App\Services\PythonScannerClient;

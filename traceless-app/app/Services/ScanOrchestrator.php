@@ -303,9 +303,9 @@ class ScanOrchestrator
         foreach ($identifiers as [$type, $value]) {
             try {
                 $report = $this->pythonScanner->scanReport($type, $value, true, $mode);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 // One identifier failing must not discard the others.
-                \Illuminate\Support\Facades\Log::warning('scan_identifier_failed', [
+                Log::warning('scan_identifier_failed', [
                     'type' => $type,
                     'mode' => $mode,
                     'reason' => get_class($exception),
