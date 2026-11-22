@@ -9,10 +9,17 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   tests:
     name: Tests & style
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: traceless-app
 
     steps:
       - name: Checkout
@@ -29,7 +36,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.composer/cache
-          key: composer-${{ hashFiles('composer.lock') }}
+          key: composer-${{ hashFiles('traceless-app/composer.lock') }}
           restore-keys: composer-
 
       - name: Install PHP dependencies
@@ -45,6 +52,7 @@ jobs:
         with:
           node-version: "20"
           cache: npm
+          cache-dependency-path: traceless-app/package-lock.json
 
       - name: Build front-end
         run: |
@@ -57,23 +65,46 @@ jobs:
       - name: Run tests
         run: php artisan test
 
-  docker:
-    name: Docker image
+  image:
+    name: Container image
     runs-on: ubuntu-latest
     needs: tests
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # The upstream scanner datasets are not committed (licensing and size),
+      # so the image build clones them at a known point in time.
+      - name: Stage scanner datasets
+        run: |
+          rm -rf python-services/upstream
+          mkdir -p python-services/upstream
+          git clone --depth 1 https://github.com/WebBreacher/WhatsMyName.git python-services/upstream/WhatsMyName
+          git clone --depth 1 https://github.com/kaifcodec/user-scanner.git python-services/upstream/user-scanner
+          git clone --depth 1 https://github.com/kaifcodec/phonsint.git python-services/upstream/phonsint
+          du -sh python-services/upstream
+
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build image
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
+          file: traceless-app/Dockerfile
           target: runtime
-          push: false
+          platforms: linux/amd64
+          push: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/traceless:latest
+            ghcr.io/${{ github.repository_owner }}/traceless:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

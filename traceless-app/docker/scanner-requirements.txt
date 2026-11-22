@@ -1,0 +1,11 @@
+# Python packages required by the vendored scanner engines.
+#
+# The curated username scan (WhatsMyName) uses only the standard library. These
+# are needed for deep scans: user-scanner probes usernames and emails, phonsint
+# probes phone numbers.
+httpx[http2]>=0.27,<0.29
+socksio>=1.0,<2
+colorama>=0.4,<1
+rich>=13
+curl_cffi>=0.7,<1
+phonenumbers>=8.13

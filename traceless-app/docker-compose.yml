@@ -2,7 +2,10 @@ name: traceless
 
 x-app: &app
   build:
-    context: .
+    # Context is the repository root so the image can include python-services
+    # and its scanner datasets.
+    context: ..
+    dockerfile: traceless-app/Dockerfile
     target: runtime
   image: traceless-app:latest
   env_file:
@@ -10,16 +13,17 @@ x-app: &app
   restart: unless-stopped
   volumes:
     - storage:/var/www/html/storage
-    # The worker and its offline WhatsMyName dataset live outside the Laravel
-    # root, so they are mounted rather than baked into the image.
-    - ../python-services:/opt/traceless/python-services:ro
 
 services:
   web:
     <<: *app
     environment:
       APP_ROLE: web
-      TRACELESS_SCANNER_SCRIPT: /opt/traceless/python-services/scanner/worker.py
+    # Single-role supervisor; queue and scheduler are separate services below.
+    command:
+      - supervisord
+      - "-c"
+      - /etc/supervisord-role.conf
     ports:
       - "8080:8080"
 
@@ -27,15 +31,14 @@ services:
     <<: *app
     environment:
       APP_ROLE: queue
-      TRACELESS_SCANNER_SCRIPT: /opt/traceless/python-services/scanner/worker.py
     command:
       - php
       - artisan
       - queue:work
       - --queue=scans,default
       - --sleep=3
-      - --tries=3
-      - --max-time=3600
+      - --tries=1
+      - --timeout=610
     healthcheck:
       disable: true
 
@@ -43,7 +46,6 @@ services:
     <<: *app
     environment:
       APP_ROLE: scheduler
-      TRACELESS_SCANNER_SCRIPT: /opt/traceless/python-services/scanner/worker.py
     command:
       - php
       - artisan
@@ -58,7 +60,6 @@ services:
       - tools
     environment:
       APP_ROLE: migrate
-      TRACELESS_SCANNER_SCRIPT: /opt/traceless/python-services/scanner/worker.py
     command:
       - php
       - artisan
