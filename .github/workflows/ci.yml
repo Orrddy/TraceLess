@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
@@ -51,6 +51,20 @@ jobs:
             tail -n 25 /tmp/composer.log
             exit 1
           fi
+
+      - name: Record composer failure
+        if: failure()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p .ci
+          cp /tmp/composer.log .ci/composer-failure.txt 2>/dev/null || echo "no log captured" > .ci/composer-failure.txt
+          git config user.name "ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          git add -f .ci/composer-failure.txt
+          git commit -m "ci: record composer failure [skip ci]" || true
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push origin HEAD:main || true
 
       - name: Prepare environment
         run: |
