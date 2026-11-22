@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
   packages: write
 
 jobs:
@@ -20,6 +20,12 @@ jobs:
     defaults:
       run:
         working-directory: traceless-app
+    env:
+      # Composer runs `artisan package:discover` before .env exists. In
+      # production that boots the safety guard (demo mode looks enabled) and
+      # aborts the install. APP_ENV=local keeps the boot out of production mode;
+      # phpunit.xml still forces APP_ENV=testing for the test run.
+      APP_ENV: local
 
     steps:
       - name: Checkout
@@ -40,31 +46,7 @@ jobs:
           restore-keys: composer-
 
       - name: Install PHP dependencies
-        run: |
-          set +e
-          composer install --prefer-dist --no-interaction --no-progress -vvv 2>&1 | tee /tmp/composer.log
-          status=${PIPESTATUS[0]}
-          if [ "$status" -ne 0 ]; then
-            msg=$(tail -n 25 /tmp/composer.log | tr '\n' '|' | head -c 3500)
-            echo "::error title=Composer install failed::$msg"
-            echo "=== composer failure tail ==="
-            tail -n 25 /tmp/composer.log
-            exit 1
-          fi
-
-      - name: Record composer failure
-        if: failure()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mkdir -p .ci
-          cp /tmp/composer.log .ci/composer-failure.txt 2>/dev/null || echo "no log captured" > .ci/composer-failure.txt
-          git config user.name "ci-bot"
-          git config user.email "ci-bot@users.noreply.github.com"
-          git add -f .ci/composer-failure.txt
-          git commit -m "ci: record composer failure [skip ci]" || true
-          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git push origin HEAD:main || true
+        run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Prepare environment
         run: |
