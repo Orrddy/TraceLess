@@ -8,10 +8,12 @@ reappearing exposure.
 The product is passwordless and consent-gated: no account passwords exist, and
 no scan runs without a recorded ownership attestation.
 
-> **Status: active development, not production ready.**
-> The application runs, the test suites pass, and the core scan-to-removal
-> journey works end to end in demo mode. Monetisation, credential monitoring
-> and the interface refresh are unfinished. See [Where the project stands](#where-the-project-stands).
+> **Status: v1.0 public beta — live at https://traceless.orrddy.store.**
+> Free during the beta: scans, deep scans and monitoring are open to every
+> account. The app runs on Altare as a single container (nginx + PHP-FPM +
+> queue + scheduler) with Neon Postgres, the multi-provider IP intelligence
+> engine and a Vercel-style light/dark interface. Billing arrives in v2.0.
+> Current state and next steps: [PROGRESS.md](PROGRESS.md).
 
 ---
 
@@ -35,62 +37,40 @@ no scan runs without a recorded ownership attestation.
 
 | Date | Change |
 |---|---|
-| 2026-11-14 | Audited the codebase, reconstructed the development timeline, recorded the outstanding work |
-| 2026-11-15 | Put the project under version control — tag `baseline-2026-11-14` marks the audited snapshot |
-| 2026-11-15 | Removed the local-only `/__preview/dashboard` route that signed in as the seeded demo user |
-| 2026-11-15 | Added a fail-closed production guard: the app refuses to boot with `APP_DEBUG`, demo mode, or on-screen OTP codes enabled in production (9 tests) |
-| 2026-11-15 | Rebuilt the front-end assets — the previous build predated the last layout edits |
-| 2026-11-15 | Made the test suite reproducible (`LOG_CHANNEL=stderr`, documented `VIEW_COMPILED_PATH`) |
-| 2026-11-15 | Verification screen: code no longer shown on-screen, six digits auto-submit, resend countdown ticks |
-| 2026-11-15 | Live scanning: every monitored username is checked, 5 dataset name mismatches fixed (19 → 23 sources), large pages truncate instead of failing |
-| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
-| 2026-11-16 | Backend recovery: dead scans no longer lock an account, credential page stops claiming "all clear", report links are signed, and destructive database commands are blocked against the Neon production branch |
-| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
-| 2026-11-16 | Local development moved to SQLite (Neon production branch no longer shared) and every response now carries CSP, nosniff, frame denial, referrer and permissions policies, with HSTS over TLS |
-| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
-| 2026-11-16 | All five authorization policies enforced through Gate (plus a new AlertPolicy), retention no longer orphans findings, deletion strips audit IPs and keeps consent evidence, and account-change codes are rate limited per user |
-| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
-| 2026-11-16 | Monitoring is real: live scans now raise alerts and advance the schedule, subscriptions with no next run are picked up, failures back off instead of retrying hourly, and a reappearing record reopens its removal task |
-| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
-| 2026-11-16 | Notifications reach the user: alerts, scan completion and removal updates are emailed as well as stored, and the in-app alert panel is now mounted in the app shell |
-| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
-| 2026-11-16 | Real brand identity: an eroding-trace mark, favicon and app icon, a single <x-brand-logo> lockup across all layouts, and BRAND.md with the colour, spacing and misuse rules |
-| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
-| 2026-11-16 | Deep scans now check emails (~200 services) and phone numbers (5 registration probes) alongside usernames, all marked unverified because they prove an account exists rather than exposing data |
-| 2026-11-18 | Deployed live on weeny.cloud: https://traceless-vwf6.onweeny.com (PHP-FPM + Caddy + queue + scheduler, Neon DB, live scanner), with the deploy kit fixed for real-server constraints |
-| 2026-11-16 | Self-service tools added: a client-side password breach check (the password never leaves the browser), an IP exposure check, a one-click data reset for a fresh scan, and pressed/hover feedback on navigation and buttons |
-| 2026-11-15 | Consolidated documentation into this README and removed the design/export assets |
-
+| 2026-11-14 | Audited the codebase, reconstructed the timeline, recorded outstanding work; tagged `baseline-2026-11-14` |
+| 2026-11-15 | Production guard, reproducible test suite, honest verification screen, policy enforcement, retention + deletion hardening, live monitoring and alerts, brand identity |
+| 2026-11-16 | Deep scans for usernames/emails/phones, self-service tools (password + IP check), data reset, notifications |
+| 2026-11-18 | First production deploy (weeny.cloud), real-server deploy constraints fixed |
+| 2026-11-19 | Administration panel: roles, users, activity log; operations surface: scan inspector, failed-job console, email delivery log, worker/scheduler heartbeats and `ops:alert` |
+| 2026-11-23 | Migrated production to Altare (Docker image, custom domain, HTTPS), stopped the old weeny instance |
+| 2026-11-23 | CI pipeline moved to the repo root and made green (tests + GHCR image builds) |
+| 2026-11-23 | Vercel-style dashboard and app-wide light/dark brand; landing page rebuilt with product film, marquee, checks slider, rotating Nevera wordmark, typing headline and two word-eating crawlers |
+| 2026-11-23 | IP intelligence engine: four providers, 48h cache, single-flight analysis, weighted risk score, public JSON endpoint, honest 503/422 states, enriched IP tool with cache countdown |
+| 2026-11-23 | Free v1.0 beta gate (deep scans + monitoring for every account), deep-scan wall-clock budget, cache pruning, queued notifications and mail-failure recording |
+| 2026-11-24+ | Resend sender verification in production, uptime monitoring, backups, legal copy, secret rotation, live deep-scan QA |
 ### Verified right now
 
-- **59 PHP tests** and **14 Python tests** pass.
-- All **9 database migrations** apply cleanly.
-- `/`, `/login`, `/register`, `/privacy`, `/terms`, `/security` and the `/up`
-  health check return 200; `/dashboard` redirects guests to sign-in.
+- **212 PHP tests / 923 assertions** and **14 Python tests** pass; Pint is clean.
+- All migrations apply cleanly (including the IP intelligence cache and metrics tables).
+- `https://traceless.orrddy.store` serves the app over HTTPS with valid certificates:
+  `/up`, `/`, `/login` return 200; `/dashboard` redirects guests; admin pages are role-gated.
+- The CI workflow on `main` runs the suite and publishes `ghcr.io/orrddy/traceless` on every push.
+### Next up (before the 10 December beta)
 
-### Next up
-
-1. **Scan failure recovery** — a worker that dies mid-scan currently leaves the
-   scan active forever and blocks the account from starting another one.
-2. **Honest credential state** — the credentials screen implies "all clear"
-   when no breach provider is configured.
-3. **Demo labelling everywhere** — demo rows on the dashboard, findings list and
-   credentials page are not marked as demo.
-4. **Finish the interface refresh** — ~20 screens still use the superseded
-   class vocabulary, and light panels remain inside the dark theme.
+1. **Production environment** — paste `traceless-app/deploy/altare.env` into the Altare app (Resend sender `TracelessBot <do-not-reply@orrddy.store>`, IP provider keys, beta flags) and redeploy the latest image.
+2. **Email deliverability proof** — sign in with Gmail and Outlook; confirm inbox vs spam.
+3. **Live QA** — one deep scan end-to-end under the beta gate, dashboard/findings/settings in both themes, mobile widths.
+4. **Resilience** — external uptime monitor, Neon restore drill, nightly backup of `/data` reports.
+5. **Legal + support** — business name, country, support address, subprocessor list on the privacy page.
+6. **Security** — rotate the Altare SFTP password, API tokens and provider keys; decide public vs private repo.
+7. **v2.0 scope** — billing (Bachs), waitlist, image/face deep scans.
 
 ### Open decisions
 
-- **Commercial model** — free-only launch, manual invoicing, or a payment
-  provider before launch.
-- **Credential monitoring** — integrate a breach-metadata provider, or remove
-  the feature from the product surface until one exists.
-- **Hosting** — production host, domain, and a transactional email domain.
-- **Scanner topology** — one host running app and worker, or a dedicated
-  scanner host.
-
----
-
+- **Launch model** — confirmed: free public beta on 10 December, paid plans in v2.0.
+- **Repo visibility** — currently public; decide whether to make it private before launch.
+- **Monitoring plan gate** — free during beta via `TRACELESS_BETA=true`; v2.0 restores plan checks.
+- **Second provider fallback for mail** — Resend primary; keep the DirectAdmin relay as a documented fallback.
 ## Repository layout
 
 ```

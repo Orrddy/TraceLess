@@ -2,65 +2,101 @@
 
 namespace App\Livewire\Tools;
 
-use App\Services\AbuseIpdbService;
 use App\Services\AuditService;
-use App\Services\IpReputationService;
+use App\Services\IpIntelligence\IpAddressNormalizer;
+use App\Services\IpIntelligence\IpIntelligenceService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use Throwable;
 
+/**
+ * Network intelligence tool.
+ *
+ * Backed by the same multi-provider engine the landing page uses: cache-first,
+ * 48h persistent cache, single-flight analysis, and honest "unavailable" states
+ * when a provider is missing or silent. The page never invents a field.
+ */
 class IpCheck extends Component
 {
     public string $ip = '';
 
-    public ?array $result = null;
+    /** idle | warming | ready | unavailable */
+    public string $state = 'idle';
 
-    /** AbuseIPDB signal, when a key is configured. */
-    public ?array $abuse = null;
+    public ?array $result = null;
 
     public ?string $error = null;
 
-    public ?string $abuseError = null;
-
     public function mount(): void
     {
-        // The address this request actually came from, which is the one the user
-        // is most likely asking about.
-        $this->ip = (string) request()->ip();
+        $candidate = IpAddressNormalizer::normalize((string) request()->ip());
+
+        $this->ip = $candidate ?? '';
     }
 
-    public function check(IpReputationService $lookup, AbuseIpdbService $abuse): void
+    public function useMyIp(): void
+    {
+        $this->ip = IpAddressNormalizer::normalize((string) request()->ip()) ?? '';
+        $this->check();
+    }
+
+    public function check(IpIntelligenceService $service): void
     {
         $this->validate([
-            'ip' => ['nullable', 'ip'],
+            'ip' => ['required', 'string', 'max:45'],
+        ], [
+            'ip.required' => 'Enter an IP address to check.',
         ]);
 
         $this->error = null;
         $this->result = null;
-        $this->abuse = null;
-        $this->abuseError = null;
+        $this->state = 'idle';
 
-        try {
-            $this->result = $lookup->lookup($this->ip !== '' ? $this->ip : null);
-        } catch (Throwable $exception) {
-            $this->error = $exception->getMessage();
+        $normalized = IpAddressNormalizer::normalize(trim($this->ip));
+
+        if ($normalized === null) {
+            $this->error = 'That is not a public IPv4 or IPv6 address. Private, reserved and loopback ranges have no public network record.';
 
             return;
         }
 
-        if (config('traceless.ip_lookup.abuseipdb_key')) {
-            try {
-                $this->abuse = $abuse->check($this->result['ip']);
-            } catch (Throwable $exception) {
-                // The geo half succeeded, so keep it and report the missing half.
-                $this->abuseError = $exception->getMessage();
-            }
+        $this->ip = $normalized;
+        $this->resolve($service);
+    }
+
+    /** Called by wire:poll while an analysis is warming. */
+    public function refresh(IpIntelligenceService $service): void
+    {
+        if ($this->state !== 'warming' || $this->ip === '') {
+            return;
         }
+
+        $this->resolve($service);
+    }
+
+    private function resolve(IpIntelligenceService $service): void
+    {
+        $result = $service->lookup($this->ip);
+
+        if ($result['status'] === 'unavailable') {
+            $this->state = 'unavailable';
+            $this->error = 'Network intelligence providers are not configured yet, so there is nothing honest to show.';
+
+            return;
+        }
+
+        if ($result['status'] === 'warming') {
+            $this->state = 'warming';
+
+            return;
+        }
+
+        $this->result = $result['data'];
+        $this->state = 'ready';
 
         app(AuditService::class)->log(
             Auth::id(),
             'ip_lookup',
-            'IP exposure lookup run for '.$this->result['ip'].'.',
+            'Network intelligence lookup run for '.$this->ip.'.',
             request()->ip(),
         );
     }
@@ -68,6 +104,6 @@ class IpCheck extends Component
     public function render()
     {
         return view('livewire.tools.ip-check')
-            ->layout('layouts.app', ['title' => 'IP check // TraceLess']);
+            ->layout('layouts.app', ['title' => 'Network intelligence // TraceLess']);
     }
 }

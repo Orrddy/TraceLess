@@ -3,7 +3,7 @@
 @section('title', 'TraceLess · Know what is public about you')
 
 @section('content')
-<div class="mx-auto max-w-[1200px] px-5 sm:px-8">
+<div class="mx-auto max-w-[1200px] px-5 sm:px-8" data-landing>
 
     {{-- HERO --}}
     <section class="grid items-center gap-12 py-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:py-20">
@@ -13,11 +13,12 @@
                 <span class="v-pill">Free during beta</span>
             </div>
 
-            <h1 class="mt-6 max-w-xl text-[clamp(2.5rem,5vw,4rem)] font-semibold leading-[1.02] tracking-[-0.045em]">
-                <span class="bg-gradient-to-b from-[#171717] to-[#555] bg-clip-text text-transparent dark:from-white dark:to-[#9aa3b2]">Know what the internet already knows about you.</span>
+            <h1 class="mt-6 max-w-xl text-[clamp(2.5rem,5vw,4rem)] font-semibold leading-[1.02] tracking-[-0.045em]" style="min-height: 3.1em">
+                <span class="sr-only">Know what the internet already knows about you.</span>
+                <span aria-hidden="true" class="bg-gradient-to-b from-[#171717] to-[#555] bg-clip-text text-transparent dark:from-white dark:to-[#9aa3b2]"><span data-typewriter data-text="Know what the internet already knows about you."></span><span data-typewriter-cursor class="tw-cursor is-typing" aria-hidden="true">|</span></span>
             </h1>
 
-            <p class="mt-5 max-w-lg text-[15px] leading-relaxed text-body">
+            <p class="subtitle-loop mt-5 max-w-lg text-[15px] leading-relaxed text-body">
                 TraceLess finds the profiles, directories and public records that connect to your identity,
                 proves each match against its source, and shows the evidence behind it. No passwords, ever.
             </p>
@@ -68,6 +69,7 @@
                         if (payload.status === 'ready' && payload.data) {
                             this.data = payload.data;
                             this.state = 'ready';
+                            this.startCountdown();
                             return;
                         }
                         this.state = 'warming';
@@ -95,6 +97,23 @@
                     if (grade === 'A' || grade === 'B') return 'v-dot-green';
                     if (grade === 'C') return 'v-dot-amber';
                     return 'v-dot-red';
+                },
+                remaining: '',
+                countdownTimer: null,
+                startCountdown() {
+                    clearInterval(this.countdownTimer);
+                    const update = () => {
+                        const target = this.data && this.data.expires_at ? new Date(this.data.expires_at).getTime() : NaN;
+                        if (Number.isNaN(target)) { this.remaining = '—'; return; }
+                        const ms = target - Date.now();
+                        if (ms <= 0) { this.remaining = 'ready now'; clearInterval(this.countdownTimer); return; }
+                        const hours = Math.floor(ms / 3600000);
+                        const minutes = Math.floor((ms % 3600000) / 60000);
+                        const seconds = Math.floor((ms % 60000) / 1000);
+                        this.remaining = hours + 'h ' + minutes + 'm ' + (seconds < 10 ? '0' : '') + seconds + 's';
+                    };
+                    update();
+                    this.countdownTimer = setInterval(update, 1000);
                 }
              }"
              x-init="init()"
@@ -197,7 +216,7 @@
 
                 <p class="mt-4 border-t border-line/60 pt-3 text-[11px] leading-relaxed text-muted">
                     <span x-text="providerCount() > 0 ? providerCount() + ' of ' + providerTotal() + ' sources responded' : 'No public source responded yet'"></span>
-                    · missing fields stay empty rather than guessed.
+                    · Cached for 48h · fresh scan in <span class="font-medium text-ink" x-text="remaining || '—'"></span>
                     <a href="{{ route('ip.check') }}" class="v-link ml-1">Full report →</a>
                 </p>
 
@@ -208,21 +227,35 @@
         </div>
     </section>
 
-    {{-- PRODUCT FILM --}}
-    <section class="pb-6">
-        <div class="v-card relative overflow-hidden">
+    {{-- PRODUCT FILM (water-ripple distortion) --}}
+    <section class="pb-3">
+        <div class="v-card relative overflow-hidden" data-ripple>
             <video class="aspect-video w-full object-cover" autoplay muted loop playsinline preload="metadata" aria-label="TraceLess product film">
                 <source src="{{ asset('assets/videos/hero-intro.mp4') }}" type="video/mp4">
             </video>
-            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent"></div>
-            <div class="absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-3 p-5 sm:p-6">
+            <div class="pointer-events-none absolute inset-0 z-[6] bg-gradient-to-t from-black/60 via-black/5 to-transparent"></div>
+            <div class="film-caption pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-3 p-5 sm:p-6">
                 <div class="text-white">
                     <p class="text-[10px] uppercase tracking-[0.18em] text-white/70">Product film</p>
                     <p class="mt-1 text-base font-medium sm:text-lg">How TraceLess finds what is public.</p>
                 </div>
-                <span class="rounded-full bg-white/10 px-2.5 py-1 text-[11px] text-white/80 backdrop-blur">Muted loop</span>
+                <span class="rounded-full bg-white/10 px-2.5 py-1 text-[11px] text-white/80 backdrop-blur">Move your cursor across the film</span>
             </div>
         </div>
+    </section>
+
+    {{-- INTERACTIVE CRAWLERS --}}
+    <section class="border-y border-line/70 py-7" aria-label="Interactive crawlers">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+            <p class="v-kicker">Live specimen · crawlers on public words</p>
+            <p class="text-[11px] text-muted">Hover to steer them · click a word to feed</p>
+        </div>
+        <div data-crawlers class="mt-4 flex flex-wrap gap-x-7 gap-y-2 font-[family-name:'Geist_Mono',ui-monospace,monospace] text-[13px] sm:text-[15px]">
+            @foreach(['exposure', 'broker', 'breach', 'username', 'phone', 'profile'] as $word)
+                <span data-crawler-word data-word="{{ $word }}" class="crawler-word">{{ $word }}</span>
+            @endforeach
+        </div>
+        <p class="mt-3 text-[11px] leading-relaxed text-muted">Crawlers chew on words, not people. No page content leaves your browser.</p>
     </section>
 
     {{-- TRUST STRIP (marquee) --}}

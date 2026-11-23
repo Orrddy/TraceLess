@@ -14,6 +14,7 @@ use App\Models\Scan;
 use App\Models\User;
 use App\Services\ConsentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -59,50 +60,106 @@ class ToolsAndResetTest extends TestCase
         $this->assertStringContainsString('https://api.pwnedpasswords.com', $csp);
     }
 
-    public function test_the_ip_check_returns_network_details(): void
+    private function seedIpCache(array $dataOverrides = []): void
     {
-        Http::fake([
-            'ipinfo.io/*' => Http::response([
-                'ip' => '8.8.8.8',
-                'city' => 'Lagos',
-                'region' => 'Lagos',
-                'country' => 'NG',
-                'org' => 'AS37027 Example Networks',
-                'timezone' => 'Africa/Lagos',
-            ], 200),
+        config([
+            'traceless.ip_intelligence.providers.ipapi_is.key' => 'test-ipapi',
+            'traceless.ip_intelligence.providers.proxycheck.key' => 'test-proxycheck',
+            'traceless.ip_intelligence.providers.abuseipdb.key' => 'test-abuseipdb',
+            'traceless.ip_intelligence.providers.ip2location.key' => 'test-ip2location',
         ]);
 
+        $data = array_merge([
+            'ip' => '8.8.8.8',
+            'ip_version' => 4,
+            'country' => 'United States',
+            'country_code' => 'US',
+            'region' => 'California',
+            'city' => 'Mountain View',
+            'postal_code' => null,
+            'latitude' => 37.4,
+            'longitude' => -122.1,
+            'timezone' => 'America/Los_Angeles',
+            'isp' => 'Google LLC',
+            'organisation' => 'Google LLC',
+            'asn' => 'AS15169',
+            'asn_organisation' => 'Google LLC',
+            'network_range' => '8.8.8.0/24',
+            'connection_type' => 'hosting',
+            'classification' => 'hosting',
+            'datacenter' => true,
+            'is_vpn' => false,
+            'is_proxy' => false,
+            'is_tor' => false,
+            'is_residential_proxy' => false,
+            'is_open_proxy' => false,
+            'is_hosting_proxy' => false,
+            'anonymous' => false,
+            'abuse_confidence' => 82,
+            'abuse_reports' => 14,
+            'abuse_last_reported' => '2026-11-01T10:00:00+00:00',
+            'abuse_categories' => ['18'],
+            'blacklist' => [],
+            'confidence' => 100,
+            'risk_score' => 34,
+            'risk_grade' => 'C',
+            'risk_classification' => 'moderate',
+            'reasons' => ['Datacenter network'],
+            'sources' => ['ipapi.is', 'AbuseIPDB'],
+            'provider_status' => ['ipapi_is' => 'ok', 'proxycheck' => 'ok', 'abuseipdb' => 'ok', 'ip2location' => 'ok'],
+            'analyzed_at' => now()->toIso8601String(),
+            'expires_at' => now()->addHours(47)->toIso8601String(),
+        ], $dataOverrides);
+
+        DB::table('ip_intelligence_cache')->insert([
+            'ip' => $data['ip'],
+            'ip_version' => $data['ip_version'],
+            'data' => json_encode($data),
+            'provider_results' => json_encode([]),
+            'provider_status' => json_encode($data['provider_status']),
+            'risk_score' => $data['risk_score'],
+            'risk_grade' => $data['risk_grade'],
+            'risk_classification' => $data['risk_classification'],
+            'confidence' => $data['confidence'],
+            'analysis_ms' => 1200,
+            'locked_until' => null,
+            'lock_token' => null,
+            'first_scanned_at' => now(),
+            'last_scanned_at' => now(),
+            'expires_at' => now()->addHours(47),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
+
+    public function test_the_ip_check_returns_cached_network_intelligence(): void
+    {
         $user = User::factory()->create();
+        $this->seedIpCache();
 
         Livewire::actingAs($user)
             ->test(IpCheck::class)
             ->set('ip', '8.8.8.8')
             ->call('check')
-            ->assertSee('Lagos')
-            ->assertSee('AS37027 Example Networks')
-            ->assertSet('error', null);
+            ->assertSet('state', 'ready')
+            ->assertSet('error', null)
+            ->assertSee('Mountain View')
+            ->assertSee('Google LLC')
+            ->assertSee('AS15169')
+            ->assertSee('Grade C')
+            ->assertSee('Cached for 48h');
     }
 
-    public function test_a_private_address_falls_back_to_the_public_one(): void
+    public function test_a_private_address_is_rejected_with_an_honest_message(): void
     {
-        Http::fake([
-            'ipinfo.io/json*' => Http::response([
-                'ip' => '41.203.72.10',
-                'city' => 'Lagos',
-                'country' => 'NG',
-                'org' => 'AS37027 Example Networks',
-            ], 200),
-        ]);
-
         $user = User::factory()->create();
 
         Livewire::actingAs($user)
             ->test(IpCheck::class)
             ->set('ip', '127.0.0.1')
             ->call('check')
-            ->assertSet('error', null)
-            ->assertSee('41.203.72.10')
-            ->assertSee('local or private');
+            ->assertSee('not a public IPv4 or IPv6 address')
+            ->assertSet('state', 'idle');
     }
 
     public function test_the_ip_check_rejects_an_invalid_address(): void
@@ -113,43 +170,16 @@ class ToolsAndResetTest extends TestCase
             ->test(IpCheck::class)
             ->set('ip', 'not-an-ip')
             ->call('check')
-            ->assertHasErrors('ip');
+            ->assertSee('not a public IPv4 or IPv6 address');
     }
 
-    public function test_the_ip_check_reports_a_provider_failure(): void
+    public function test_the_ip_check_reports_when_no_providers_are_configured(): void
     {
-        Http::fake(['ipinfo.io/*' => Http::response([], 429)]);
-
-        $user = User::factory()->create();
-
-        Livewire::actingAs($user)
-            ->test(IpCheck::class)
-            ->set('ip', '8.8.8.8')
-            ->call('check')
-            ->assertSee('rate limiting');
-    }
-
-    public function test_the_ip_check_shows_abuse_reports_when_configured(): void
-    {
-        config(['traceless.ip_lookup.abuseipdb_key' => 'test-key']);
-
-        Http::fake([
-            'ipinfo.io/*' => Http::response([
-                'ip' => '8.8.8.8', 'city' => 'Mountain View', 'country' => 'US', 'org' => 'AS15169 Google',
-            ], 200),
-            'api.abuseipdb.com/*' => Http::response([
-                'data' => [
-                    'ipAddress' => '8.8.8.8',
-                    'abuseConfidenceScore' => 82,
-                    'totalReports' => 14,
-                    'numDistinctUsers' => 9,
-                    'usageType' => 'Data Center/Web Hosting/Transit',
-                    'isp' => 'Google LLC',
-                    'isTor' => false,
-                    'isWhitelisted' => false,
-                    'lastReportedAt' => '2026-11-01T10:00:00+00:00',
-                ],
-            ], 200),
+        config([
+            'traceless.ip_intelligence.providers.ipapi_is.key' => '',
+            'traceless.ip_intelligence.providers.proxycheck.key' => '',
+            'traceless.ip_intelligence.providers.abuseipdb.key' => '',
+            'traceless.ip_intelligence.providers.ip2location.key' => '',
         ]);
 
         $user = User::factory()->create();
@@ -158,34 +188,36 @@ class ToolsAndResetTest extends TestCase
             ->test(IpCheck::class)
             ->set('ip', '8.8.8.8')
             ->call('check')
-            ->assertSee('Confidence 82/100')
+            ->assertSet('state', 'unavailable')
+            ->assertSee('not configured');
+    }
+
+    public function test_the_ip_check_shows_abuse_reputation_from_the_cache(): void
+    {
+        $user = User::factory()->create();
+        $this->seedIpCache();
+
+        Livewire::actingAs($user)
+            ->test(IpCheck::class)
+            ->set('ip', '8.8.8.8')
+            ->call('check')
+            ->assertSee('82')
             ->assertSee('14')
-            ->assertSee('Data Center/Web Hosting/Transit')
-            ->assertSet('abuseError', null);
+            ->assertSee('Datacenter network');
     }
 
-    public function test_a_failed_abuse_lookup_keeps_the_location_result(): void
+    public function test_the_ip_check_counts_down_to_the_next_fresh_scan(): void
     {
-        config(['traceless.ip_lookup.abuseipdb_key' => 'test-key']);
-
-        Http::fake([
-            'ipinfo.io/*' => Http::response([
-                'ip' => '8.8.8.8', 'city' => 'Mountain View', 'country' => 'US',
-            ], 200),
-            'api.abuseipdb.com/*' => Http::response(['errors' => []], 500),
-        ]);
-
         $user = User::factory()->create();
+        $this->seedIpCache();
 
         Livewire::actingAs($user)
             ->test(IpCheck::class)
             ->set('ip', '8.8.8.8')
             ->call('check')
-            ->assertSee('Mountain View')
-            ->assertSee('Abuse reports unavailable')
-            ->assertSee('500');
+            ->assertSee('Cached for 48h')
+            ->assertSee('fresh scan in');
     }
-
     public function test_resetting_clears_scan_data_but_keeps_the_identity_and_consent(): void
     {
         $profile = $this->profile();
