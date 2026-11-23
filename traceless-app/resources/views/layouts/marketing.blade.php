@@ -32,7 +32,7 @@
     <header class="sticky top-0 z-50 border-b border-line/70 bg-canvas/85 backdrop-blur-md">
         <div class="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-4 px-5 sm:px-8">
             <div class="flex items-center gap-8">
-                <x-brand-logo :href="route('home')" size="sm" />
+                <x-brand-logo :href="route('home')" size="sm" :spin="true" />
 
                 <nav class="hidden items-center gap-1 md:flex" aria-label="Site navigation">
                     <a href="{{ route('home') }}#capabilities" class="m-nav-link">What we check</a>
@@ -72,9 +72,9 @@
         <div class="mx-auto max-w-[1200px] px-5 py-14 sm:px-8">
             <div class="grid gap-10 md:grid-cols-4">
                 <div class="md:col-span-1">
-                    <x-brand-logo :href="route('home')" size="sm" />
+                    <x-brand-logo :href="route('home')" size="sm" :spin="true" />
                     <p class="mt-3 max-w-xs text-[13px] leading-relaxed text-body">
-                        Public-source privacy monitoring. Find what is already public about you, understand the risk, and remove what can be removed.
+                        Public-source privacy monitoring. Find what is already public about you and understand the risk.
                     </p>
                     <p class="mt-4 flex flex-wrap items-center gap-2">
                         <span class="v-pill">v1.0 · Beta</span>
@@ -113,7 +113,7 @@
 
             <div class="mt-12 flex flex-col items-start justify-between gap-3 border-t border-line/70 pt-6 text-[12px] text-muted sm:flex-row sm:items-center">
                 <span>&copy; {{ date('Y') }} TraceLess · public-source privacy monitoring</span>
-                <span>Attribution: WhatsMyName (CC BY-SA 4.0), user-scanner (MIT). Removal is not guaranteed.</span>
+                <span>Attribution: WhatsMyName (CC BY-SA 4.0), user-scanner (MIT). Scores are prioritisation aids, not statements of fact.</span>
             </div>
         </div>
     </footer>

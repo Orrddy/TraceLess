@@ -1,4 +1,4 @@
-@props(['size' => 'md', 'href' => null, 'tagline' => null])
+@props(['size' => 'md', 'href' => null, 'tagline' => null, 'spin' => false])
 
 @php
     $dimensions = [
@@ -10,9 +10,9 @@
 
 <a href="{{ $href ?? route('home') }}" {{ $attributes->merge(['class' => 'group inline-flex items-center gap-2.5']) }} aria-label="TraceLess home">
     <img src="{{ asset('brand/traceless-mark.svg') }}" alt="" width="44" height="44"
-         class="{{ $dimensions }} shrink-0 transition-transform duration-300 group-hover:scale-105" />
+         class="{{ $dimensions }} shrink-0 {{ $spin ? 'brand-mark-spin' : 'transition-transform duration-300 group-hover:scale-105' }}" />
     <span class="flex flex-col leading-tight">
-        <span class="font-display text-lg font-semibold tracking-[-0.045em] text-ink">TraceLess</span>
+        <span class="font-brand text-lg font-normal tracking-[-0.01em] text-ink">{{ config('app.name') === 'TraceLess' ? 'TRACELESS' : config('app.name') }}</span>
         @if($tagline)
             <span class="mt-0.5 text-xs text-faint">{{ $tagline }}</span>
         @endif

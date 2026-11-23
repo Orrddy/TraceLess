@@ -19,7 +19,7 @@
 
             <p class="mt-5 max-w-lg text-[15px] leading-relaxed text-body">
                 TraceLess finds the profiles, directories and public records that connect to your identity,
-                proves each match against its source, and gives you a removal path. No passwords, ever.
+                proves each match against its source, and shows the evidence behind it. No passwords, ever.
             </p>
 
             <div class="mt-7 flex flex-wrap items-center gap-2">
@@ -105,7 +105,7 @@
                     <span class="v-dot" x-bind:class="state === 'ready' ? 'v-dot-green' : (state === 'warming' ? 'v-dot-amber' : 'v-dot-gray')"></span>
                     <span class="text-[13px] font-medium">Your network, seen from here</span>
                 </div>
-                <span class="v-kicker" x-text="state === 'ready' ? 'Live · cached 48h' : (state === 'warming' ? 'Reading signals…' : 'Unavailable')"></span>
+                <span class="v-kicker" x-text="state === 'ready' ? 'Live check' : (state === 'warming' ? 'Reading signals…' : 'Unavailable')"></span>
             </div>
 
             {{-- Warming skeleton --}}
@@ -196,21 +196,49 @@
                 </div>
 
                 <p class="mt-4 border-t border-line/60 pt-3 text-[11px] leading-relaxed text-muted">
-                    <span x-text="providerCount() + ' of ' + providerTotal() + ' sources responded'"></span>
-                    · cached for 48 hours · missing fields stay empty rather than guessed.
+                    <span x-text="providerCount() > 0 ? providerCount() + ' of ' + providerTotal() + ' sources responded' : 'No public source responded yet'"></span>
+                    · missing fields stay empty rather than guessed.
                     <a href="{{ route('ip.check') }}" class="v-link ml-1">Full report →</a>
+                </p>
+
+                <p x-show="providerCount() === 0" class="mt-2 text-[11px] leading-relaxed text-warning">
+                    The public intelligence sources are briefly unavailable. Retry in a moment, or check any IP manually.
                 </p>
             </div>
         </div>
     </section>
 
-    {{-- TRUST STRIP --}}
-    <section class="border-t border-line/70 py-8">
-        <div class="grid grid-cols-2 gap-6 text-[12px] text-muted sm:grid-cols-4">
-            <div class="flex items-center gap-2"><span class="v-dot v-dot-green"></span>Evidence stored per finding</div>
-            <div class="flex items-center gap-2"><span class="v-dot v-dot-green"></span>Blocked sources read “unknown”</div>
-            <div class="flex items-center gap-2"><span class="v-dot v-dot-green"></span>Consent required before scanning</div>
-            <div class="flex items-center gap-2"><span class="v-dot v-dot-green"></span>Zero passwords requested</div>
+    {{-- PRODUCT FILM --}}
+    <section class="pb-6">
+        <div class="v-card relative overflow-hidden">
+            <video class="aspect-video w-full object-cover" autoplay muted loop playsinline preload="metadata" aria-label="TraceLess product film">
+                <source src="{{ asset('assets/videos/hero-intro.mp4') }}" type="video/mp4">
+            </video>
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent"></div>
+            <div class="absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-3 p-5 sm:p-6">
+                <div class="text-white">
+                    <p class="text-[10px] uppercase tracking-[0.18em] text-white/70">Product film</p>
+                    <p class="mt-1 text-base font-medium sm:text-lg">How TraceLess finds what is public.</p>
+                </div>
+                <span class="rounded-full bg-white/10 px-2.5 py-1 text-[11px] text-white/80 backdrop-blur">Muted loop</span>
+            </div>
+        </div>
+    </section>
+
+    {{-- TRUST STRIP (marquee) --}}
+    <section class="border-y border-line/70 py-4" aria-label="Product guarantees">
+        <div class="marquee">
+            <div class="marquee-track text-[12px] text-muted" aria-hidden="false">
+                @foreach([1, 2] as $loopIndex)
+                    <div class="{{ $loopIndex === 2 ? 'contents' : 'contents' }}">
+                        <span class="flex items-center gap-2 whitespace-nowrap"><span class="v-dot v-dot-green"></span>Evidence stored per finding</span>
+                        <span class="flex items-center gap-2 whitespace-nowrap"><span class="v-dot v-dot-green"></span>Blocked sources read “unknown”</span>
+                        <span class="flex items-center gap-2 whitespace-nowrap"><span class="v-dot v-dot-green"></span>Consent required before scanning</span>
+                        <span class="flex items-center gap-2 whitespace-nowrap"><span class="v-dot v-dot-green"></span>Zero passwords requested</span>
+                        <span class="flex items-center gap-2 whitespace-nowrap"><span class="v-dot v-dot-green"></span>No card required during beta</span>
+                    </div>
+                @endforeach
+            </div>
         </div>
     </section>
 
@@ -226,34 +254,65 @@
             </p>
         </div>
 
-        <div class="mt-8 grid gap-4 sm:grid-cols-2">
-            <div class="v-card p-6">
-                <div class="flex items-center gap-2"><span class="v-dot v-dot-blue"></span><p class="v-kicker">Public profiles</p></div>
-                <h3 class="mt-3 text-[15px] font-medium">Where your handles surface</h3>
-                <p class="mt-2 text-[13px] leading-relaxed text-body">
-                    A curated catalog of public platforms is checked for each monitored username. Matches carry the URL, HTTP outcome and response hash.
-                </p>
+        <div class="mt-8" x-data="{
+                scrollByCard(direction) {
+                    const track = this.$refs.track;
+                    const card = track.querySelector('[data-card]');
+                    const amount = card ? card.getBoundingClientRect().width + 16 : 340;
+                    track.scrollBy({ left: direction * amount, behavior: 'smooth' });
+                }
+             }">
+            <div class="flex items-center justify-between gap-3">
+                <p class="text-[12px] text-muted">Slide to see every check</p>
+                <div class="flex gap-1.5">
+                    <button type="button" class="v-btn v-btn-secondary h-9 w-9 !px-0" x-on:click="scrollByCard(-1)" aria-label="Previous check">
+                        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    </button>
+                    <button type="button" class="v-btn v-btn-secondary h-9 w-9 !px-0" x-on:click="scrollByCard(1)" aria-label="Next check">
+                        <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                    </button>
+                </div>
             </div>
-            <div class="v-card p-6">
-                <div class="flex items-center gap-2"><span class="v-dot v-dot-amber"></span><p class="v-kicker">Breach metadata</p></div>
-                <h3 class="mt-3 text-[15px] font-medium">Exposure without your passwords</h3>
-                <p class="mt-2 text-[13px] leading-relaxed text-body">
-                    Breach metadata shows when an email appears in a public disclosure index. TraceLess never asks for, stores or tests a password.
-                </p>
-            </div>
-            <div class="v-card p-6">
-                <div class="flex items-center gap-2"><span class="v-dot v-dot-red"></span><p class="v-kicker">Data brokers</p></div>
-                <h3 class="mt-3 text-[15px] font-medium">Listings that feed profiling</h3>
-                <p class="mt-2 text-[13px] leading-relaxed text-body">
-                    People-search directories and public registries are surfaced with the opt-out path that source actually supports.
-                </p>
-            </div>
-            <div class="v-card p-6">
-                <div class="flex items-center gap-2"><span class="v-dot v-dot-purple"></span><p class="v-kicker">Re-exposure watch</p></div>
-                <h3 class="mt-3 text-[15px] font-medium">What comes back</h3>
-                <p class="mt-2 text-[13px] leading-relaxed text-body">
-                    Recurring scans watch for records that reappear after removal, so you know when a source re-published your data.
-                </p>
+
+            <div x-ref="track" class="no-scrollbar mt-3 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2">
+                <div data-card class="v-card w-[86%] flex-none snap-start p-6 sm:w-[48%] lg:w-[31.5%]">
+                    <div class="flex items-center gap-2"><span class="v-dot v-dot-blue"></span><p class="v-kicker">Public profiles</p></div>
+                    <h3 class="mt-3 text-[15px] font-medium">Where your handles surface</h3>
+                    <p class="mt-2 text-[13px] leading-relaxed text-body">
+                        A curated catalog of public platforms is checked for each monitored username. Matches carry the URL, HTTP outcome and response hash.
+                    </p>
+                </div>
+                <div data-card class="v-card w-[86%] flex-none snap-start p-6 sm:w-[48%] lg:w-[31.5%]">
+                    <div class="flex items-center gap-2"><span class="v-dot v-dot-amber"></span><p class="v-kicker">Breach metadata</p></div>
+                    <h3 class="mt-3 text-[15px] font-medium">Exposure without your passwords</h3>
+                    <p class="mt-2 text-[13px] leading-relaxed text-body">
+                        Breach metadata shows when an email appears in a public disclosure index. TraceLess never asks for, stores or tests a password.
+                    </p>
+                </div>
+                <div data-card class="v-card w-[86%] flex-none snap-start p-6 sm:w-[48%] lg:w-[31.5%]">
+                    <div class="flex items-center gap-2"><span class="v-dot v-dot-red"></span><p class="v-kicker">Data brokers</p></div>
+                    <h3 class="mt-3 text-[15px] font-medium">Listings that feed profiling</h3>
+                    <p class="mt-2 text-[13px] leading-relaxed text-body">
+                        People-search directories and public registries are surfaced with the opt-out path that source actually supports.
+                    </p>
+                </div>
+                <div data-card class="v-card w-[86%] flex-none snap-start p-6 sm:w-[48%] lg:w-[31.5%]">
+                    <div class="flex items-center gap-2"><span class="v-dot v-dot-purple"></span><p class="v-kicker">Re-exposure watch</p></div>
+                    <h3 class="mt-3 text-[15px] font-medium">What comes back</h3>
+                    <p class="mt-2 text-[13px] leading-relaxed text-body">
+                        Recurring scans watch for records that reappear later, so you know when a source re-published your data.
+                    </p>
+                </div>
+                <div data-card class="v-card w-[86%] flex-none snap-start p-6 sm:w-[48%] lg:w-[31.5%]">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2"><span class="v-dot v-dot-gray"></span><p class="v-kicker">Planned · v2.0</p></div>
+                        <span class="v-pill">v2.0</span>
+                    </div>
+                    <h3 class="mt-3 text-[15px] font-medium">Image and face deep scans</h3>
+                    <p class="mt-2 text-[13px] leading-relaxed text-body">
+                        Reverse-image and facial-exposure searches across public sources are planned for v2.0. Not shipped yet — we do not fake coverage.
+                    </p>
+                </div>
             </div>
         </div>
     </section>
@@ -283,8 +342,8 @@
             </li>
             <li class="v-card p-5">
                 <p class="v-kicker">04</p>
-                <h3 class="mt-2 text-[14px] font-medium">Work the removals</h3>
-                <p class="mt-1.5 text-[12px] leading-relaxed text-body">Follow the source-specific opt-out path and track what was sent, removed and re-exposed.</p>
+                <h3 class="mt-2 text-[14px] font-medium">Act on the evidence</h3>
+                <p class="mt-1.5 text-[12px] leading-relaxed text-body">Decide what should change, follow the source-specific guidance, and keep a record of what you did.</p>
             </li>
         </ol>
     </section>
@@ -312,7 +371,7 @@
                 <p class="v-kicker">Roadmap</p>
                 <ul class="mt-4 space-y-3 text-[13px] text-body">
                     <li class="flex items-start gap-2"><span class="v-dot v-dot-green mt-1.5"></span><span><span class="font-medium text-ink">v1.0 beta</span> — free scans, deep scans, monitoring and removals.</span></li>
-                    <li class="flex items-start gap-2"><span class="v-dot v-dot-blue mt-1.5"></span><span><span class="font-medium text-ink">v2.0</span> — paid plans, billing and team workspaces.</span></li>
+                    <li class="flex items-start gap-2"><span class="v-dot v-dot-blue mt-1.5"></span><span><span class="font-medium text-ink">v2.0</span> — paid plans, billing, team workspaces, and image + face deep scans.</span></li>
                     <li class="flex items-start gap-2"><span class="v-dot v-dot-gray mt-1.5"></span><span>Nothing in the beta will ever charge you automatically.</span></li>
                 </ul>
             </div>
@@ -347,7 +406,7 @@
         <div class="v-card px-6 py-12 text-center sm:px-12">
             <p class="v-kicker">Start with one identity</p>
             <h2 class="mx-auto mt-2 max-w-2xl text-[clamp(1.7rem,3vw,2.25rem)] font-semibold leading-tight tracking-[-1.28px]">
-                See what is public, then decide what to remove.
+                See what is public, then decide what changes.
             </h2>
             <p class="mx-auto mt-3 max-w-lg text-[14px] leading-relaxed text-body">
                 Free during the v1.0 beta. No password, no card, and nothing is scanned without your consent.
