@@ -1,337 +1,363 @@
 @extends('layouts.marketing')
 
-@section('title', 'TraceLess // Private Operations Command Center')
+@section('title', 'TraceLess · Know what is public about you')
 
 @section('content')
-<div x-data="{
-    soundEnabled: false,
-    introSeen: localStorage.getItem('traceless_intro_seen') === 'true',
-    reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-    initHero() {
-        const video = this.$refs.heroVideo;
-        if (!video) return;
-        if (this.reducedMotion || this.introSeen) {
-            video.pause();
-            return;
-        }
-        // Try sound-on first, then fall back to a muted loop.
-        video.muted = false;
-        video.play().catch(() => {
-            video.muted = true;
-            this.soundEnabled = false;
-            video.play().catch(() => {});
-        });
-    },
-    toggleSound() {
-        const video = this.$refs.heroVideo;
-        if (!video) return;
-        this.soundEnabled = !this.soundEnabled;
-        video.muted = !this.soundEnabled;
-        video.play().catch(() => {});
-    },
-    skipIntro() {
-        localStorage.setItem('traceless_intro_seen', 'true');
-        this.introSeen = true;
-        const video = this.$refs.heroVideo;
-        if (video) video.pause();
-        document.getElementById('overview-section')?.scrollIntoView({ behavior: 'smooth' });
-    }
-}" x-init="initHero()" class="relative">
+<div class="mx-auto max-w-[1200px] px-5 sm:px-8">
 
-    {{-- FULL-VIEWPORT BRIEFING --}}
-    <section class="video-hero-container flex flex-col justify-between" id="hero-viewport">
-        <video x-ref="heroVideo" width="1920" height="1080" class="h-full w-full object-cover" autoplay loop playsinline muted preload="metadata" aria-hidden="true">
-            <source src="{{ asset('assets/videos/hero-intro.mp4') }}" type="video/mp4">
-        </video>
+    {{-- HERO --}}
+    <section class="grid items-center gap-12 py-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:py-20">
+        <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="v-pill"><span class="v-dot v-dot-green"></span>v1.0 · Public beta</span>
+                <span class="v-pill">Free during beta</span>
+            </div>
 
-        <canvas data-ambient-canvas class="ambient-canvas" aria-hidden="true"></canvas>
-        <div class="video-hero-overlay"></div>
-        <div class="hero-vignette pointer-events-none absolute inset-0 bg-gradient-to-b from-canvas/25 via-transparent to-canvas" aria-hidden="true"></div>
+            <h1 class="mt-6 max-w-xl text-[clamp(2.5rem,5vw,4rem)] font-semibold leading-[1.02] tracking-[-0.045em]">
+                <span class="bg-gradient-to-b from-[#171717] to-[#555] bg-clip-text text-transparent dark:from-white dark:to-[#9aa3b2]">Know what the internet already knows about you.</span>
+            </h1>
 
-        {{-- Quiet status row --}}
-        <div class="relative z-10 w-full px-5 pt-4 sm:px-10">
-            <div class="flex items-center justify-between gap-4 border-b border-line pb-3 text-xs text-body">
-                <div class="flex items-center gap-3">
-                    <span class="rounded-full border border-line bg-surface px-2.5 py-1 text-ink">Public data only</span>
-                    <span class="hidden sm:inline">No passwords, ever</span>
-                </div>
+            <p class="mt-5 max-w-lg text-[15px] leading-relaxed text-body">
+                TraceLess finds the profiles, directories and public records that connect to your identity,
+                proves each match against its source, and gives you a removal path. No passwords, ever.
+            </p>
 
+            <div class="mt-7 flex flex-wrap items-center gap-2">
+                <a href="{{ route('register') }}" class="v-btn v-btn-primary">
+                    Scan my footprint
+                    <span aria-hidden="true">→</span>
+                </a>
+                <a href="#how-it-works" class="v-btn v-btn-secondary">How it works</a>
+            </div>
+
+            <ul class="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] text-muted">
+                <li class="flex items-center gap-2"><span class="v-dot v-dot-green"></span>Consent recorded per identity</li>
+                <li class="flex items-center gap-2"><span class="v-dot v-dot-green"></span>Public sources only</li>
+                <li class="flex items-center gap-2"><span class="v-dot v-dot-green"></span>No password to steal</li>
+            </ul>
+        </div>
+
+        {{-- LIVE NETWORK INTELLIGENCE --}}
+        <div class="min-w-0"
+             x-data="{
+                state: 'loading',
+                data: null,
+                note: '',
+                polls: 0,
+                timer: null,
+                init() { this.load(); },
+                async load() {
+                    try {
+                        const response = await fetch('/api/ip-intelligence', { headers: { accept: 'application/json' }, cache: 'no-store' });
+                        if (response.status === 422) {
+                            this.state = 'unavailable';
+                            this.note = 'This check needs a public internet connection, so it is paused on your network.';
+                            return;
+                        }
+                        if (response.status === 429) {
+                            this.state = 'unavailable';
+                            this.note = 'Too many requests from your network. Try again in a minute.';
+                            return;
+                        }
+                        if (!response.ok) {
+                            this.state = 'unavailable';
+                            this.note = 'Network intelligence is temporarily unavailable.';
+                            return;
+                        }
+                        const payload = await response.json();
+                        if (payload.status === 'ready' && payload.data) {
+                            this.data = payload.data;
+                            this.state = 'ready';
+                            return;
+                        }
+                        this.state = 'warming';
+                        this.schedule();
+                    } catch (error) {
+                        this.state = 'unavailable';
+                        this.note = 'Network intelligence is temporarily unavailable.';
+                    }
+                },
+                schedule() {
+                    clearTimeout(this.timer);
+                    if (this.polls >= 8) { this.state = 'slow'; return; }
+                    this.polls += 1;
+                    this.timer = setTimeout(() => this.load(), 2000 + Math.random() * 800);
+                },
+                providerCount() {
+                    if (!this.data || !this.data.provider_status) return 0;
+                    return Object.values(this.data.provider_status).filter(v => v === 'ok').length;
+                },
+                providerTotal() {
+                    if (!this.data || !this.data.provider_status) return 0;
+                    return Object.keys(this.data.provider_status).length;
+                },
+                gradeTone(grade) {
+                    if (grade === 'A' || grade === 'B') return 'v-dot-green';
+                    if (grade === 'C') return 'v-dot-amber';
+                    return 'v-dot-red';
+                }
+             }"
+             x-init="init()"
+             class="v-card overflow-hidden"
+             aria-label="Your live network intelligence">
+            <div class="flex items-center justify-between border-b border-line/60 px-5 py-3.5">
                 <div class="flex items-center gap-2">
-                    <button type="button" @click="toggleSound()"
-                            class="flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1 text-body transition-colors hover:text-ink"
-                            :aria-pressed="soundEnabled">
-                        <span class="material-symbols-outlined text-[14px]" x-text="soundEnabled ? 'volume_up' : 'volume_off'"></span>
-                        <span x-text="soundEnabled ? 'Sound on' : 'Enable sound'"></span>
-                    </button>
-                    <button type="button" @click="skipIntro()"
-                            class="rounded-lg border border-line bg-surface px-2.5 py-1 text-body transition-colors hover:text-ink">
-                        Skip intro ↓
-                    </button>
+                    <span class="v-dot" x-bind:class="state === 'ready' ? 'v-dot-green' : (state === 'warming' ? 'v-dot-amber' : 'v-dot-gray')"></span>
+                    <span class="text-[13px] font-medium">Your network, seen from here</span>
                 </div>
+                <span class="v-kicker" x-text="state === 'ready' ? 'Live · cached 48h' : (state === 'warming' ? 'Reading signals…' : 'Unavailable')"></span>
             </div>
-        </div>
 
-        {{-- Hero copy --}}
-        <div class="relative z-10 mx-auto my-auto w-full max-w-[1440px] px-5 py-10 sm:px-10">
-            <div class="grid items-end gap-10 lg:grid-cols-12 lg:gap-14">
-            <div class="max-w-3xl space-y-6 lg:col-span-8">
-                <div class="flex items-center gap-3 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-cyan">
-                    <span class="hero-rule"></span>
-                    <span>Public exposure intelligence / 01</span>
+            {{-- Warming skeleton --}}
+            <div x-show="state === 'warming' || state === 'loading'" x-cloak class="px-5 py-6">
+                <div class="animate-pulse space-y-3">
+                    <div class="h-2.5 w-1/3 rounded bg-[#ebebeb] dark:bg-[#1c2333]"></div>
+                    <div class="h-8 w-2/3 rounded bg-[#ebebeb] dark:bg-[#1c2333]"></div>
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <div class="h-10 rounded bg-[#f2f2f2] dark:bg-[#141926]"></div>
+                        <div class="h-10 rounded bg-[#f2f2f2] dark:bg-[#141926]"></div>
+                        <div class="h-10 rounded bg-[#f2f2f2] dark:bg-[#141926]"></div>
+                        <div class="h-10 rounded bg-[#f2f2f2] dark:bg-[#141926]"></div>
+                    </div>
                 </div>
-                <h1 class="font-display text-[2.9rem] font-semibold leading-[.94] tracking-[-0.06em] text-ink sm:text-6xl lg:text-[5.8rem] xl:text-[6.8rem]">
-                    Your digital footprint.<br>
-                    <span class="text-accent">Under your control.</span>
-                </h1>
-
-                <p class="max-w-xl font-body text-base leading-relaxed text-body sm:text-lg">
-                    See which public profiles, open registries and archived posts connect to you. Every match is verified against the source, and every exposure comes with a clear path to removal. No passwords, ever.
+                <p class="mt-4 text-[12px] leading-relaxed text-muted">
+                    Four public intelligence sources are being consulted in parallel. This usually takes two to five seconds and never delays the page.
                 </p>
+            </div>
 
-                <div class="flex flex-wrap items-center gap-3 pt-2">
-                    <a href="{{ route('register') }}" class="btn-ops-primary px-6 py-3.5 text-sm">
-                        <span class="material-symbols-outlined text-[18px]">radar</span>
-                        <span>Scan my digital footprint</span>
-                    </a>
-                    <a href="#overview-section" class="btn-ops-secondary px-6 py-3.5 text-sm">
-                        <span class="material-symbols-outlined text-[18px]">visibility</span>
-                        <span>See how verification works</span>
-                    </a>
-                </div>
-
-                <div class="grid grid-cols-1 gap-3 border-t border-line pt-5 font-mono text-[10px] text-body/85 sm:grid-cols-3">
-                    <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[15px] text-success">public</span>
-                        <span>Public web data only</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[15px] text-success">key_off</span>
-                        <span>Zero passwords requested</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[15px] text-success">verified_user</span>
-                        <span>Consent recorded per identity</span>
-                    </div>
+            {{-- Slow --}}
+            <div x-show="state === 'slow'" x-cloak class="px-5 py-6">
+                <p class="text-[13px] leading-relaxed text-body">
+                    The public sources are taking longer than usual. The page stays usable — the result will be cached for 48 hours when it lands.
+                </p>
+                <div class="mt-4 flex gap-2">
+                    <button type="button" class="v-btn v-btn-secondary" x-on:click="polls = 0; state = 'loading'; load();">Check again</button>
+                    <a href="{{ route('ip.check') }}" class="v-btn v-btn-ghost">Open the IP tool</a>
                 </div>
             </div>
 
-            <aside class="hero-signal-card hidden p-5 lg:col-span-4 lg:block" aria-label="Illustrative privacy scan signal">
-                <div class="relative z-10 flex items-center justify-between border-b border-line/80 pb-4 font-mono text-[10px] uppercase tracking-[0.12em] text-muted">
-                    <span>Live signal</span>
-                    <span class="flex items-center gap-1.5 text-cyan"><span class="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_12px_rgb(var(--c-cyan))]"></span>Active</span>
-                </div>
-                <div class="relative z-10 py-7">
-                    <div class="font-mono text-[11px] uppercase tracking-[0.13em] text-muted">Identity surface</div>
-                    <div class="mt-2 flex items-end gap-2">
-                        <span class="font-display text-6xl font-semibold leading-none tracking-[-0.07em] text-ink">73</span>
-                        <span class="mb-1.5 font-mono text-xs text-body">/ 100</span>
-                    </div>
-                    <div class="mt-5 h-1.5 overflow-hidden rounded-full bg-canvas/90">
-                        <div class="h-full w-[73%] rounded-full bg-gradient-to-r from-cyan via-accent to-violet shadow-[0_0_16px_rgb(var(--c-cyan)/.72)]"></div>
-                    </div>
-                </div>
-                <div class="relative z-10 space-y-3 border-t border-line/80 pt-4 font-mono text-[10px]">
-                    <div class="flex items-center justify-between"><span class="text-body">Verified signals</span><span class="text-ink">14 nodes</span></div>
-                    <div class="flex items-center justify-between"><span class="text-body">Removal paths</span><span class="text-success">2 ready</span></div>
-                    <div class="flex items-center justify-between"><span class="text-body">Private data</span><span class="text-cyan">never queried</span></div>
-                </div>
-            </aside>
+            {{-- Unavailable --}}
+            <div x-show="state === 'unavailable'" x-cloak class="px-5 py-6">
+                <p class="text-[13px] leading-relaxed text-body" x-text="note"></p>
+                <p class="mt-2 text-[12px] leading-relaxed text-muted">
+                    TraceLess shows nothing rather than guessing when a source cannot be reached.
+                </p>
+                <a href="{{ route('ip.check') }}" class="v-link mt-3 inline-block">Check any IP manually →</a>
             </div>
-        </div>
 
-        <div class="relative z-10 w-full pb-6 text-center">
-            <a href="#overview-section" class="inline-flex flex-col items-center gap-1 text-xs text-body transition-colors hover:text-ink">
-                <span>Continue briefing</span>
-                <span class="material-symbols-outlined animate-bounce text-[16px]">keyboard_arrow_down</span>
-            </a>
+            {{-- Ready --}}
+            <div x-show="state === 'ready'" x-cloak class="px-5 py-5">
+                <div class="flex items-end justify-between gap-4">
+                    <div class="min-w-0">
+                        <p class="v-kicker">Public IP address</p>
+                        <p class="mt-1 truncate font-[family-name:'Geist_Mono',ui-monospace,monospace] text-xl font-medium tracking-tight" x-text="data?.ip ?? '—'"></p>
+                        <p class="mt-1 text-[12px] text-body">
+                            <span x-text="[data?.city, data?.region, data?.country].filter(Boolean).join(', ') || 'Location unavailable'"></span>
+                            <span class="text-muted">·</span>
+                            <span x-text="data?.timezone || '—'"></span>
+                        </p>
+                    </div>
+                    <div class="shrink-0 text-right">
+                        <p class="v-kicker">IP risk</p>
+                        <div class="mt-1 flex items-center justify-end gap-2">
+                            <span class="v-dot" x-bind:class="gradeTone(data?.risk_grade)"></span>
+                            <span class="text-2xl font-semibold tracking-[-1.28px]" x-text="(data?.risk_score ?? '—') + '/100'"></span>
+                        </div>
+                        <p class="mt-0.5 text-[12px] capitalize text-muted">
+                            Grade <span class="font-medium text-ink" x-text="data?.risk_grade ?? '—'"></span>
+                            · <span x-text="data?.risk_classification ?? 'unknown'"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <dl class="mt-5 grid grid-cols-2 gap-3">
+                    <div class="rounded-md bg-[#fafafa] px-3 py-2.5 dark:bg-[#0b0f18]">
+                        <dt class="v-kicker">Network</dt>
+                        <dd class="mt-0.5 truncate text-[13px]" x-text="data?.isp || data?.organisation || 'Unavailable'"></dd>
+                    </div>
+                    <div class="rounded-md bg-[#fafafa] px-3 py-2.5 dark:bg-[#0b0f18]">
+                        <dt class="v-kicker">ASN</dt>
+                        <dd class="mt-0.5 truncate text-[13px]" x-text="data?.asn ? data.asn + (data.asn_organisation ? ' · ' + data.asn_organisation : '') : 'Unavailable'"></dd>
+                    </div>
+                    <div class="rounded-md bg-[#fafafa] px-3 py-2.5 dark:bg-[#0b0f18]">
+                        <dt class="v-kicker">Connection</dt>
+                        <dd class="mt-0.5 truncate text-[13px] capitalize" x-text="data?.classification || 'unknown'"></dd>
+                    </div>
+                    <div class="rounded-md bg-[#fafafa] px-3 py-2.5 dark:bg-[#0b0f18]">
+                        <dt class="v-kicker">Abuse confidence</dt>
+                        <dd class="mt-0.5 truncate text-[13px]" x-text="(data?.abuse_confidence ?? '—') + (data?.abuse_reports ? ' · ' + data.abuse_reports + ' reports' : '')"></dd>
+                    </div>
+                </dl>
+
+                <div class="mt-4 flex flex-wrap items-center gap-2">
+                    <span class="v-pill"><span class="v-dot" x-bind:class="data?.is_vpn ? 'v-dot-red' : 'v-dot-green'"></span>VPN <span x-text="data?.is_vpn ? 'detected' : 'clear'"></span></span>
+                    <span class="v-pill"><span class="v-dot" x-bind:class="data?.is_proxy ? 'v-dot-red' : 'v-dot-green'"></span>Proxy <span x-text="data?.is_proxy ? 'detected' : 'clear'"></span></span>
+                    <span class="v-pill"><span class="v-dot" x-bind:class="data?.is_tor ? 'v-dot-red' : 'v-dot-green'"></span>Tor <span x-text="data?.is_tor ? 'detected' : 'clear'"></span></span>
+                </div>
+
+                <p class="mt-4 border-t border-line/60 pt-3 text-[11px] leading-relaxed text-muted">
+                    <span x-text="providerCount() + ' of ' + providerTotal() + ' sources responded'"></span>
+                    · cached for 48 hours · missing fields stay empty rather than guessed.
+                    <a href="{{ route('ip.check') }}" class="v-link ml-1">Full report →</a>
+                </p>
+            </div>
         </div>
     </section>
 
-    {{-- INTELLIGENCE OVERVIEW --}}
-    <section id="overview-section" class="mx-auto max-w-[1440px] px-4 py-24 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
-            <div class="space-y-6 lg:col-span-5">
-                <div class="ops-badge ops-badge-cyan">Evidence matrix</div>
-                <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
-                    Privacy intelligence built on proof, not alerts.
-                </h2>
-                <p class="font-body text-sm leading-relaxed text-body">
-                    Most checkers leave you with a warning and no next step. TraceLess records how each match was found, states plainly when a source could not be verified, and turns what remains into removal work you can track.
+    {{-- TRUST STRIP --}}
+    <section class="border-t border-line/70 py-8">
+        <div class="grid grid-cols-2 gap-6 text-[12px] text-muted sm:grid-cols-4">
+            <div class="flex items-center gap-2"><span class="v-dot v-dot-green"></span>Evidence stored per finding</div>
+            <div class="flex items-center gap-2"><span class="v-dot v-dot-green"></span>Blocked sources read “unknown”</div>
+            <div class="flex items-center gap-2"><span class="v-dot v-dot-green"></span>Consent required before scanning</div>
+            <div class="flex items-center gap-2"><span class="v-dot v-dot-green"></span>Zero passwords requested</div>
+        </div>
+    </section>
+
+    {{-- CAPABILITIES --}}
+    <section id="capabilities" class="border-t border-line/70 py-16">
+        <div class="max-w-2xl">
+            <p class="v-kicker">What we check</p>
+            <h2 class="mt-2 text-[clamp(1.6rem,2.6vw,2rem)] font-semibold tracking-[-1.28px]">
+                A map of your public surface, not a stream of alerts.
+            </h2>
+            <p class="mt-3 text-[14px] leading-relaxed text-body">
+                Four kinds of exposure, checked against public sources and recorded with the evidence that produced them.
+            </p>
+        </div>
+
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+            <div class="v-card p-6">
+                <div class="flex items-center gap-2"><span class="v-dot v-dot-blue"></span><p class="v-kicker">Public profiles</p></div>
+                <h3 class="mt-3 text-[15px] font-medium">Where your handles surface</h3>
+                <p class="mt-2 text-[13px] leading-relaxed text-body">
+                    A curated catalog of public platforms is checked for each monitored username. Matches carry the URL, HTTP outcome and response hash.
                 </p>
-
-                <div class="space-y-3 font-mono text-xs">
-                    <div class="flex items-center justify-between rounded-lg border border-line bg-surface p-3.5">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[18px] text-accent">account_tree</span>
-                            <span class="text-ink">Federated handle discovery</span>
-                        </div>
-                        <span class="text-accent">WhatsMyName</span>
-                    </div>
-
-                    <div class="flex items-center justify-between rounded-lg border border-line bg-surface p-3.5">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[18px] text-warning">fact_check</span>
-                            <span class="text-ink">Verification evidence per finding</span>
-                        </div>
-                        <span class="text-warning">Status + hash</span>
-                    </div>
-
-                    <div class="flex items-center justify-between rounded-lg border border-line bg-surface p-3.5">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[18px] text-faint">vpn_key_off</span>
-                            <span class="text-body">Breach metadata provider</span>
-                        </div>
-                        <span class="text-faint">Not configured</span>
-                    </div>
-                </div>
             </div>
-
-            <div id="capabilities" class="lg:col-span-7">
-                <div id="intelligence" class="ops-card p-6 sm:p-8">
-                    <div class="mb-6 flex items-center justify-between border-b border-line pb-4 font-mono text-xs">
-                        <div class="flex items-center gap-2">
-                            <span class="h-2 w-2 rounded-full bg-success"></span>
-                            <span class="font-semibold text-ink">Illustrative evidence record</span>
-                        </div>
-                        <span class="text-warning">DEMO DATA</span>
-                    </div>
-
-                    <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                        <div class="rounded-lg border border-line bg-canvas p-4 text-center">
-                            <div class="mb-1 font-mono text-3xl font-bold text-ink">73<span class="text-xs text-body">/100</span></div>
-                            <div class="font-mono text-[9px] uppercase tracking-wider text-body">Posture index</div>
-                        </div>
-                        <div class="rounded-lg border border-line bg-canvas p-4 text-center">
-                            <div class="mb-1 font-mono text-3xl font-bold text-warning">14</div>
-                            <div class="font-mono text-[9px] uppercase tracking-wider text-body">Verified nodes</div>
-                        </div>
-                        <div class="rounded-lg border border-line bg-canvas p-4 text-center">
-                            <div class="mb-1 font-mono text-3xl font-bold text-success">2</div>
-                            <div class="font-mono text-[9px] uppercase tracking-wider text-body">Removals ready</div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-1.5 rounded-lg border border-line bg-canvas p-4 font-mono text-[11px] leading-relaxed text-body/90">
-                        <div class="text-accent">[INFO] Consent recorded. Starting public-source check for target handle...</div>
-                        <div>[200] Public profile catalog queried... <span class="text-success">MATCH (GitHub, Reddit, DeviantArt)</span></div>
-                        <div>[200] Match rule satisfied, response hash stored... <span class="text-success">VERIFIED</span></div>
-                        <div>[403] Source blocked automated checks... <span class="text-warning">UNKNOWN, NOT A FINDING</span></div>
-                        <div class="text-success">[OK] Actionable removal tasks compiled. Evidence attached to each record.</div>
-                    </div>
-
-                    <div class="mt-6 flex flex-col gap-2 font-mono text-[10px] text-faint sm:flex-row sm:items-center sm:justify-between">
-                        <span>ILLUSTRATIVE ONLY · NO PRIVATE DATA USED</span>
-                        <a href="{{ route('register') }}" class="flex items-center gap-1 text-accent hover:underline">
-                            Run it on your own profile →
-                        </a>
-                    </div>
-                </div>
+            <div class="v-card p-6">
+                <div class="flex items-center gap-2"><span class="v-dot v-dot-amber"></span><p class="v-kicker">Breach metadata</p></div>
+                <h3 class="mt-3 text-[15px] font-medium">Exposure without your passwords</h3>
+                <p class="mt-2 text-[13px] leading-relaxed text-body">
+                    Breach metadata shows when an email appears in a public disclosure index. TraceLess never asks for, stores or tests a password.
+                </p>
+            </div>
+            <div class="v-card p-6">
+                <div class="flex items-center gap-2"><span class="v-dot v-dot-red"></span><p class="v-kicker">Data brokers</p></div>
+                <h3 class="mt-3 text-[15px] font-medium">Listings that feed profiling</h3>
+                <p class="mt-2 text-[13px] leading-relaxed text-body">
+                    People-search directories and public registries are surfaced with the opt-out path that source actually supports.
+                </p>
+            </div>
+            <div class="v-card p-6">
+                <div class="flex items-center gap-2"><span class="v-dot v-dot-purple"></span><p class="v-kicker">Re-exposure watch</p></div>
+                <h3 class="mt-3 text-[15px] font-medium">What comes back</h3>
+                <p class="mt-2 text-[13px] leading-relaxed text-body">
+                    Recurring scans watch for records that reappear after removal, so you know when a source re-published your data.
+                </p>
             </div>
         </div>
     </section>
 
     {{-- HOW IT WORKS --}}
-    <section id="how-it-works" class="border-t border-line bg-surface py-20">
-        <div class="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-            <div class="mx-auto mb-14 max-w-2xl space-y-3 text-center">
-                <div class="ops-badge">How it works</div>
-                <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">Four steps to lower exposure</h2>
-                <p class="font-body text-sm leading-relaxed text-body">Every scan is deliberate, legally consented, and strictly limited to public-source discovery.</p>
+    <section id="how-it-works" class="border-t border-line/70 py-16">
+        <div class="max-w-2xl">
+            <p class="v-kicker">How it works</p>
+            <h2 class="mt-2 text-[clamp(1.6rem,2.6vw,2rem)] font-semibold tracking-[-1.28px]">Four steps, each reversible.</h2>
+        </div>
+
+        <ol class="mt-8 grid gap-4 md:grid-cols-4">
+            <li class="v-card p-5">
+                <p class="v-kicker">01</p>
+                <h3 class="mt-2 text-[14px] font-medium">Authorise an identity</h3>
+                <p class="mt-1.5 text-[12px] leading-relaxed text-body">Record your name, known handles and public emails behind an explicit consent step.</p>
+            </li>
+            <li class="v-card p-5">
+                <p class="v-kicker">02</p>
+                <h3 class="mt-2 text-[14px] font-medium">Run a scan</h3>
+                <p class="mt-1.5 text-[12px] leading-relaxed text-body">Snapshot checks the curated catalog; deep scans extend to usernames, emails and phones.</p>
+            </li>
+            <li class="v-card p-5">
+                <p class="v-kicker">03</p>
+                <h3 class="mt-2 text-[14px] font-medium">Review the evidence</h3>
+                <p class="mt-1.5 text-[12px] leading-relaxed text-body">Every finding shows how it was verified. Sources that blocked us read “unknown”, never invented.</p>
+            </li>
+            <li class="v-card p-5">
+                <p class="v-kicker">04</p>
+                <h3 class="mt-2 text-[14px] font-medium">Work the removals</h3>
+                <p class="mt-1.5 text-[12px] leading-relaxed text-body">Follow the source-specific opt-out path and track what was sent, removed and re-exposed.</p>
+            </li>
+        </ol>
+    </section>
+
+    {{-- FREE BETA / PRICING --}}
+    <section id="pricing" class="border-t border-line/70 py-16">
+        <div class="grid gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)]">
+            <div class="v-card p-7">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="v-pill"><span class="v-dot v-dot-green"></span>v1.0 beta</span>
+                    <span class="v-pill">No card required</span>
+                </div>
+                <h2 class="mt-4 text-[clamp(1.5rem,2.4vw,1.9rem)] font-semibold tracking-[-1.28px]">Everything is free during the beta.</h2>
+                <p class="mt-3 max-w-xl text-[14px] leading-relaxed text-body">
+                    Snapshot scans, deep scans and monitoring are open to every account while TraceLess is in v1.0.
+                    When v2.0 arrives, paid plans will be announced in advance — nothing charges automatically and no card is collected now.
+                </p>
+                <div class="mt-6 flex flex-wrap gap-2">
+                    <a href="{{ route('register') }}" class="v-btn v-btn-primary">Create a free account</a>
+                    <a href="{{ route('login') }}" class="v-btn v-btn-secondary">Sign in</a>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
-                <div class="ops-card space-y-4 p-6">
-                    <div class="text-xs font-semibold uppercase tracking-wide text-accent">Step 1</div>
-                    <h3 class="font-display text-base font-semibold text-ink">Monitored profile</h3>
-                    <p class="font-body text-xs leading-relaxed text-body">Record your legal name, known handles and public emails behind an explicit ownership consent gate.</p>
-                </div>
-
-                <div class="ops-card space-y-4 p-6">
-                    <div class="text-xs font-semibold uppercase tracking-wide text-accent">Step 2</div>
-                    <h3 class="font-display text-base font-semibold text-ink">Public discovery</h3>
-                    <p class="font-body text-xs leading-relaxed text-body">Check a curated public-source catalog for profiles and mentions that connect to your identifiers.</p>
-                </div>
-
-                <div class="ops-card space-y-4 p-6">
-                    <div class="text-xs font-semibold uppercase tracking-wide text-accent">Step 3</div>
-                    <h3 class="font-display text-base font-semibold text-ink">Evidence review</h3>
-                    <p class="font-body text-xs leading-relaxed text-body">Each result carries its HTTP outcome, match rule and response hash. Blocked sources read <span class="text-warning">unknown</span>, never invented.</p>
-                </div>
-
-                <div class="ops-card space-y-4 p-6">
-                    <div class="text-xs font-semibold uppercase tracking-wide text-accent">Step 4</div>
-                    <h3 class="font-display text-base font-semibold text-ink">Tracked removal</h3>
-                    <p class="font-body text-xs leading-relaxed text-body">Follow source-specific guidance, record what you sent, and monitor whether the record returns.</p>
-                </div>
+            <div class="v-card p-7">
+                <p class="v-kicker">Roadmap</p>
+                <ul class="mt-4 space-y-3 text-[13px] text-body">
+                    <li class="flex items-start gap-2"><span class="v-dot v-dot-green mt-1.5"></span><span><span class="font-medium text-ink">v1.0 beta</span> — free scans, deep scans, monitoring and removals.</span></li>
+                    <li class="flex items-start gap-2"><span class="v-dot v-dot-blue mt-1.5"></span><span><span class="font-medium text-ink">v2.0</span> — paid plans, billing and team workspaces.</span></li>
+                    <li class="flex items-start gap-2"><span class="v-dot v-dot-gray mt-1.5"></span><span>Nothing in the beta will ever charge you automatically.</span></li>
+                </ul>
             </div>
         </div>
     </section>
 
-    {{-- WHY PUBLIC EXPOSURE MATTERS --}}
-    <section id="preparedness" class="mx-auto max-w-[1440px] border-t border-line px-4 py-24 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
-            <div class="space-y-4 lg:col-span-6">
-                <div class="ops-badge">Why it matters</div>
-                <h2 class="font-display text-3xl font-semibold leading-tight tracking-[-0.03em] text-ink sm:text-4xl">
-                    Public fragments are training data.
-                </h2>
-                <p class="font-body text-sm leading-relaxed text-body">
-                    Automated profiling, voice cloning and targeted phishing rarely need to break into a private server. They assemble what is already public: old usernames, archived forum posts, directory listings and forgotten accounts.
+    {{-- PRIVACY PROMISE --}}
+    <section class="border-t border-line/70 py-16">
+        <div class="grid gap-8 lg:grid-cols-3">
+            <div>
+                <p class="v-kicker">Privacy by design</p>
+                <h2 class="mt-2 text-[clamp(1.4rem,2.2vw,1.75rem)] font-semibold tracking-[-1px]">You stay in control of what is stored.</h2>
+                <p class="mt-3 text-[13px] leading-relaxed text-body">
+                    Export everything, purge scan data, or delete your account at any time from Settings.
+                    Read the <a href="{{ route('privacy') }}" class="v-link">privacy policy</a> and
+                    <a href="{{ route('security') }}" class="v-link">security notes</a>.
                 </p>
-                <div class="space-y-2 rounded-lg border border-line bg-surface p-4 font-mono text-xs text-body">
-                    <div class="flex items-center gap-2 font-semibold text-ink">
-                        <span class="material-symbols-outlined text-[18px] text-accent">verified_user</span>
-                        <span>Minimisation, not disappearance</span>
-                    </div>
-                    <p class="text-[11px] leading-relaxed text-faint">
-                        Reducing your public surface lowers the material available to automated social engineering. It cannot guarantee complete deletion by third parties.
-                    </p>
-                </div>
             </div>
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-6">
-                <div class="ops-card space-y-2 p-5">
-                    <span class="material-symbols-outlined text-accent">hub</span>
-                    <h4 class="font-display text-sm font-semibold text-ink">Synthetic profiling</h4>
-                    <p class="font-body text-[11px] leading-relaxed text-body">Remove directory listings that feed identity profiles and automated enrichment.</p>
-                </div>
-                <div class="ops-card space-y-2 p-5">
-                    <span class="material-symbols-outlined text-success">history</span>
-                    <h4 class="font-display text-sm font-semibold text-ink">Forgotten accounts</h4>
-                    <p class="font-body text-[11px] leading-relaxed text-body">Find stale profiles created years ago on platforms you no longer use.</p>
-                </div>
-                <div class="ops-card space-y-2 p-5">
-                    <span class="material-symbols-outlined text-warning">visibility_off</span>
-                    <h4 class="font-display text-sm font-semibold text-ink">Old public posts</h4>
-                    <p class="font-body text-[11px] leading-relaxed text-body">Surface archived text that still links your name to an old handle.</p>
-                </div>
-                <div class="ops-card space-y-2 p-5">
-                    <span class="material-symbols-outlined text-danger">notifications_active</span>
-                    <h4 class="font-display text-sm font-semibold text-ink">Re-exposure watch</h4>
-                    <p class="font-body text-[11px] leading-relaxed text-body">Be told when a record you removed is published again at the same source.</p>
-                </div>
+            <div class="v-card p-5">
+                <p class="v-kicker">Passwords</p>
+                <p class="mt-2 text-[13px] leading-relaxed text-body">Sign-in is a one-time email code. TraceLess never asks for a password, and never tests one against third-party logins.</p>
+            </div>
+            <div class="v-card p-5">
+                <p class="v-kicker">Consent</p>
+                <p class="mt-2 text-[13px] leading-relaxed text-body">Scanning requires a recorded consent event for the identity. Scans stop when you cancel, and stale jobs cannot resurrect a finished scan.</p>
             </div>
         </div>
     </section>
 
     {{-- FINAL CTA --}}
-    <section class="mx-auto max-w-[1440px] border-t border-line px-4 py-24 sm:px-6 lg:px-8">
-        <div class="ops-card mx-auto max-w-3xl space-y-6 p-10 text-center sm:p-12">
-            <div class="text-xs font-semibold uppercase tracking-wide text-accent">Take back control</div>
-            <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">Your privacy deserves more than hope.</h2>
-            <p class="mx-auto max-w-lg font-body text-sm leading-relaxed text-body">
-                Start with one authorised identity. See what is actually public, understand how it was verified, and decide what to remove first.
+    <section class="border-t border-line/70 py-16">
+        <div class="v-card px-6 py-12 text-center sm:px-12">
+            <p class="v-kicker">Start with one identity</p>
+            <h2 class="mx-auto mt-2 max-w-2xl text-[clamp(1.7rem,3vw,2.25rem)] font-semibold leading-tight tracking-[-1.28px]">
+                See what is public, then decide what to remove.
+            </h2>
+            <p class="mx-auto mt-3 max-w-lg text-[14px] leading-relaxed text-body">
+                Free during the v1.0 beta. No password, no card, and nothing is scanned without your consent.
             </p>
-            <div class="flex flex-wrap justify-center gap-4 pt-2">
-                <a href="{{ route('register') }}" class="btn-ops-primary px-8 py-3.5 text-sm">
-                    <span>Start an authorised scan</span>
-                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                </a>
-            </div>
-            <div class="font-mono text-[10px] text-faint">
-                NO PASSWORDS REQUESTED // PUBLIC SOURCES ONLY // DEMO MODE LABELLED
+            <div class="mt-6 flex flex-wrap justify-center gap-2">
+                <a href="{{ route('register') }}" class="v-btn v-btn-primary">Start free</a>
+                <a href="{{ route('password.check') }}" class="v-btn v-btn-secondary">Check a password first</a>
             </div>
         </div>
     </section>
+
 </div>
 @endsection
