@@ -682,3 +682,253 @@
         .v-card-pad { padding: 1rem 1.125rem; }
     }
 }
+
+/*
+ * Vercel-style authenticated shell.
+ *
+ * Scoped to the dashboard route so the rest of the product keeps its dark
+ * operations look while pages are migrated one at a time. The shell flips the
+ * semantic colour tokens to the light Vercel palette and replaces the glassy
+ * dark chrome with flat surfaces and shadow borders.
+ */
+@layer components {
+    .v-shell {
+        --c-canvas: 250 250 250;
+        --c-surface: 255 255 255;
+        --c-elevated: 245 245 245;
+        --c-line: 229 229 229;
+        --c-ink: 23 23 23;
+        --c-body: 77 77 77;
+        --c-muted: 143 143 143;
+        --c-faint: 163 163 163;
+        --c-accent: 0 114 245;
+        --c-cyan: 0 114 245;
+        --c-violet: 120 32 188;
+        --c-success: 57 142 74;
+        --c-warning: 255 153 10;
+        --c-danger: 229 72 77;
+        --glass-fill: #ffffff;
+        --shadow-card: 0 0 0 1px rgba(0, 0, 0, .08), 0 1px 2px rgba(0, 0, 0, .03);
+
+        background: #fafafa;
+        color: #171717;
+        font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .v-shell::before,
+    .v-shell::after { display: none; }
+    .v-shell.app-grid { background-image: none; }
+
+    /* Sidebar */
+    .v-shell .ops-sidebar {
+        background: #fafafa;
+        border-color: rgba(0, 0, 0, .08);
+        box-shadow: inset -1px 0 0 rgba(0, 0, 0, .08);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .v-shell .ops-sidebar .nav-link {
+        border-radius: 6px;
+        color: #4d4d4d;
+    }
+    .v-shell .ops-sidebar .nav-link .material-symbols-outlined { color: #8f8f8f; }
+    .v-shell .ops-sidebar .nav-link:hover { background: #ebebeb; color: #171717; }
+    .v-shell .ops-sidebar .nav-link:hover .material-symbols-outlined { color: #171717; }
+    .v-shell .ops-sidebar .nav-link-active {
+        background: #ebebeb;
+        color: #171717;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06);
+    }
+    .v-shell .ops-sidebar .nav-link-active .material-symbols-outlined { color: #171717; }
+
+    /* Top bar */
+    .v-shell .ops-topbar {
+        background: rgba(250, 250, 250, .92);
+        border-color: rgba(0, 0, 0, .08);
+        box-shadow: 0 1px 0 rgba(0, 0, 0, .05);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    .v-shell .ops-topbar input,
+    .v-shell .ops-topbar select {
+        background: #ffffff;
+        border-color: rgba(0, 0, 0, .08);
+        color: #171717;
+        border-radius: 6px;
+    }
+
+    /* Buttons: ghost-first, monochrome, no gradients or movement */
+    .v-shell .btn-primary,
+    .v-shell .btn-ops-primary {
+        background: #171717;
+        border-color: transparent;
+        color: #fff;
+        box-shadow: none;
+        transform: none;
+    }
+    .v-shell .btn-primary:hover,
+    .v-shell .btn-ops-primary:hover { background: #383838; border-color: transparent; transform: none; box-shadow: none; }
+
+    .v-shell .btn-secondary,
+    .v-shell .btn-ops-secondary {
+        background: #ffffff;
+        border-color: transparent;
+        color: #171717;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, .08);
+        backdrop-filter: none;
+        transform: none;
+    }
+    .v-shell .btn-secondary:hover,
+    .v-shell .btn-ops-secondary:hover { background: #f5f5f5; color: #171717; transform: none; }
+
+    .v-shell .btn-ghost { color: #4d4d4d; }
+    .v-shell .btn-ghost:hover { background: #ebebeb; color: #171717; }
+
+    /* Main + footer */
+    .v-shell main { background: #fafafa; }
+    .v-shell footer {
+        background: transparent;
+        border-color: rgba(0, 0, 0, .08);
+        color: #8f8f8f;
+        backdrop-filter: none;
+    }
+
+    .v-shell .font-mono { font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    /* The dashboard panel is already light; let it sit directly on the canvas */
+    .v-shell .v-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .v-shell :focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px #fafafa, 0 0 0 4px #0072f5;
+        border-radius: 6px;
+    }
+
+    @media (max-width: 640px) {
+        .v-shell .v-page { padding: 0; }
+    }
+}
+
+/* Dark mode for the Vercel shell: the same tokens resolve to the operations palette. */
+@layer components {
+    .dark .v-shell {
+        --c-canvas: 5 7 12;
+        --c-surface: 12 15 24;
+        --c-elevated: 18 23 35;
+        --c-line: 55 66 84;
+        --c-ink: 243 246 252;
+        --c-body: 172 183 201;
+        --c-muted: 137 150 171;
+        --c-faint: 103 116 138;
+        --c-accent: 96 165 250;
+        --c-cyan: 73 215 255;
+        --c-violet: 159 122 234;
+        --c-success: 74 222 128;
+        --c-warning: 251 191 36;
+        --c-danger: 251 113 133;
+        --glass-fill: rgba(16, 21, 32, .66);
+        --shadow-card: 0 24px 80px rgba(0, 0, 0, .26), inset 0 1px 0 rgba(255, 255, 255, .035);
+
+        background: linear-gradient(145deg, #05070c, #080b13 58%, #04060a);
+        color: #f3f6fc;
+    }
+
+    .dark .v-shell::before,
+    .dark .v-shell::after { display: block; }
+
+    .dark .v-shell.app-grid {
+        background-image:
+            linear-gradient(rgb(96 165 250 / .035) 1px, transparent 1px),
+            linear-gradient(90deg, rgb(96 165 250 / .035) 1px, transparent 1px);
+    }
+
+    .dark .v-shell .ops-sidebar {
+        background:
+            linear-gradient(180deg, rgb(14 19 30 / .94), rgb(7 10 17 / .92)),
+            radial-gradient(520px circle at 0 0, rgb(96 165 250 / .16), transparent 55%);
+        box-shadow: 28px 0 90px rgb(0 0 0 / .16), inset -1px 0 0 rgb(255 255 255 / .035);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+    }
+    .dark .v-shell .ops-sidebar .nav-link { color: rgb(var(--c-body)); }
+    .dark .v-shell .ops-sidebar .nav-link .material-symbols-outlined { color: rgb(var(--c-faint)); }
+    .dark .v-shell .ops-sidebar .nav-link:hover { background: rgb(var(--c-elevated) / .7); color: #fff; }
+    .dark .v-shell .ops-sidebar .nav-link:hover .material-symbols-outlined { color: rgb(var(--c-cyan)); }
+    .dark .v-shell .ops-sidebar .nav-link-active { background: rgb(var(--c-accent) / .12); color: #fff; box-shadow: none; }
+    .dark .v-shell .ops-sidebar .nav-link-active .material-symbols-outlined { color: rgb(var(--c-cyan)); }
+
+    .dark .v-shell .ops-topbar {
+        background: linear-gradient(180deg, rgb(9 12 20 / .9), rgb(8 11 18 / .7));
+        border-color: rgb(var(--c-line) / .72);
+        box-shadow: 0 10px 40px rgb(0 0 0 / .12);
+        backdrop-filter: blur(18px) saturate(130%);
+    }
+    .dark .v-shell .ops-topbar input,
+    .dark .v-shell .ops-topbar select {
+        background: rgb(var(--c-canvas) / .72);
+        border-color: rgb(var(--c-line));
+        color: rgb(var(--c-ink));
+    }
+
+    .dark .v-shell .btn-primary,
+    .dark .v-shell .btn-ops-primary {
+        background: linear-gradient(135deg, rgb(var(--c-accent)), rgb(44 109 224));
+        border-color: rgb(var(--c-cyan) / .68);
+        color: #fff;
+        box-shadow: 0 10px 28px rgb(var(--c-accent) / .2), inset 0 1px 0 rgb(255 255 255 / .27);
+    }
+    .dark .v-shell .btn-primary:hover,
+    .dark .v-shell .btn-ops-primary:hover { border-color: rgb(var(--c-cyan)); box-shadow: 0 14px 32px rgb(var(--c-accent) / .32); }
+
+    .dark .v-shell .btn-secondary,
+    .dark .v-shell .btn-ops-secondary {
+        background: rgb(var(--c-elevated) / .7);
+        border-color: rgb(var(--c-line));
+        color: rgb(var(--c-ink));
+        box-shadow: inset 0 1px 0 rgb(255 255 255 / .045);
+    }
+    .dark .v-shell .btn-secondary:hover,
+    .dark .v-shell .btn-ops-secondary:hover { background: rgb(var(--c-accent) / .1); color: #fff; }
+    .dark .v-shell .btn-ghost { color: rgb(var(--c-body)); }
+    .dark .v-shell .btn-ghost:hover { background: rgb(var(--c-elevated) / .7); color: #fff; }
+
+    .dark .v-shell main { background: transparent; }
+    .dark .v-shell footer {
+        background: transparent;
+        border-color: rgb(var(--c-line) / .72);
+        color: rgb(var(--c-faint));
+    }
+
+    /* Dashboard surface in dark mode */
+    .dark .v-shell .v-page {
+        --v-canvas: #05070c;
+        --v-elevated: #0c0f18;
+        --v-ink: #f3f6fc;
+        --v-body: #acb7c9;
+        --v-muted: #8996ab;
+        --v-line: rgba(255, 255, 255, .09);
+        --v-line-soft: rgba(255, 255, 255, .07);
+        --v-blue: #6cb1ff;
+        --v-focus: #60a5fa;
+        background: transparent;
+    }
+    .dark .v-shell .v-page .v-progress { background: #1c2333; }
+    .dark .v-shell .v-page .v-progress > span { background: #dbe4f3; }
+    .dark .v-shell .v-page .v-btn-primary { background: #f3f6fc; color: #0b0d12; }
+    .dark .v-shell .v-page .v-btn-primary:hover { background: #dbe4f3; }
+    .dark .v-shell .v-page .v-btn-secondary { background: #0c0f18; color: #f3f6fc; box-shadow: 0 0 0 1px rgba(255, 255, 255, .1); }
+    .dark .v-shell .v-page .v-btn-secondary:hover { background: #121722; }
+    .dark .v-shell .v-page .v-row:hover { background: rgba(255, 255, 255, .03); }
+    .dark .v-shell .v-page .v-pill { background: #0c0f18; color: #acb7c9; box-shadow: 0 0 0 1px rgba(255, 255, 255, .1); }
+    .dark .v-shell .v-page .v-table-head { color: #8996ab; }
+    .dark .v-shell .v-page .divide-y > :not([hidden]) ~ :not([hidden]) { border-color: rgba(255, 255, 255, .06); }
+    .dark .v-shell .v-page .font-mono { font-family: 'Geist Mono', ui-monospace, monospace; }
+}

@@ -74,8 +74,8 @@
                     </div>
                 </dl>
             @else
-                <p class="mt-4 font-body text-xs leading-relaxed text-muted">You are on the free Snapshot plan. Monitoring and deep reports require Deep Scan.</p>
-                <p class="mt-4 text-xs text-muted">Deep Scan is not available yet.</p>
+                <p class="mt-4 font-body text-xs leading-relaxed text-muted">You are on the free v1.0 beta: scans, deep scans and monitoring are free for every account. Billing arrives with v2.0.</p>
+                <p class="mt-4 text-xs text-muted">Paid plans are not implemented yet, and nothing here will ever charge you automatically.</p>
             @endif
 
             <div class="mt-5 rounded-xl border border-hairline bg-canvas-alt px-3 py-2.5">

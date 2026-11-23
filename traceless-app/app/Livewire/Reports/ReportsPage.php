@@ -29,6 +29,7 @@ class ReportsPage extends Component
 
         $this->validate(['type' => 'required|in:snapshot,deep_scan']);
 
+        // Plan gate: isDeepScan() delegates to App\Support\BetaAccess.
         if ($this->type === 'deep_scan' && ! Auth::user()->isDeepScan()) {
             $this->addError('type', 'Deep reports require an active Deep Scan plan.');
 

@@ -3,7 +3,7 @@
         @if($isDeepScan)
             <span class="badge badge-emerald"><span class="material-symbols-outlined text-[12px]">verified</span>Deep Scan active</span>
         @else
-            <span class="badge badge-neutral"><span class="material-symbols-outlined text-[12px]">lock</span>Deep Scan feature</span>
+            <span class="badge badge-neutral"><span class="material-symbols-outlined text-[12px]">lock</span>Deep Scan · Beta</span>
         @endif
     </x-page-header>
 
@@ -37,8 +37,8 @@
 
                 @if(!$isDeepScan && !$demoMode)
                     <div class="mt-5 rounded-xl border border-amber/25 bg-amber/10 px-4 py-3">
-                        <p class="font-mono text-[10px] font-semibold text-warning">Recurring monitoring requires Deep Scan</p>
-                        <p class="mt-1 font-body text-xs leading-relaxed text-warning/85">You can configure preferences now, but scheduled scans only run on an active Deep Scan plan.</p>
+                        <p class="font-mono text-[10px] font-semibold text-warning">Deep Scan is part of the v1.0 beta</p>
+                        <p class="mt-1 font-body text-xs leading-relaxed text-warning/85">Scans and recurring monitoring are free for every account during the beta. Billing arrives with v2.0.</p>
                     </div>
                 @endif
 

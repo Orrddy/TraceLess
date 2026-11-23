@@ -44,6 +44,8 @@ class MonitoringPage extends Component
             'options' => 'array',
         ]);
 
+        // Plan gate: isDeepScan() delegates to App\Support\BetaAccess, which
+        // grants recurring monitoring during the free beta.
         if ($this->isActive && ! Auth::user()->isDeepScan() && ! config('traceless.demo_mode')) {
             $this->addError('isActive', 'Recurring monitoring is a Deep Scan feature.');
 
@@ -70,6 +72,7 @@ class MonitoringPage extends Component
             return null;
         }
 
+        // Plan gate: isDeepScan() delegates to App\Support\BetaAccess.
         if (! Auth::user()->isDeepScan()) {
             $this->addError('isActive', 'Deep Scan is required to run a monitoring scan.');
 

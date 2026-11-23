@@ -89,6 +89,8 @@
                             <span class="v-dot v-dot-green"></span>
                             Active
                         </span>
+                        <span class="v-pill">v1.0 · Beta</span>
+                        <span class="v-pill">v2.0 coming</span>
                         <span class="v-pill font-[family-name:'Geist_Mono',ui-monospace,monospace]">
                             TR-{{ str_pad($profile->id, 5, '0', STR_PAD_LEFT) }}
                         </span>

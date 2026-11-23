@@ -51,6 +51,8 @@ class ScanCreate extends Component
             return null;
         }
 
+        // Plan gate: isDeepScan() delegates to App\Support\BetaAccess, which
+        // unlocks deep scans for every active account while the free beta is on.
         if ($this->type === 'deep_scan' && ! Auth::user()->isDeepScan()) {
             $this->addError('type', 'Deep Scan requires an active Deep Scan plan. You can enable the demo plan from this page in demo mode.');
 

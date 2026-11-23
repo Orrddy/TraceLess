@@ -51,6 +51,9 @@ class DispatchDueMonitoringScans implements ShouldQueue
                         continue;
                     }
 
+                    // Plan gate through the user model, which delegates to
+                    // App\Support\BetaAccess: the free beta runs for everyone
+                    // active, v2.0 restores the Deep Scan subscription check.
                     if ($enforcePlan && ! $profile->user?->isDeepScan()) {
                         Log::info('monitoring_skipped_no_plan', ['subscription_id' => $subscription->id]);
                         $subscription->update(['next_scan_at' => now()->addDay()]);

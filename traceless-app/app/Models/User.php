@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\BetaAccess;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -125,7 +126,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isDeepScan(): bool
     {
-        return (bool) $this->activeSubscription()?->isDeepScan();
+        // Single plan gate for deep scans, deep reports and monitoring. During
+        // the free beta BetaAccess unlocks it for every active account.
+        return BetaAccess::grantsDeepScan($this);
     }
 
     public function unreadAlertsCount(): int

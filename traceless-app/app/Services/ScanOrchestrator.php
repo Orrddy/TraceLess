@@ -18,6 +18,8 @@ use App\Models\Scan;
 use App\Models\ScanSource;
 use App\Notifications\AlertNotification;
 use App\Notifications\ScanCompletedNotification;
+use App\Support\ScanBudgetExceededException;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use Throwable;
@@ -75,6 +77,12 @@ class ScanOrchestrator
             return;
         }
 
+        // Deep scans get one wall-clock deadline for the whole job (discovery
+        // plus source processing). It stays below the 600s queue timeout, so a
+        // slow scan is failed cleanly instead of the worker being killed while
+        // it is writing findings.
+        $deadline = $this->scanDeadline($scan);
+
         try {
             $profile = $scan->identityProfile;
             $this->setStage($scan, 'initializing', 3, 'Initializing consent-aware scan engine...', [
@@ -89,12 +97,14 @@ class ScanOrchestrator
                     'started_at' => $scan->started_at ?? now(),
                 ]);
 
-            $report = $this->discoverFindings($profile, $scan->type === 'deep_scan' ? 'deep' : 'curated', $scan);
+            $report = $this->discoverFindings($profile, $scan->type === 'deep_scan' ? 'deep' : 'curated', $scan, $deadline);
             $findings = $report['findings'];
 
             if ($this->wasCancelled($scan)) {
                 return;
             }
+
+            $this->guardScanDeadline($deadline);
 
             if (! config('traceless.demo_mode') && $report['attempted'] > 0 && $report['sources'] === []) {
                 throw new RuntimeException('No monitored identifier could be checked.');
@@ -114,6 +124,8 @@ class ScanOrchestrator
                 if ($this->wasCancelled($scan)) {
                     return;
                 }
+
+                $this->guardScanDeadline($deadline);
 
                 if ($source->outcome === 'skipped') {
                     $source->update(['status' => 'completed', 'findings_found' => 0]);
@@ -164,6 +176,8 @@ class ScanOrchestrator
             }
 
             // Any findings from a source not in the catalog still get stored.
+            $this->guardScanDeadline($deadline);
+
             foreach ($grouped as $sourceName => $rows) {
                 if ($sources->contains(fn (ScanSource $s) => $s->name === $sourceName)) {
                     continue;
@@ -183,6 +197,8 @@ class ScanOrchestrator
                 return;
             }
 
+            $this->guardScanDeadline($deadline);
+
             $this->setStage($scan, 'normalizing_results', 70, 'De-duplicating records and validating confidence thresholds...', [
                 'sources_checked' => $total,
                 'findings_count' => $inserted + $reappeared,
@@ -192,9 +208,14 @@ class ScanOrchestrator
             $this->setStage($scan, 'calculating_risk', 84, 'Calculating your 0–100 privacy posture estimate...');
             $this->delay();
 
+            $this->guardScanDeadline($deadline);
+
             $score = $this->riskScorer->recalculateAndPersist($profile->id);
 
             $this->setStage($scan, 'generating_report', 93, 'Generating a signed privacy report...');
+
+            $this->guardScanDeadline($deadline);
+
             $report = $this->reports->generate($profile, $scan->type, $scan->id);
             event(new ReportGenerated($report));
 
@@ -221,6 +242,21 @@ class ScanOrchestrator
                 'reappeared' => $reappeared,
                 'demo_mode' => $scan->demo_mode,
                 'score' => $score['privacy_score'],
+            ]);
+        } catch (ScanBudgetExceededException $e) {
+            // A budget stop is an expected outcome, not a queue failure: the
+            // scan is failed with a message that names the budget and the job
+            // exits successfully before the worker timeout.
+            Log::warning('scan_budget_exceeded', [
+                'scan_id' => $scan->id,
+                'budget_seconds' => $e->budgetSeconds,
+            ]);
+
+            $scan->update([
+                'status' => 'failed',
+                'current_stage' => 'Deep scan stopped at its wall-clock budget.',
+                'error_message' => $e->getMessage().' No report was generated. Retry with fewer monitored identifiers.',
+                'completed_at' => now(),
             ]);
         } catch (Throwable $e) {
             Log::error('scan_failed', [
@@ -255,7 +291,7 @@ class ScanOrchestrator
     /**
      * @return array{findings: array<int, array<string, mixed>>, sources: array<int, array<string, mixed>>|null, attempted: int}
      */
-    protected function discoverFindings(IdentityProfile $profile, string $mode = 'curated', ?Scan $scan = null): array
+    protected function discoverFindings(IdentityProfile $profile, string $mode = 'curated', ?Scan $scan = null, ?Carbon $deadline = null): array
     {
         if (config('traceless.demo_mode')) {
             return ['findings' => $this->demoAdapter->findingsFor($profile), 'sources' => null, 'attempted' => 0];
@@ -320,10 +356,20 @@ class ScanOrchestrator
                 return ['findings' => [], 'sources' => [], 'attempted' => $total];
             }
 
+            // Stop before a new subprocess starts once the deep-scan deadline
+            // has passed; the remaining budget also caps that subprocess so it
+            // cannot run past the deadline either.
+            $this->guardScanDeadline($deadline);
+
+            $timeout = $this->remainingIdentifierTimeout($deadline);
             $report = null;
 
             try {
-                $report = $this->pythonScanner->scanReport($type, $value, true, $mode);
+                $report = $timeout === null
+                    ? $this->pythonScanner->scanReport($type, $value, true, $mode)
+                    : $this->pythonScanner->scanReport($type, $value, true, $mode, $timeout);
+            } catch (ScanBudgetExceededException $exception) {
+                throw $exception;
             } catch (Throwable $exception) {
                 // One identifier failing must not discard the others.
                 Log::warning('scan_identifier_failed', [
@@ -713,5 +759,41 @@ class ScanOrchestrator
         $profile->user->notify(new AlertNotification($alert));
 
         return $alert;
+    }
+
+    /**
+     * Deadline for a deep scan only. Live snapshot scans keep their existing
+     * bounds (identifier caps plus the 90s worker timeout).
+     */
+    protected function scanDeadline(Scan $scan): ?Carbon
+    {
+        $budget = (int) config('traceless.scan.deep_wall_clock_seconds', 480);
+
+        if ($scan->type !== 'deep_scan' || $budget <= 0) {
+            return null;
+        }
+
+        return now()->addSeconds($budget);
+    }
+
+    protected function guardScanDeadline(?Carbon $deadline): void
+    {
+        if ($deadline === null || now()->lessThan($deadline)) {
+            return;
+        }
+
+        throw new ScanBudgetExceededException((int) config('traceless.scan.deep_wall_clock_seconds', 480));
+    }
+
+    /**
+     * Cap one identifier subprocess so it cannot run past the deadline.
+     */
+    protected function remainingIdentifierTimeout(?Carbon $deadline): ?int
+    {
+        if ($deadline === null) {
+            return null;
+        }
+
+        return max(1, (int) floor($deadline->getTimestamp() - now()->getTimestamp()));
     }
 }

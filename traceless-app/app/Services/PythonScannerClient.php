@@ -30,9 +30,12 @@ class PythonScannerClient
     /**
      * Full report: verified findings plus a per-source outcome list.
      *
+     * @param  int|null  $timeoutSeconds  Optional cap for this single worker
+     *                                    process, used to keep a deep scan inside
+     *                                    its wall-clock budget.
      * @return array{findings: array<int, array<string, mixed>>, sources: array<int, array<string, mixed>>}
      */
-    public function scanReport(string $identifierType, string $identifier, bool $consent, string $mode = 'curated'): array
+    public function scanReport(string $identifierType, string $identifier, bool $consent, string $mode = 'curated', ?int $timeoutSeconds = null): array
     {
         if (! $consent) {
             throw new RuntimeException('Consent is required before scanning.');
@@ -60,7 +63,10 @@ class PythonScannerClient
             $arguments[] = '--deep';
         }
 
-        $result = Process::timeout((int) config($deep ? 'traceless.python.deep_timeout' : 'traceless.python.timeout', $deep ? 420 : 90))
+        $defaultTimeout = (int) config($deep ? 'traceless.python.deep_timeout' : 'traceless.python.timeout', $deep ? 420 : 90);
+        $timeout = $timeoutSeconds === null ? $defaultTimeout : max(1, min($defaultTimeout, $timeoutSeconds));
+
+        $result = Process::timeout($timeout)
             ->run($arguments);
 
         if (! $result->successful()) {

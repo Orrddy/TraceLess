@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="#05070c">
+    <meta name="theme-color" content="#FAFAFA">
     <title>{{ $title ?? 'TraceLess · Privacy dashboard' }}</title>
     <meta name="description" content="TraceLess privacy dashboard: your public exposure, credential risk and removal progress in one place.">
 
@@ -12,7 +12,7 @@
         // Resolve the theme before paint so there is no flash.
         (() => {
             const stored = localStorage.getItem('traceless-theme');
-            const dark = stored ? stored === 'dark' : true;
+            const dark = stored ? stored === 'dark' : false;
             document.documentElement.classList.toggle('dark', dark);
         })();
     </script>
@@ -27,7 +27,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="app-grid min-h-screen bg-canvas text-ink antialiased ops-shell"
+<body class="app-grid min-h-screen bg-canvas text-ink antialiased ops-shell v-shell"
       x-data="{ mobileNav: false, toast: false, toastMsg: '' }"
       @notify.window="toastMsg = $event.detail.message || 'Saved'; toast = true; setTimeout(() => toast = false, 4000)"
       @toast.window="toastMsg = $event.detail.message || 'Saved'; toast = true; setTimeout(() => toast = false, 4000)">
@@ -157,6 +157,8 @@
                         <input type="search" name="search" value="{{ request('search') }}" placeholder="Search findings, handles, sources…"
                                class="w-full border-0 bg-transparent p-0 text-sm text-ink placeholder:text-faint focus:ring-0" aria-label="Search findings">
                     </form>
+                    <span class="v-pill hidden md:inline-flex">v1.0 · Beta</span>
+                    <span class="hidden text-[10px] text-muted lg:inline">v2.0 coming</span>
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -197,8 +199,8 @@
 
         <footer class="border-t border-line bg-canvas/50 px-6 py-4 font-mono text-[10px] text-faint backdrop-blur-sm">
             <div class="flex flex-col items-center justify-between gap-2 sm:flex-row">
-                <span>TraceLess · public-source privacy monitoring</span>
-                <span>Discovery uses WhatsMyName (CC BY-SA 4.0) and user-scanner (MIT)</span>
+                <span>TraceLess · public-source privacy monitoring · v1.0 beta</span>
+                <span>v2.0 coming · Discovery uses WhatsMyName (CC BY-SA 4.0) and user-scanner (MIT)</span>
             </div>
         </footer>
     </div>
