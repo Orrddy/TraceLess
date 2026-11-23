@@ -1,0 +1,931 @@
+#0 building with "builder-103e1f92-1c7b-4cf7-9cec-67669e9904bd" instance using docker-container driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 4.70kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#2 ...
+
+#3 [auth] docker/dockerfile:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#2 DONE 1.5s
+
+#4 docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#4 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e done
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 7.34MB / 11.98MB 0.2s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 11.98MB / 11.98MB 0.2s done
+#4 extracting sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 0.1s done
+#4 DONE 0.3s
+
+#5 [auth] library/node:pull token for registry-1.docker.io
+#5 DONE 0.0s
+
+#6 [auth] library/php:pull token for registry-1.docker.io
+#6 DONE 0.0s
+
+#7 [auth] library/composer:pull token for registry-1.docker.io
+#7 DONE 0.0s
+
+#8 [internal] load metadata for docker.io/library/composer:2
+#8 ...
+
+#9 [internal] load metadata for docker.io/library/php:8.3-fpm-bookworm
+#9 DONE 0.7s
+
+#8 [internal] load metadata for docker.io/library/composer:2
+#8 DONE 0.8s
+
+#10 [internal] load metadata for docker.io/library/node:20-bookworm-slim
+#10 DONE 1.2s
+
+#11 [internal] load .dockerignore
+#11 transferring context: 537B done
+#11 DONE 0.0s
+
+#12 [assets 1/8] FROM docker.io/library/node:20-bookworm-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0
+#12 resolve docker.io/library/node:20-bookworm-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0 done
+#12 sha256:3c02fd806613748139b8b8a14a69ae3518a1b0e863c57c35aada3b92ed87fb31 447B / 447B 0.1s done
+#12 sha256:64cfb949317c9824fd081d55c59a7225bfe1f650c6395ba42d7ed0ccf51993d2 0B / 1.71MB 0.2s
+#12 sha256:804d4d68057cbb26cbcde9a735148ebc6589911bad32cf9dbddb5b0ba878bf1f 26.21MB / 41.42MB 0.2s
+#12 sha256:e54aec64c365815cd7b91e718f00ac6e625562b1de09036b38614621b42c7582 0B / 3.31kB 0.2s
+#12 sha256:ff86ea2e5edce334d19a34fbc65d1a511aa1fc823dba1110422f991aa56b44d4 0B / 28.24MB 0.2s
+#12 sha256:64cfb949317c9824fd081d55c59a7225bfe1f650c6395ba42d7ed0ccf51993d2 1.71MB / 1.71MB 0.3s
+#12 sha256:804d4d68057cbb26cbcde9a735148ebc6589911bad32cf9dbddb5b0ba878bf1f 41.42MB / 41.42MB 0.3s
+#12 sha256:64cfb949317c9824fd081d55c59a7225bfe1f650c6395ba42d7ed0ccf51993d2 1.71MB / 1.71MB 0.4s done
+#12 sha256:804d4d68057cbb26cbcde9a735148ebc6589911bad32cf9dbddb5b0ba878bf1f 41.42MB / 41.42MB 0.4s done
+#12 sha256:e54aec64c365815cd7b91e718f00ac6e625562b1de09036b38614621b42c7582 3.31kB / 3.31kB 0.4s done
+#12 sha256:ff86ea2e5edce334d19a34fbc65d1a511aa1fc823dba1110422f991aa56b44d4 5.24MB / 28.24MB 0.3s
+#12 ...
+
+#13 [internal] load build context
+#13 transferring context: 28.76MB 0.6s done
+#13 DONE 0.7s
+
+#12 [assets 1/8] FROM docker.io/library/node:20-bookworm-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0
+#12 sha256:ff86ea2e5edce334d19a34fbc65d1a511aa1fc823dba1110422f991aa56b44d4 28.24MB / 28.24MB 0.5s done
+#12 extracting sha256:ff86ea2e5edce334d19a34fbc65d1a511aa1fc823dba1110422f991aa56b44d4
+#12 extracting sha256:ff86ea2e5edce334d19a34fbc65d1a511aa1fc823dba1110422f991aa56b44d4 1.2s done
+#12 extracting sha256:e54aec64c365815cd7b91e718f00ac6e625562b1de09036b38614621b42c7582
+#12 extracting sha256:e54aec64c365815cd7b91e718f00ac6e625562b1de09036b38614621b42c7582 0.0s done
+#12 extracting sha256:804d4d68057cbb26cbcde9a735148ebc6589911bad32cf9dbddb5b0ba878bf1f
+#12 extracting sha256:804d4d68057cbb26cbcde9a735148ebc6589911bad32cf9dbddb5b0ba878bf1f 0.9s done
+#12 DONE 2.8s
+
+#14 [runtime  1/16] FROM docker.io/library/php:8.3-fpm-bookworm@sha256:5b9440ebac23314bb42d33338918c1c2c852469e5b0a7f0a9493448d827bab35
+#14 resolve docker.io/library/php:8.3-fpm-bookworm@sha256:5b9440ebac23314bb42d33338918c1c2c852469e5b0a7f0a9493448d827bab35 done
+#14 sha256:c16190c8823290899b2cf235305466a0399828362a2bc303efb068ba0ff8edaa 9.26kB / 9.26kB 0.1s done
+#14 sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1 32B / 32B 0.2s done
+#14 sha256:bb3ce61d2d1aa6d80f40c6cf48deebc6ec5f6956fcc72fb21120f18ddd2ebe10 2.46kB / 2.46kB 0.1s done
+#14 sha256:78209c6129ba12f383277b274c0596f6afe1bed0f3ec32e25446bb1df08548fb 245B / 245B 0.2s done
+#14 sha256:777015804984665c5968ce9ed64573f896b75f682bb023319c5c5f521dbc102d 250B / 250B 0.1s done
+#14 sha256:85484dacc15a8884e8b4905e2409404dc56cce7a4a2a2afc3ee4c62a5d4689ff 488B / 488B 0.2s done
+#14 sha256:e90f3efbe1ac02ef63aa5999baf06d63493e7f4ae6687b35ce6364003bb021cc 12.79MB / 12.79MB 0.2s done
+#14 sha256:5721cd92acd3722feaf922386496e10f2f479a214e22db380a5dbfe59de6a183 225B / 225B 0.1s done
+#14 sha256:5a89f3c4993428da1699ef00022948e2e299defc2713a58735ba5e2f067541a8 104.16MB / 104.16MB 1.1s done
+#14 sha256:fc7918d408b7450f9262e46b05dc5a1b494f80c856da46c8aa8945a35f0c2303 225B / 225B 0.1s done
+#14 sha256:3b3b1a00228f89185d0639c3ac5ff8038b004656b4e81678587296c560854607 27.89MB / 27.89MB 1.0s done
+#14 sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3 28.25MB / 28.25MB 1.0s done
+#14 extracting sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3 0.7s done
+#14 extracting sha256:fc7918d408b7450f9262e46b05dc5a1b494f80c856da46c8aa8945a35f0c2303 0.0s done
+#14 extracting sha256:5a89f3c4993428da1699ef00022948e2e299defc2713a58735ba5e2f067541a8
+#14 ...
+
+#12 [assets 1/8] FROM docker.io/library/node:20-bookworm-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0
+#12 extracting sha256:64cfb949317c9824fd081d55c59a7225bfe1f650c6395ba42d7ed0ccf51993d2 0.0s done
+#12 extracting sha256:3c02fd806613748139b8b8a14a69ae3518a1b0e863c57c35aada3b92ed87fb31 done
+#12 DONE 2.9s
+
+#15 [vendor 1/6] FROM docker.io/library/composer:2@sha256:50ea4d33fdcde1adb0f045547295faa1548b33872e5f789dae5b02ce2fb5de93
+#15 resolve docker.io/library/composer:2@sha256:50ea4d33fdcde1adb0f045547295faa1548b33872e5f789dae5b02ce2fb5de93 0.0s done
+#15 sha256:a16f709362bd0b7b3cab7d70e3a5a0200ad0b6c06961481f29c6659410885e4d 418B / 418B 0.1s done
+#15 sha256:c4c87643b8cee02592699398cab5466f6f66da02a95e0fa6f5a3cddf4dae0aa9 1.09MB / 1.09MB 0.2s done
+#15 sha256:53d65f6f231d99b136bb11fa5923017d7ead3225256ad9295599a2de605b312d 22.39kB / 22.39kB 0.1s done
+#15 sha256:eb34cdb4b6ac7c2f937349bb85655d935a606e0eb5464d0dc91de635e4bdd555 2.44kB / 2.44kB 0.1s done
+#15 sha256:73873ef0ff75b3a63bd405fb5386de8e46e4c1f3cd24f9b1aa54164fca26b0c6 260B / 260B 0.1s done
+#15 sha256:295c7d339315e47102ec5649315065b92ad659b8b890bd87a099900836e9511f 32.03MB / 32.03MB 0.3s done
+#15 sha256:21b824381d747ab82eeaa07efb3ec7e27c9ef0a525d342fdf2758169b2ef8a10 486B / 486B 0.3s done
+#15 sha256:70aeb896379a30fa7e2353240e9cdfd46f01b3121f593585c233caf2caf74fdd 22.98MB / 22.98MB 0.3s done
+#15 sha256:e5457eb4ec032c6d5df11d639bdb13afc0c2c2e8c68ab5732847aaa6a018d579 92B / 92B 0.2s done
+#15 sha256:e81c43fcee137a331af6613c6c015b731afdfe7b7893cbfd53e1c531242bed32 930B / 930B 0.1s done
+#15 sha256:0d6926b212715e0610590550c3853ea11245c18b7099d4f8e3c6a92d09e82fb9 215B / 215B 0.1s done
+#15 sha256:fa8181c2cd967207e3556cb60d1c7a2715e128024faa69f6fa1da191a247a93e 5.97MB / 5.97MB 0.1s done
+#15 sha256:ce76d85d80ca202cd3d69d966e6bfc1e920063f2c682c02bf9111daef6f3acae 14.62MB / 14.62MB 0.3s done
+#15 sha256:881fc932939efef04ca120ad44bbd2c0917851eb247aa4995428afb1e80ede17 3.85MB / 3.85MB 0.2s done
+#15 extracting sha256:881fc932939efef04ca120ad44bbd2c0917851eb247aa4995428afb1e80ede17 0.1s done
+#15 extracting sha256:fa8181c2cd967207e3556cb60d1c7a2715e128024faa69f6fa1da191a247a93e 0.1s done
+#15 extracting sha256:e81c43fcee137a331af6613c6c015b731afdfe7b7893cbfd53e1c531242bed32 done
+#15 extracting sha256:0d6926b212715e0610590550c3853ea11245c18b7099d4f8e3c6a92d09e82fb9 done
+#15 extracting sha256:ce76d85d80ca202cd3d69d966e6bfc1e920063f2c682c02bf9111daef6f3acae 0.1s done
+#15 extracting sha256:21b824381d747ab82eeaa07efb3ec7e27c9ef0a525d342fdf2758169b2ef8a10 0.0s done
+#15 extracting sha256:70aeb896379a30fa7e2353240e9cdfd46f01b3121f593585c233caf2caf74fdd
+#15 extracting sha256:70aeb896379a30fa7e2353240e9cdfd46f01b3121f593585c233caf2caf74fdd 0.5s done
+#15 DONE 3.4s
+
+#16 [assets 2/8] WORKDIR /app
+#16 ...
+
+#15 [vendor 1/6] FROM docker.io/library/composer:2@sha256:50ea4d33fdcde1adb0f045547295faa1548b33872e5f789dae5b02ce2fb5de93
+#15 extracting sha256:eb34cdb4b6ac7c2f937349bb85655d935a606e0eb5464d0dc91de635e4bdd555 0.0s done
+#15 extracting sha256:53d65f6f231d99b136bb11fa5923017d7ead3225256ad9295599a2de605b312d 0.0s done
+#15 extracting sha256:295c7d339315e47102ec5649315065b92ad659b8b890bd87a099900836e9511f 0.6s done
+#15 DONE 4.1s
+
+#15 [vendor 1/6] FROM docker.io/library/composer:2@sha256:50ea4d33fdcde1adb0f045547295faa1548b33872e5f789dae5b02ce2fb5de93
+#15 extracting sha256:73873ef0ff75b3a63bd405fb5386de8e46e4c1f3cd24f9b1aa54164fca26b0c6
+#15 extracting sha256:73873ef0ff75b3a63bd405fb5386de8e46e4c1f3cd24f9b1aa54164fca26b0c6 0.2s done
+#15 DONE 4.3s
+
+#16 [assets 2/8] WORKDIR /app
+#16 ...
+
+#15 [vendor 1/6] FROM docker.io/library/composer:2@sha256:50ea4d33fdcde1adb0f045547295faa1548b33872e5f789dae5b02ce2fb5de93
+#15 extracting sha256:c4c87643b8cee02592699398cab5466f6f66da02a95e0fa6f5a3cddf4dae0aa9 0.1s done
+#15 extracting sha256:a16f709362bd0b7b3cab7d70e3a5a0200ad0b6c06961481f29c6659410885e4d 0.2s done
+#15 DONE 4.5s
+
+#15 [vendor 1/6] FROM docker.io/library/composer:2@sha256:50ea4d33fdcde1adb0f045547295faa1548b33872e5f789dae5b02ce2fb5de93
+#15 extracting sha256:e5457eb4ec032c6d5df11d639bdb13afc0c2c2e8c68ab5732847aaa6a018d579 0.1s done
+#15 DONE 4.6s
+
+#14 [runtime  1/16] FROM docker.io/library/php:8.3-fpm-bookworm@sha256:5b9440ebac23314bb42d33338918c1c2c852469e5b0a7f0a9493448d827bab35
+#14 extracting sha256:5a89f3c4993428da1699ef00022948e2e299defc2713a58735ba5e2f067541a8 2.0s done
+#14 extracting sha256:5721cd92acd3722feaf922386496e10f2f479a214e22db380a5dbfe59de6a183 0.0s done
+#14 extracting sha256:e90f3efbe1ac02ef63aa5999baf06d63493e7f4ae6687b35ce6364003bb021cc 0.0s done
+#14 DONE 4.6s
+
+#17 [vendor 2/6] WORKDIR /app
+#17 ...
+
+#14 [runtime  1/16] FROM docker.io/library/php:8.3-fpm-bookworm@sha256:5b9440ebac23314bb42d33338918c1c2c852469e5b0a7f0a9493448d827bab35
+#14 extracting sha256:85484dacc15a8884e8b4905e2409404dc56cce7a4a2a2afc3ee4c62a5d4689ff 0.0s done
+#14 extracting sha256:3b3b1a00228f89185d0639c3ac5ff8038b004656b4e81678587296c560854607 0.6s done
+#14 DONE 5.2s
+
+#14 [runtime  1/16] FROM docker.io/library/php:8.3-fpm-bookworm@sha256:5b9440ebac23314bb42d33338918c1c2c852469e5b0a7f0a9493448d827bab35
+#14 extracting sha256:bb3ce61d2d1aa6d80f40c6cf48deebc6ec5f6956fcc72fb21120f18ddd2ebe10
+#14 extracting sha256:bb3ce61d2d1aa6d80f40c6cf48deebc6ec5f6956fcc72fb21120f18ddd2ebe10 0.3s done
+#14 DONE 5.5s
+
+#16 [assets 2/8] WORKDIR /app
+#16 ...
+
+#14 [runtime  1/16] FROM docker.io/library/php:8.3-fpm-bookworm@sha256:5b9440ebac23314bb42d33338918c1c2c852469e5b0a7f0a9493448d827bab35
+#14 extracting sha256:777015804984665c5968ce9ed64573f896b75f682bb023319c5c5f521dbc102d 0.0s done
+#14 extracting sha256:78209c6129ba12f383277b274c0596f6afe1bed0f3ec32e25446bb1df08548fb 0.0s done
+#14 extracting sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1 done
+#14 extracting sha256:c16190c8823290899b2cf235305466a0399828362a2bc303efb068ba0ff8edaa 0.0s done
+#14 DONE 5.6s
+
+#18 [runtime  2/16] RUN apt-get update && apt-get install -y --no-install-recommends         nginx         supervisor         curl         ca-certificates         git         unzip         python3         python3-venv         python3-pip         libpq-dev         libzip-dev     && docker-php-ext-install -j"$(nproc)" pdo_pgsql opcache pcntl zip     && rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default     && apt-get clean     && rm -rf /var/lib/apt/lists/*
+#18 0.126 Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+#18 0.189 Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+#18 0.207 Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [34.8 kB]
+#18 0.235 Get:4 http://deb.debian.org/debian bookworm/main amd64 Packages [8790 kB]
+#18 0.495 Get:5 http://deb.debian.org/debian bookworm-updates/main amd64 Packages [6924 B]
+#18 0.646 Get:6 http://deb.debian.org/debian-security bookworm-security/main amd64 Packages [379 kB]
+#18 1.184 Fetched 9417 kB in 1s (8594 kB/s)
+#18 1.184 Reading package lists...
+#18 1.563 Reading package lists...
+#18 1.937 Building dependency tree...
+#18 2.026 Reading state information...
+#18 2.131 curl is already the newest version (7.88.1-10+deb12u15).
+#18 2.131 ca-certificates is already the newest version (20250419~deb12u2).
+#18 2.131 The following additional packages will be installed:
+#18 2.131   git-man iproute2 libbpf1 libbsd0 libcap2-bin libcurl3-gnutls libelf1
+#18 2.131   liberror-perl libexpat1 libmnl0 libncursesw6 libpq5 libpython3-stdlib
+#18 2.131   libpython3.11-minimal libpython3.11-stdlib libssl-dev libxtables12 libzip4
+#18 2.132   media-types nginx-common python3-distutils python3-lib2to3 python3-minimal
+#18 2.132   python3-pip-whl python3-pkg-resources python3-setuptools
+#18 2.132   python3-setuptools-whl python3-wheel python3.11 python3.11-minimal
+#18 2.132   python3.11-venv zlib1g-dev
+#18 2.132 Suggested packages:
+#18 2.132   gettext-base git-daemon-run | git-daemon-sysvinit git-doc git-email git-gui
+#18 2.132   gitk gitweb git-cvs git-mediawiki git-svn iproute2-doc postgresql-doc-15
+#18 2.132   libssl-doc fcgiwrap nginx-doc ssl-cert python3-doc python3-tk
+#18 2.132   python-setuptools-doc python3.11-doc binfmt-support supervisor-doc zip
+#18 2.132 Recommended packages:
+#18 2.132   less ssh-client libatm1 libpam-cap libgpm2 build-essential python3-dev
+#18 2.267 The following NEW packages will be installed:
+#18 ...
+
+#16 [assets 2/8] WORKDIR /app
+#16 DONE 5.1s
+
+#18 [runtime  2/16] RUN apt-get update && apt-get install -y --no-install-recommends         nginx         supervisor         curl         ca-certificates         git         unzip         python3         python3-venv         python3-pip         libpq-dev         libzip-dev     && docker-php-ext-install -j"$(nproc)" pdo_pgsql opcache pcntl zip     && rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default     && apt-get clean     && rm -rf /var/lib/apt/lists/*
+#18 2.267   git git-man iproute2 libbpf1 libbsd0 libcap2-bin libcurl3-gnutls libelf1
+#18 2.267   liberror-perl libexpat1 libmnl0 libncursesw6 libpq-dev libpq5
+#18 2.267   libpython3-stdlib libpython3.11-minimal libpython3.11-stdlib libssl-dev
+#18 2.267   libxtables12 libzip-dev libzip4 media-types nginx nginx-common python3
+#18 2.267   python3-distutils python3-lib2to3 python3-minimal python3-pip
+#18 2.267   python3-pip-whl python3-pkg-resources python3-setuptools
+#18 2.267   python3-setuptools-whl python3-venv python3-wheel python3.11
+#18 2.268   python3.11-minimal python3.11-venv supervisor unzip zlib1g-dev
+#18 2.332 0 upgraded, 41 newly installed, 0 to remove and 0 not upgraded.
+#18 2.332 Need to get 27.2 MB of archives.
+#18 2.332 After this operation, 112 MB of additional disk space will be used.
+#18 2.332 Get:1 http://deb.debian.org/debian-security bookworm-security/main amd64 libpython3.11-minimal amd64 3.11.2-6+deb12u9 [821 kB]
+#18 2.386 Get:2 http://deb.debian.org/debian-security bookworm-security/main amd64 libexpat1 amd64 2.5.0-1+deb12u5 [108 kB]
+#18 2.425 Get:3 http://deb.debian.org/debian-security bookworm-security/main amd64 python3.11-minimal amd64 3.11.2-6+deb12u9 [2055 kB]
+#18 2.447 Get:4 http://deb.debian.org/debian bookworm/main amd64 python3-minimal amd64 3.11.2-1+b1 [26.3 kB]
+#18 2.453 Get:5 http://deb.debian.org/debian bookworm/main amd64 media-types all 10.0.0 [26.1 kB]
+#18 2.454 Get:6 http://deb.debian.org/debian bookworm/main amd64 libncursesw6 amd64 6.4-4 [134 kB]
+#18 2.455 Get:7 http://deb.debian.org/debian-security bookworm-security/main amd64 libpython3.11-stdlib amd64 3.11.2-6+deb12u9 [1798 kB]
+#18 2.460 Get:8 http://deb.debian.org/debian-security bookworm-security/main amd64 python3.11 amd64 3.11.2-6+deb12u9 [575 kB]
+#18 2.461 Get:9 http://deb.debian.org/debian bookworm/main amd64 libpython3-stdlib amd64 3.11.2-1+b1 [9312 B]
+#18 2.475 Get:10 http://deb.debian.org/debian bookworm/main amd64 python3 amd64 3.11.2-1+b1 [26.3 kB]
+#18 2.476 Get:11 http://deb.debian.org/debian bookworm/main amd64 python3-pkg-resources all 66.1.1-1+deb12u2 [297 kB]
+#18 2.512 Get:12 http://deb.debian.org/debian bookworm/main amd64 supervisor all 4.2.5-1 [311 kB]
+#18 2.596 Get:13 http://deb.debian.org/debian bookworm/main amd64 libelf1 amd64 0.188-2.1 [174 kB]
+#18 2.597 Get:14 http://deb.debian.org/debian bookworm/main amd64 libbpf1 amd64 1:1.1.2-0+deb12u1 [145 kB]
+#18 2.597 Get:15 http://deb.debian.org/debian bookworm/main amd64 libbsd0 amd64 0.11.7-2 [117 kB]
+#18 2.714 Get:16 http://deb.debian.org/debian bookworm/main amd64 libmnl0 amd64 1.0.4-3 [12.5 kB]
+#18 2.714 Get:17 http://deb.debian.org/debian bookworm/main amd64 libxtables12 amd64 1.8.9-2 [30.8 kB]
+#18 2.715 Get:18 http://deb.debian.org/debian bookworm/main amd64 libcap2-bin amd64 1:2.66-4+deb12u3+b1 [35.2 kB]
+#18 2.715 Get:19 http://deb.debian.org/debian bookworm/main amd64 iproute2 amd64 6.1.0-3 [1046 kB]
+#18 2.825 Get:20 http://deb.debian.org/debian bookworm/main amd64 libcurl3-gnutls amd64 7.88.1-10+deb12u15 [386 kB]
+#18 2.870 Get:21 http://deb.debian.org/debian bookworm/main amd64 liberror-perl all 0.17029-2 [29.0 kB]
+#18 2.871 Get:22 http://deb.debian.org/debian bookworm/main amd64 git-man all 1:2.39.5-0+deb12u3 [2053 kB]
+#18 2.877 Get:23 http://deb.debian.org/debian bookworm/main amd64 git amd64 1:2.39.5-0+deb12u3 [7264 kB]
+#18 2.930 Get:24 http://deb.debian.org/debian-security bookworm-security/main amd64 libpq5 amd64 15.20-0+deb12u1 [205 kB]
+#18 2.949 Get:25 http://deb.debian.org/debian-security bookworm-security/main amd64 libssl-dev amd64 3.0.22-1~deb12u2 [2450 kB]
+#18 2.955 Get:26 http://deb.debian.org/debian-security bookworm-security/main amd64 libpq-dev amd64 15.20-0+deb12u1 [157 kB]
+#18 2.968 Get:27 http://deb.debian.org/debian bookworm/main amd64 libzip4 amd64 1.7.3-1+b1 [55.5 kB]
+#18 2.972 Get:28 http://deb.debian.org/debian bookworm/main amd64 zlib1g-dev amd64 1:1.2.13.dfsg-1 [916 kB]
+#18 2.975 Get:29 http://deb.debian.org/debian bookworm/main amd64 libzip-dev amd64 1.7.3-1+b1 [163 kB]
+#18 2.982 Get:30 http://deb.debian.org/debian-security bookworm-security/main amd64 nginx-common all 1.22.1-9+deb12u11 [116 kB]
+#18 2.984 Get:31 http://deb.debian.org/debian-security bookworm-security/main amd64 nginx amd64 1.22.1-9+deb12u11 [532 kB]
+#18 2.985 Get:32 http://deb.debian.org/debian bookworm/main amd64 python3-lib2to3 all 3.11.2-3 [76.3 kB]
+#18 2.985 Get:33 http://deb.debian.org/debian bookworm/main amd64 python3-distutils all 3.11.2-3 [131 kB]
+#18 2.987 Get:34 http://deb.debian.org/debian bookworm/main amd64 python3-setuptools all 66.1.1-1+deb12u2 [522 kB]
+#18 2.994 Get:35 http://deb.debian.org/debian bookworm/main amd64 python3-wheel all 0.38.4-2 [30.8 kB]
+#18 3.000 Get:36 http://deb.debian.org/debian bookworm/main amd64 python3-pip all 23.0.1+dfsg-1 [1325 kB]
+#18 3.008 Get:37 http://deb.debian.org/debian bookworm/main amd64 python3-pip-whl all 23.0.1+dfsg-1 [1717 kB]
+#18 3.013 Get:38 http://deb.debian.org/debian bookworm/main amd64 python3-setuptools-whl all 66.1.1-1+deb12u2 [1112 kB]
+#18 3.120 Get:39 http://deb.debian.org/debian-security bookworm-security/main amd64 python3.11-venv amd64 3.11.2-6+deb12u9 [5896 B]
+#18 ...
+
+#17 [vendor 2/6] WORKDIR /app
+#17 DONE 4.2s
+
+#19 [assets 3/8] COPY traceless-app/package.json traceless-app/package-lock.json ./
+#19 DONE 0.8s
+
+#20 [vendor 3/6] COPY traceless-app/composer.json traceless-app/composer.lock ./
+#20 DONE 0.0s
+
+#18 [runtime  2/16] RUN apt-get update && apt-get install -y --no-install-recommends         nginx         supervisor         curl         ca-certificates         git         unzip         python3         python3-venv         python3-pip         libpq-dev         libzip-dev     && docker-php-ext-install -j"$(nproc)" pdo_pgsql opcache pcntl zip     && rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default     && apt-get clean     && rm -rf /var/lib/apt/lists/*
+#18 3.137 Get:40 http://deb.debian.org/debian bookworm/main amd64 python3-venv amd64 3.11.2-1+b1 [1200 B]
+#18 3.143 Get:41 http://deb.debian.org/debian-security bookworm-security/main amd64 unzip amd64 6.0-28+deb12u1 [167 kB]
+#18 3.258 debconf: delaying package configuration, since apt-utils is not installed
+#18 3.282 Fetched 27.2 MB in 1s (31.4 MB/s)
+#18 3.300 Selecting previously unselected package libpython3.11-minimal:amd64.
+#18 3.300 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 13260 files and directories currently installed.)
+#18 3.310 Preparing to unpack .../libpython3.11-minimal_3.11.2-6+deb12u9_amd64.deb ...
+#18 3.311 Unpacking libpython3.11-minimal:amd64 (3.11.2-6+deb12u9) ...
+#18 3.382 Selecting previously unselected package libexpat1:amd64.
+#18 3.383 Preparing to unpack .../libexpat1_2.5.0-1+deb12u5_amd64.deb ...
+#18 3.385 Unpacking libexpat1:amd64 (2.5.0-1+deb12u5) ...
+#18 3.405 Selecting previously unselected package python3.11-minimal.
+#18 3.407 Preparing to unpack .../python3.11-minimal_3.11.2-6+deb12u9_amd64.deb ...
+#18 3.409 Unpacking python3.11-minimal (3.11.2-6+deb12u9) ...
+#18 3.558 Setting up libpython3.11-minimal:amd64 (3.11.2-6+deb12u9) ...
+#18 3.565 Setting up libexpat1:amd64 (2.5.0-1+deb12u5) ...
+#18 3.567 Setting up python3.11-minimal (3.11.2-6+deb12u9) ...
+#18 4.080 Selecting previously unselected package python3-minimal.
+#18 4.080 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 13576 files and directories currently installed.)
+#18 4.091 Preparing to unpack .../0-python3-minimal_3.11.2-1+b1_amd64.deb ...
+#18 4.093 Unpacking python3-minimal (3.11.2-1+b1) ...
+#18 4.115 Selecting previously unselected package media-types.
+#18 4.115 Preparing to unpack .../1-media-types_10.0.0_all.deb ...
+#18 4.117 Unpacking media-types (10.0.0) ...
+#18 4.139 Selecting previously unselected package libncursesw6:amd64.
+#18 4.140 Preparing to unpack .../2-libncursesw6_6.4-4_amd64.deb ...
+#18 4.141 Unpacking libncursesw6:amd64 (6.4-4) ...
+#18 4.163 Selecting previously unselected package libpython3.11-stdlib:amd64.
+#18 4.165 Preparing to unpack .../3-libpython3.11-stdlib_3.11.2-6+deb12u9_amd64.deb ...
+#18 4.166 Unpacking libpython3.11-stdlib:amd64 (3.11.2-6+deb12u9) ...
+#18 4.318 Selecting previously unselected package python3.11.
+#18 4.320 Preparing to unpack .../4-python3.11_3.11.2-6+deb12u9_amd64.deb ...
+#18 4.321 Unpacking python3.11 (3.11.2-6+deb12u9) ...
+#18 4.349 Selecting previously unselected package libpython3-stdlib:amd64.
+#18 4.351 Preparing to unpack .../5-libpython3-stdlib_3.11.2-1+b1_amd64.deb ...
+#18 4.353 Unpacking libpython3-stdlib:amd64 (3.11.2-1+b1) ...
+#18 4.384 Setting up python3-minimal (3.11.2-1+b1) ...
+#18 4.547 Selecting previously unselected package python3.
+#18 4.547 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 13995 files and directories currently installed.)
+#18 4.557 Preparing to unpack .../00-python3_3.11.2-1+b1_amd64.deb ...
+#18 4.564 Unpacking python3 (3.11.2-1+b1) ...
+#18 4.583 Selecting previously unselected package python3-pkg-resources.
+#18 4.584 Preparing to unpack .../01-python3-pkg-resources_66.1.1-1+deb12u2_all.deb ...
+#18 4.586 Unpacking python3-pkg-resources (66.1.1-1+deb12u2) ...
+#18 4.627 Selecting previously unselected package supervisor.
+#18 4.627 Preparing to unpack .../02-supervisor_4.2.5-1_all.deb ...
+#18 4.631 Unpacking supervisor (4.2.5-1) ...
+#18 4.674 Selecting previously unselected package libelf1:amd64.
+#18 4.676 Preparing to unpack .../03-libelf1_0.188-2.1_amd64.deb ...
+#18 4.678 Unpacking libelf1:amd64 (0.188-2.1) ...
+#18 4.716 Selecting previously unselected package libbpf1:amd64.
+#18 4.717 Preparing to unpack .../04-libbpf1_1%3a1.1.2-0+deb12u1_amd64.deb ...
+#18 4.718 Unpacking libbpf1:amd64 (1:1.1.2-0+deb12u1) ...
+#18 4.748 Selecting previously unselected package libbsd0:amd64.
+#18 4.750 Preparing to unpack .../05-libbsd0_0.11.7-2_amd64.deb ...
+#18 4.751 Unpacking libbsd0:amd64 (0.11.7-2) ...
+#18 4.779 Selecting previously unselected package libmnl0:amd64.
+#18 4.783 Preparing to unpack .../06-libmnl0_1.0.4-3_amd64.deb ...
+#18 4.786 Unpacking libmnl0:amd64 (1.0.4-3) ...
+#18 4.810 Selecting previously unselected package libxtables12:amd64.
+#18 4.811 Preparing to unpack .../07-libxtables12_1.8.9-2_amd64.deb ...
+#18 4.814 Unpacking libxtables12:amd64 (1.8.9-2) ...
+#18 4.831 Selecting previously unselected package libcap2-bin.
+#18 4.832 Preparing to unpack .../08-libcap2-bin_1%3a2.66-4+deb12u3+b1_amd64.deb ...
+#18 4.834 Unpacking libcap2-bin (1:2.66-4+deb12u3+b1) ...
+#18 4.852 Selecting previously unselected package iproute2.
+#18 4.854 Preparing to unpack .../09-iproute2_6.1.0-3_amd64.deb ...
+#18 4.855 Unpacking iproute2 (6.1.0-3) ...
+#18 4.947 Selecting previously unselected package libcurl3-gnutls:amd64.
+#18 4.949 Preparing to unpack .../10-libcurl3-gnutls_7.88.1-10+deb12u15_amd64.deb ...
+#18 4.950 Unpacking libcurl3-gnutls:amd64 (7.88.1-10+deb12u15) ...
+#18 4.992 Selecting previously unselected package liberror-perl.
+#18 4.994 Preparing to unpack .../11-liberror-perl_0.17029-2_all.deb ...
+#18 4.997 Unpacking liberror-perl (0.17029-2) ...
+#18 5.015 Selecting previously unselected package git-man.
+#18 5.016 Preparing to unpack .../12-git-man_1%3a2.39.5-0+deb12u3_all.deb ...
+#18 5.018 Unpacking git-man (1:2.39.5-0+deb12u3) ...
+#18 5.122 Selecting previously unselected package git.
+#18 5.124 Preparing to unpack .../13-git_1%3a2.39.5-0+deb12u3_amd64.deb ...
+#18 5.130 Unpacking git (1:2.39.5-0+deb12u3) ...
+#18 5.419 Selecting previously unselected package libpq5:amd64.
+#18 5.421 Preparing to unpack .../14-libpq5_15.20-0+deb12u1_amd64.deb ...
+#18 5.424 Unpacking libpq5:amd64 (15.20-0+deb12u1) ...
+#18 5.452 Selecting previously unselected package libssl-dev:amd64.
+#18 5.454 Preparing to unpack .../15-libssl-dev_3.0.22-1~deb12u2_amd64.deb ...
+#18 5.455 Unpacking libssl-dev:amd64 (3.0.22-1~deb12u2) ...
+#18 5.633 Selecting previously unselected package libpq-dev.
+#18 5.635 Preparing to unpack .../16-libpq-dev_15.20-0+deb12u1_amd64.deb ...
+#18 5.636 Unpacking libpq-dev (15.20-0+deb12u1) ...
+#18 5.663 Selecting previously unselected package libzip4:amd64.
+#18 5.665 Preparing to unpack .../17-libzip4_1.7.3-1+b1_amd64.deb ...
+#18 5.666 Unpacking libzip4:amd64 (1.7.3-1+b1) ...
+#18 5.688 Selecting previously unselected package zlib1g-dev:amd64.
+#18 5.690 Preparing to unpack .../18-zlib1g-dev_1%3a1.2.13.dfsg-1_amd64.deb ...
+#18 5.692 Unpacking zlib1g-dev:amd64 (1:1.2.13.dfsg-1) ...
+#18 5.726 Selecting previously unselected package libzip-dev:amd64.
+#18 5.728 Preparing to unpack .../19-libzip-dev_1.7.3-1+b1_amd64.deb ...
+#18 5.729 Unpacking libzip-dev:amd64 (1.7.3-1+b1) ...
+#18 5.756 Selecting previously unselected package nginx-common.
+#18 5.758 Preparing to unpack .../20-nginx-common_1.22.1-9+deb12u11_all.deb ...
+#18 5.762 Unpacking nginx-common (1.22.1-9+deb12u11) ...
+#18 5.785 Selecting previously unselected package nginx.
+#18 5.787 Preparing to unpack .../21-nginx_1.22.1-9+deb12u11_amd64.deb ...
+#18 5.789 Unpacking nginx (1.22.1-9+deb12u11) ...
+#18 5.875 Selecting previously unselected package python3-lib2to3.
+#18 5.877 Preparing to unpack .../22-python3-lib2to3_3.11.2-3_all.deb ...
+#18 5.878 Unpacking python3-lib2to3 (3.11.2-3) ...
+#18 5.904 Selecting previously unselected package python3-distutils.
+#18 5.906 Preparing to unpack .../23-python3-distutils_3.11.2-3_all.deb ...
+#18 5.909 Unpacking python3-distutils (3.11.2-3) ...
+#18 5.930 Selecting previously unselected package python3-setuptools.
+#18 5.931 Preparing to unpack .../24-python3-setuptools_66.1.1-1+deb12u2_all.deb ...
+#18 5.932 Unpacking python3-setuptools (66.1.1-1+deb12u2) ...
+#18 6.115 Selecting previously unselected package python3-wheel.
+#18 6.117 Preparing to unpack .../25-python3-wheel_0.38.4-2_all.deb ...
+#18 6.160 Unpacking python3-wheel (0.38.4-2) ...
+#18 6.219 Selecting previously unselected package python3-pip.
+#18 6.220 Preparing to unpack .../26-python3-pip_23.0.1+dfsg-1_all.deb ...
+#18 6.225 Unpacking python3-pip (23.0.1+dfsg-1) ...
+#18 6.382 Selecting previously unselected package python3-pip-whl.
+#18 6.384 Preparing to unpack .../27-python3-pip-whl_23.0.1+dfsg-1_all.deb ...
+#18 6.487 Unpacking python3-pip-whl (23.0.1+dfsg-1) ...
+#18 6.671 Selecting previously unselected package python3-setuptools-whl.
+#18 6.673 Preparing to unpack .../28-python3-setuptools-whl_66.1.1-1+deb12u2_all.deb ...
+#18 6.743 Unpacking python3-setuptools-whl (66.1.1-1+deb12u2) ...
+#18 6.824 Selecting previously unselected package python3.11-venv.
+#18 6.826 Preparing to unpack .../29-python3.11-venv_3.11.2-6+deb12u9_amd64.deb ...
+#18 6.831 Unpacking python3.11-venv (3.11.2-6+deb12u9) ...
+#18 6.861 Selecting previously unselected package python3-venv.
+#18 6.862 Preparing to unpack .../30-python3-venv_3.11.2-1+b1_amd64.deb ...
+#18 6.864 Unpacking python3-venv (3.11.2-1+b1) ...
+#18 6.915 Selecting previously unselected package unzip.
+#18 6.917 Preparing to unpack .../31-unzip_6.0-28+deb12u1_amd64.deb ...
+#18 6.919 Unpacking unzip (6.0-28+deb12u1) ...
+#18 7.002 Setting up media-types (10.0.0) ...
+#18 7.013 Setting up python3-setuptools-whl (66.1.1-1+deb12u2) ...
+#18 7.019 Setting up python3-pip-whl (23.0.1+dfsg-1) ...
+#18 7.024 Setting up libzip4:amd64 (1.7.3-1+b1) ...
+#18 7.034 Setting up unzip (6.0-28+deb12u1) ...
+#18 7.044 Setting up libpq5:amd64 (15.20-0+deb12u1) ...
+#18 7.048 Setting up nginx-common (1.22.1-9+deb12u11) ...
+#18 7.136 debconf: unable to initialize frontend: Dialog
+#18 7.136 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#18 7.136 debconf: falling back to frontend: Readline
+#18 ...
+
+#21 [assets 4/8] RUN npm ci --no-audit --no-fund
+#21 2.744 
+#21 2.744 added 166 packages in 3s
+#21 2.745 npm notice
+#21 2.745 npm notice New major version of npm available! 10.8.2 -> 12.2.3
+#21 2.745 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.3
+#21 2.745 npm notice To update run: npm install -g npm@12.2.3
+#21 2.745 npm notice
+#21 DONE 4.0s
+
+#18 [runtime  2/16] RUN apt-get update && apt-get install -y --no-install-recommends         nginx         supervisor         curl         ca-certificates         git         unzip         python3         python3-venv         python3-pip         libpq-dev         libzip-dev     && docker-php-ext-install -j"$(nproc)" pdo_pgsql opcache pcntl zip     && rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default     && apt-get clean     && rm -rf /var/lib/apt/lists/*
+#18 7.141 debconf: unable to initialize frontend: Readline
+#18 7.141 debconf: (This frontend requires a controlling tty.)
+#18 7.141 debconf: falling back to frontend: Teletype
+#18 ...
+
+#22 [assets 5/8] COPY traceless-app/vite.config.js traceless-app/postcss.config.js traceless-app/tailwind.config.js ./
+#22 DONE 0.1s
+
+#23 [assets 6/8] COPY traceless-app/resources ./resources
+#23 DONE 0.0s
+
+#24 [assets 7/8] COPY traceless-app/public ./public
+#24 DONE 0.1s
+
+#18 [runtime  2/16] RUN apt-get update && apt-get install -y --no-install-recommends         nginx         supervisor         curl         ca-certificates         git         unzip         python3         python3-venv         python3-pip         libpq-dev         libzip-dev     && docker-php-ext-install -j"$(nproc)" pdo_pgsql opcache pcntl zip     && rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default     && apt-get clean     && rm -rf /var/lib/apt/lists/*
+#18 7.255 Setting up libcurl3-gnutls:amd64 (7.88.1-10+deb12u15) ...
+#18 7.265 Setting up libcap2-bin (1:2.66-4+deb12u3+b1) ...
+#18 7.268 Setting up liberror-perl (0.17029-2) ...
+#18 7.271 Setting up libssl-dev:amd64 (3.0.22-1~deb12u2) ...
+#18 7.273 Setting up libmnl0:amd64 (1.0.4-3) ...
+#18 7.276 Setting up libncursesw6:amd64 (6.4-4) ...
+#18 7.278 Setting up libxtables12:amd64 (1.8.9-2) ...
+#18 7.280 Setting up zlib1g-dev:amd64 (1:1.2.13.dfsg-1) ...
+#18 7.287 Setting up git-man (1:2.39.5-0+deb12u3) ...
+#18 7.291 Setting up libbsd0:amd64 (0.11.7-2) ...
+#18 7.293 Setting up libelf1:amd64 (0.188-2.1) ...
+#18 7.296 Setting up libbpf1:amd64 (1:1.1.2-0+deb12u1) ...
+#18 7.298 Setting up libzip-dev:amd64 (1.7.3-1+b1) ...
+#18 7.301 Setting up iproute2 (6.1.0-3) ...
+#18 7.438 debconf: unable to initialize frontend: Dialog
+#18 7.438 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#18 7.438 debconf: falling back to frontend: Readline
+#18 7.443 debconf: unable to initialize frontend: Readline
+#18 7.443 debconf: (This frontend requires a controlling tty.)
+#18 7.443 debconf: falling back to frontend: Teletype
+#18 7.463 Setting up libpython3.11-stdlib:amd64 (3.11.2-6+deb12u9) ...
+#18 7.466 Setting up libpq-dev (15.20-0+deb12u1) ...
+#18 7.468 Setting up git (1:2.39.5-0+deb12u3) ...
+#18 7.475 Setting up libpython3-stdlib:amd64 (3.11.2-1+b1) ...
+#18 7.476 Setting up python3.11 (3.11.2-6+deb12u9) ...
+#18 7.985 Setting up nginx (1.22.1-9+deb12u11) ...
+#18 8.024 invoke-rc.d: could not determine current runlevel
+#18 8.027 invoke-rc.d: policy-rc.d denied execution of start.
+#18 8.028 Setting up python3 (3.11.2-1+b1) ...
+#18 8.033 running python rtupdate hooks for python3.11...
+#18 8.033 running python post-rtupdate hooks for python3.11...
+#18 8.094 Setting up python3-lib2to3 (3.11.2-3) ...
+#18 8.169 Setting up python3-pkg-resources (66.1.1-1+deb12u2) ...
+#18 8.354 Setting up python3-distutils (3.11.2-3) ...
+#18 8.457 Setting up supervisor (4.2.5-1) ...
+#18 8.744 invoke-rc.d: could not determine current runlevel
+#18 8.748 invoke-rc.d: policy-rc.d denied execution of start.
+#18 8.845 Setting up python3-setuptools (66.1.1-1+deb12u2) ...
+#18 ...
+
+#25 [assets 8/8] RUN npm run build
+#25 0.141 
+#25 0.141 > build
+#25 0.141 > vite build
+#25 0.141 
+#25 0.327 vite v6.4.5 building for production...
+#25 0.376 transforming...
+#25 1.125 
+#25 1.125 /Nevera-Regular.otf referenced in /Nevera-Regular.otf didn't resolve at build time, it will remain unchanged to be resolved at runtime
+#25 1.507 ✓ 67 modules transformed.
+#25 1.578 rendering chunks...
+#25 1.608 computing gzip size...
+#25 1.612 public/build/manifest.json                           1.12 kB │ gzip:  0.31 kB
+#25 1.612 public/build/assets/app-BamdWxQ4.css                89.81 kB │ gzip: 16.49 kB
+#25 1.613 public/build/assets/water-ripple-CCxazSs-.js         9.73 kB │ gzip:  3.04 kB
+#25 1.613 public/build/assets/landing-fx-Cn_IOmM6.js          10.88 kB │ gzip:  4.21 kB
+#25 1.613 public/build/assets/web-crawler-spider-EO7LF153.js  20.07 kB │ gzip:  8.63 kB
+#25 1.613 public/build/assets/app-CDoFrGc2.js                 62.42 kB │ gzip: 23.68 kB
+#25 1.613 ✓ built in 1.26s
+#25 DONE 1.8s
+
+#18 [runtime  2/16] RUN apt-get update && apt-get install -y --no-install-recommends         nginx         supervisor         curl         ca-certificates         git         unzip         python3         python3-venv         python3-pip         libpq-dev         libzip-dev     && docker-php-ext-install -j"$(nproc)" pdo_pgsql opcache pcntl zip     && rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default     && apt-get clean     && rm -rf /var/lib/apt/lists/*
+#18 9.192 Setting up python3-wheel (0.38.4-2) ...
+#18 9.277 Setting up python3.11-venv (3.11.2-6+deb12u9) ...
+#18 9.309 Setting up python3-pip (23.0.1+dfsg-1) ...
+#18 9.920 Setting up python3-venv (3.11.2-1+b1) ...
+#18 9.923 Processing triggers for libc-bin (2.36-9+deb12u14) ...
+#18 10.96 Configuring for:
+#18 10.96 PHP Api Version:         20230831
+#18 10.96 Zend Module Api No:      20230831
+#18 10.96 Zend Extension Api No:   420230831
+#18 11.38 checking for grep that handles long lines and -e... /usr/bin/grep
+#18 11.38 checking for egrep... /usr/bin/grep -E
+#18 11.38 checking for a sed that does not truncate output... /usr/bin/sed
+#18 11.40 checking for pkg-config... /usr/bin/pkg-config
+#18 11.41 checking pkg-config is at least version 0.9.0... yes
+#18 11.41 checking for cc... cc
+#18 11.43 checking whether the C compiler works... yes
+#18 11.46 checking for C compiler default output file name... a.out
+#18 11.46 checking for suffix of executables... 
+#18 11.48 checking whether we are cross compiling... no
+#18 11.51 checking for suffix of object files... o
+#18 11.53 checking whether the compiler supports GNU C... yes
+#18 11.54 checking whether cc accepts -g... yes
+#18 11.56 checking for cc option to enable C11 features... none needed
+#18 11.59 checking how to run the C preprocessor... cc -E
+#18 11.63 checking for icc... no
+#18 11.64 checking for suncc... no
+#18 11.64 checking for system library directory... lib
+#18 11.64 checking if compiler supports -Wl,-rpath,... yes
+#18 11.67 checking build system type... x86_64-pc-linux-gnu
+#18 11.68 checking host system type... x86_64-pc-linux-gnu
+#18 11.68 checking target system type... x86_64-pc-linux-gnu
+#18 11.70 checking for PHP prefix... /usr/local
+#18 11.70 checking for PHP includes... -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib
+#18 11.70 checking for PHP extension directory... /usr/local/lib/php/extensions/no-debug-non-zts-20230831
+#18 11.70 checking for PHP installed headers prefix... /usr/local/include/php
+#18 11.70 checking if debug is enabled... no
+#18 11.71 checking if zts is enabled... no
+#18 11.72 checking for gawk... no
+#18 11.73 checking for nawk... nawk
+#18 11.73 checking if nawk is broken... no
+#18 11.73 checking for PostgreSQL support for PDO... yes, shared
+#18 11.73 checking for pg_config... /usr/bin/pg_config
+#18 11.73 checking for PQlibVersion in -lpq... yes
+#18 11.79 checking for PDO includes... /usr/local/include/php/ext
+#18 11.80 checking for a sed that does not truncate output... /usr/bin/sed
+#18 11.80 checking for ld used by cc... /usr/bin/ld
+#18 11.80 checking if the linker (/usr/bin/ld) is GNU ld... yes
+#18 11.80 checking for /usr/bin/ld option to reload object files... -r
+#18 11.80 checking for BSD-compatible nm... /usr/bin/nm -B
+#18 11.80 checking whether ln -s works... yes
+#18 11.80 checking how to recognize dependent libraries... pass_all
+#18 11.82 checking for stdio.h... yes
+#18 11.83 checking for stdlib.h... yes
+#18 11.84 checking for string.h... yes
+#18 11.86 checking for inttypes.h... yes
+#18 11.88 checking for stdint.h... yes
+#18 11.89 checking for strings.h... yes
+#18 11.91 checking for sys/stat.h... yes
+#18 11.92 checking for sys/types.h... yes
+#18 11.94 checking for unistd.h... yes
+#18 11.96 checking for dlfcn.h... yes
+#18 11.98 checking the maximum length of command line arguments... 3145728
+#18 11.98 checking command to parse /usr/bin/nm -B output from cc object... ok
+#18 12.03 checking for objdir... .libs
+#18 12.03 checking for ar... ar
+#18 12.03 checking for ranlib... ranlib
+#18 12.03 checking for strip... strip
+#18 12.07 checking if cc supports -fno-rtti -fno-exceptions... no
+#18 12.09 checking for cc option to produce PIC... -fPIC
+#18 12.09 checking if cc PIC flag -fPIC works... yes
+#18 12.10 checking if cc static flag -static works... yes
+#18 12.15 checking if cc supports -c -o file.o... yes
+#18 12.17 checking whether the cc linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+#18 12.18 checking whether -lc should be explicitly linked in... no
+#18 12.20 checking dynamic linker characteristics... GNU/Linux ld.so
+#18 12.21 checking how to hardcode library paths into programs... immediate
+#18 12.21 checking whether stripping libraries is possible... yes
+#18 12.21 checking if libtool supports shared libraries... yes
+#18 12.21 checking whether to build shared libraries... yes
+#18 12.21 checking whether to build static libraries... no
+#18 12.31 
+#18 12.31 creating libtool
+#18 12.33 appending configuration tag "CXX" to libtool
+#18 12.37 configure: patching config.h.in
+#18 12.37 configure: creating ./config.status
+#18 12.41 config.status: creating config.h
+#18 12.43 /bin/bash /usr/src/php/ext/pdo_pgsql/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/pdo_pgsql -I/usr/src/php/ext/pdo_pgsql/include -I/usr/src/php/ext/pdo_pgsql/main -I/usr/src/php/ext/pdo_pgsql -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -I/usr/include/postgresql  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE   -I/usr/local/include/php/ext -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo_pgsql/pdo_pgsql.c -o pdo_pgsql.lo  -MMD -MF pdo_pgsql.dep -MT pdo_pgsql.lo
+#18 12.44 /bin/bash /usr/src/php/ext/pdo_pgsql/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/pdo_pgsql -I/usr/src/php/ext/pdo_pgsql/include -I/usr/src/php/ext/pdo_pgsql/main -I/usr/src/php/ext/pdo_pgsql -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -I/usr/include/postgresql  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE   -I/usr/local/include/php/ext -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo_pgsql/pgsql_driver.c -o pgsql_driver.lo  -MMD -MF pgsql_driver.dep -MT pgsql_driver.lo
+#18 12.44 /bin/bash /usr/src/php/ext/pdo_pgsql/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/pdo_pgsql -I/usr/src/php/ext/pdo_pgsql/include -I/usr/src/php/ext/pdo_pgsql/main -I/usr/src/php/ext/pdo_pgsql -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -I/usr/include/postgresql  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE   -I/usr/local/include/php/ext -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo_pgsql/pgsql_statement.c -o pgsql_statement.lo  -MMD -MF pgsql_statement.dep -MT pgsql_statement.lo
+#18 12.52 mkdir .libs
+#18 12.52  cc -I. -I/usr/src/php/ext/pdo_pgsql -I/usr/src/php/ext/pdo_pgsql/include -I/usr/src/php/ext/pdo_pgsql/main -I/usr/src/php/ext/pdo_pgsql -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -I/usr/include/postgresql -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -I/usr/local/include/php/ext -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo_pgsql/pdo_pgsql.c -MMD -MF pdo_pgsql.dep -MT pdo_pgsql.lo  -fPIC -DPIC -o .libs/pdo_pgsql.o
+#18 12.53  cc -I. -I/usr/src/php/ext/pdo_pgsql -I/usr/src/php/ext/pdo_pgsql/include -I/usr/src/php/ext/pdo_pgsql/main -I/usr/src/php/ext/pdo_pgsql -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -I/usr/include/postgresql -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -I/usr/local/include/php/ext -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo_pgsql/pgsql_driver.c -MMD -MF pgsql_driver.dep -MT pgsql_driver.lo  -fPIC -DPIC -o .libs/pgsql_driver.o
+#18 12.53  cc -I. -I/usr/src/php/ext/pdo_pgsql -I/usr/src/php/ext/pdo_pgsql/include -I/usr/src/php/ext/pdo_pgsql/main -I/usr/src/php/ext/pdo_pgsql -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -I/usr/include/postgresql -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -I/usr/local/include/php/ext -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/pdo_pgsql/pgsql_statement.c -MMD -MF pgsql_statement.dep -MT pgsql_statement.lo  -fPIC -DPIC -o .libs/pgsql_statement.o
+#18 12.88 /bin/bash /usr/src/php/ext/pdo_pgsql/libtool --tag=CC --mode=link cc -shared -I/usr/src/php/ext/pdo_pgsql/include -I/usr/src/php/ext/pdo_pgsql/main -I/usr/src/php/ext/pdo_pgsql -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -I/usr/include/postgresql  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE  -Wl,-O1 -pie  -o pdo_pgsql.la -export-dynamic -avoid-version -prefer-pic -module -rpath /usr/src/php/ext/pdo_pgsql/modules  pdo_pgsql.lo pgsql_driver.lo pgsql_statement.lo -Wl,-rpath,/usr/lib/x86_64-linux-gnu -L/usr/lib/x86_64-linux-gnu -lpq
+#18 12.97 cc -shared  .libs/pdo_pgsql.o .libs/pgsql_driver.o .libs/pgsql_statement.o  -L/usr/lib/x86_64-linux-gnu -lpq  -Wl,-O1 -Wl,-rpath -Wl,/usr/lib/x86_64-linux-gnu -Wl,-soname -Wl,pdo_pgsql.so -o .libs/pdo_pgsql.so
+#18 12.98 creating pdo_pgsql.la
+#18 12.98 (cd .libs && rm -f pdo_pgsql.la && ln -s ../pdo_pgsql.la pdo_pgsql.la)
+#18 12.99 /bin/bash /usr/src/php/ext/pdo_pgsql/libtool --tag=CC --mode=install cp ./pdo_pgsql.la /usr/src/php/ext/pdo_pgsql/modules
+#18 13.01 cp ./.libs/pdo_pgsql.so /usr/src/php/ext/pdo_pgsql/modules/pdo_pgsql.so
+#18 13.01 cp ./.libs/pdo_pgsql.lai /usr/src/php/ext/pdo_pgsql/modules/pdo_pgsql.la
+#18 13.02 PATH="$PATH:/sbin" ldconfig -n /usr/src/php/ext/pdo_pgsql/modules
+#18 13.02 ----------------------------------------------------------------------
+#18 13.02 Libraries have been installed in:
+#18 13.02    /usr/src/php/ext/pdo_pgsql/modules
+#18 13.02 
+#18 13.02 If you ever happen to want to link against installed libraries
+#18 13.02 in a given directory, LIBDIR, you must either use libtool, and
+#18 13.02 specify the full pathname of the library, or use the `-LLIBDIR'
+#18 13.02 flag during linking and do at least one of the following:
+#18 13.02    - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
+#18 13.02      during execution
+#18 13.02    - add LIBDIR to the `LD_RUN_PATH' environment variable
+#18 13.02      during linking
+#18 13.02    - use the `-Wl,--rpath -Wl,LIBDIR' linker flag
+#18 13.02    - have your system administrator add LIBDIR to `/etc/ld.so.conf'
+#18 13.02 
+#18 13.02 See any operating system documentation about shared libraries for
+#18 13.02 more information, such as the ld(1) and ld.so(8) manual pages.
+#18 13.02 ----------------------------------------------------------------------
+#18 13.03 
+#18 13.03 Build complete.
+#18 13.03 Don't forget to run 'make test'.
+#18 13.03 
+#18 13.04 + strip --strip-all modules/pdo_pgsql.so
+#18 13.06 Installing shared extensions:     /usr/local/lib/php/extensions/no-debug-non-zts-20230831/
+#18 13.11 find . -name \*.gcno -o -name \*.gcda | xargs rm -f
+#18 13.11 find . -name \*.lo -o -name \*.o -o -name \*.dep | xargs rm -f
+#18 13.12 find . -name \*.la -o -name \*.a | xargs rm -f
+#18 13.12 find . -name \*.so | xargs rm -f
+#18 13.12 find . -name .libs -a -type d|xargs rm -rf
+#18 13.12 rm -f libphp.la      modules/* libs/*
+#18 13.12 rm -f ext/opcache/jit/zend_jit_x86.c
+#18 13.13 rm -f ext/opcache/jit/zend_jit_arm64.c
+#18 13.13 rm -f ext/opcache/minilua
+#18 13.15 Configuring for:
+#18 13.15 PHP Api Version:         20230831
+#18 13.15 Zend Module Api No:      20230831
+#18 13.15 Zend Extension Api No:   420230831
+#18 ...
+
+#26 [vendor 4/6] RUN composer install         --no-dev         --no-interaction         --no-progress         --no-scripts         --prefer-dist         --ignore-platform-reqs
+#26 0.416 Installing dependencies from lock file
+#26 0.422 Verifying lock file contents can be installed on current platform.
+#26 0.706 Package operations: 93 installs, 0 updates, 0 removals
+#26 0.707   - Downloading clue/redis-protocol (v0.3.2)
+#26 0.708   - Downloading doctrine/inflector (2.1.1)
+#26 0.708   - Downloading doctrine/lexer (3.0.3)
+#26 0.708   - Downloading dragonmantank/cron-expression (v3.6.1)
+#26 0.709   - Downloading symfony/polyfill-mbstring (v1.43.3)
+#26 0.709   - Downloading symfony/deprecation-contracts (v3.8.1)
+#26 0.710   - Downloading symfony/http-foundation (v7.4.23)
+#26 0.710   - Downloading fruitcake/php-cors (v1.4.0)
+#26 0.711   - Downloading symfony/polyfill-php80 (v1.43.0)
+#26 0.711   - Downloading guzzlehttp/uri-template (v1.0.11)
+#26 0.712   - Downloading symfony/polyfill-intl-normalizer (v1.43.0)
+#26 0.712   - Downloading symfony/polyfill-intl-grapheme (v1.43.3)
+#26 0.712   - Downloading symfony/polyfill-ctype (v1.37.0)
+#26 0.713   - Downloading symfony/string (v7.4.22)
+#26 0.713   - Downloading psr/container (2.0.2)
+#26 0.713   - Downloading symfony/service-contracts (v3.8.1)
+#26 0.714   - Downloading symfony/console (v7.4.23)
+#26 0.714   - Downloading react/event-loop (v1.6.0)
+#26 0.714   - Downloading evenement/evenement (v3.0.2)
+#26 0.715   - Downloading react/stream (v1.4.0)
+#26 0.715   - Downloading react/promise (v3.3.0)
+#26 0.715   - Downloading react/cache (v1.2.0)
+#26 0.715   - Downloading react/dns (v1.14.0)
+#26 0.716   - Downloading react/socket (v1.17.0)
+#26 0.716   - Downloading react/promise-timer (v1.11.0)
+#26 0.716   - Downloading ralouphie/getallheaders (3.0.3)
+#26 0.717   - Downloading psr/http-message (2.0)
+#26 0.717   - Downloading psr/http-factory (1.1.0)
+#26 0.717   - Downloading guzzlehttp/psr7 (2.13.2)
+#26 0.718   - Downloading ratchet/rfc6455 (v0.4.1)
+#26 0.718   - Downloading psr/log (3.0.2)
+#26 0.718   - Downloading psr/http-client (1.0.3)
+#26 0.719   - Downloading guzzlehttp/promises (2.6.0)
+#26 0.719   - Downloading guzzlehttp/guzzle (7.16.1)
+#26 0.720   - Downloading pusher/pusher-php-server (7.3.0)
+#26 0.720   - Downloading laravel/prompts (v0.3.26)
+#26 0.720   - Downloading voku/portable-ascii (2.1.1)
+#26 0.721   - Downloading phpoption/phpoption (1.10.0)
+#26 0.721   - Downloading graham-campbell/result-type (v1.2.0)
+#26 0.722   - Downloading vlucas/phpdotenv (v5.8.0)
+#26 0.722   - Downloading symfony/css-selector (v7.4.22)
+#26 0.722   - Downloading tijsverkoyen/css-to-inline-styles (v2.4.0)
+#26 0.723   - Downloading symfony/var-dumper (v7.4.22)
+#26 0.723   - Downloading symfony/polyfill-uuid (v1.43.0)
+#26 0.723   - Downloading symfony/uid (v7.4.21)
+#26 0.724   - Downloading symfony/routing (v7.4.23)
+#26 0.724   - Downloading symfony/process (v7.4.22)
+#26 0.725   - Downloading symfony/polyfill-php85 (v1.43.0)
+#26 0.725   - Downloading symfony/polyfill-php84 (v1.43.0)
+#26 0.725   - Downloading symfony/polyfill-php83 (v1.43.0)
+#26 0.726   - Downloading symfony/polyfill-intl-idn (v1.43.0)
+#26 0.726   - Downloading symfony/mime (v7.4.22)
+#26 0.726   - Downloading psr/event-dispatcher (1.0.0)
+#26 0.726   - Downloading symfony/event-dispatcher-contracts (v3.8.1)
+#26 0.727   - Downloading symfony/event-dispatcher (v7.4.17)
+#26 0.727   - Downloading egulias/email-validator (4.0.4)
+#26 0.727   - Downloading symfony/mailer (v7.4.22)
+#26 0.728   - Downloading symfony/error-handler (v7.4.22)
+#26 0.728   - Downloading symfony/http-kernel (v7.4.23)
+#26 0.728   - Downloading symfony/finder (v7.4.23)
+#26 0.729   - Downloading ramsey/collection (2.1.1)
+#26 0.729   - Downloading brick/math (0.14.8)
+#26 0.730   - Downloading ramsey/uuid (4.9.4)
+#26 0.730   - Downloading psr/simple-cache (3.0.0)
+#26 0.730   - Downloading nunomaduro/termwind (v2.4.0)
+#26 0.731   - Downloading symfony/translation-contracts (v3.8.1)
+#26 0.731   - Downloading symfony/translation (v7.4.23)
+#26 0.733   - Downloading symfony/polyfill-time (v1.42.0)
+#26 0.733   - Downloading psr/clock (1.0.0)
+#26 0.733   - Downloading symfony/clock (v7.4.21)
+#26 0.733   - Downloading carbonphp/carbon-doctrine-types (3.2.1)
+#26 0.733   - Downloading nesbot/carbon (3.15.1)
+#26 0.733   - Downloading monolog/monolog (3.12.1)
+#26 0.733   - Downloading league/uri-interfaces (7.10.0)
+#26 0.734   - Downloading league/uri (7.10.0)
+#26 0.735   - Downloading league/mime-type-detection (1.17.0)
+#26 0.735   - Downloading league/flysystem-local (3.35.3)
+#26 0.735   - Downloading league/flysystem (3.36.0)
+#26 0.736   - Downloading nette/utils (v4.1.6)
+#26 0.736   - Downloading nette/schema (v1.4.0)
+#26 0.737   - Downloading dflydev/dot-access-data (v3.0.3)
+#26 0.737   - Downloading league/config (v1.2.0)
+#26 0.738   - Downloading league/commonmark (2.10.7)
+#26 0.738   - Downloading laravel/serializable-closure (v2.1.0)
+#26 0.740   - Downloading laravel/framework (v12.68.0)
+#26 0.740   - Downloading clue/redis-react (v2.8.0)
+#26 0.740   - Downloading laravel/reverb (v1.12.0)
+#26 0.742   - Downloading nikic/php-parser (v5.9.0)
+#26 0.742   - Downloading psy/psysh (v0.12.24)
+#26 0.742   - Downloading laravel/tinker (v2.11.1)
+#26 0.742   - Downloading livewire/livewire (v3.8.11)
+#26 0.742   - Downloading predis/predis (v3.7.1)
+#26 0.742   - Downloading resend/resend-php (v1.18.0)
+#26 2.414   - Downloading react/dns (v1.14.0)
+#26 3.008   - Downloading symfony/event-dispatcher-contracts (v3.8.1)
+#26 3.521   - Downloading symfony/polyfill-php85 (v1.43.0)
+#26 4.070   - Downloading symfony/finder (v7.4.23)
+#26 4.575   - Downloading brick/math (0.14.8)
+#26 5.075   - Downloading ramsey/uuid (4.9.4)
+#26 6.392   - Downloading react/dns (v1.14.0)
+#26 6.954   - Downloading brick/math (0.14.8)
+#26 7.462   - Downloading symfony/event-dispatcher-contracts (v3.8.1)
+#26 7.966   - Downloading symfony/finder (v7.4.23)
+#26 8.467   - Downloading ramsey/uuid (4.9.4)
+#26 8.968   - Downloading symfony/polyfill-php85 (v1.43.0)
+#26 10.33   - Downloading react/dns (v1.14.0)
+#26 ...
+
+#18 [runtime  2/16] RUN apt-get update && apt-get install -y --no-install-recommends         nginx         supervisor         curl         ca-certificates         git         unzip         python3         python3-venv         python3-pip         libpq-dev         libzip-dev     && docker-php-ext-install -j"$(nproc)" pdo_pgsql opcache pcntl zip     && rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default     && apt-get clean     && rm -rf /var/lib/apt/lists/*
+#18 13.61 checking for grep that handles long lines and -e... /usr/bin/grep
+#18 13.61 checking for egrep... /usr/bin/grep -E
+#18 13.61 checking for a sed that does not truncate output... /usr/bin/sed
+#18 13.64 checking for pkg-config... /usr/bin/pkg-config
+#18 13.64 checking pkg-config is at least version 0.9.0... yes
+#18 13.64 checking for cc... cc
+#18 13.66 checking whether the C compiler works... yes
+#18 13.69 checking for C compiler default output file name... a.out
+#18 13.69 checking for suffix of executables... 
+#18 13.71 checking whether we are cross compiling... no
+#18 13.74 checking for suffix of object files... o
+#18 13.76 checking whether the compiler supports GNU C... yes
+#18 13.78 checking whether cc accepts -g... yes
+#18 13.79 checking for cc option to enable C11 features... none needed
+#18 13.83 checking how to run the C preprocessor... cc -E
+#18 13.86 checking for icc... no
+#18 13.87 checking for suncc... no
+#18 13.88 checking for system library directory... lib
+#18 13.88 checking if compiler supports -Wl,-rpath,... yes
+#18 13.91 checking build system type... x86_64-pc-linux-gnu
+#18 13.91 checking host system type... x86_64-pc-linux-gnu
+#18 13.91 checking target system type... x86_64-pc-linux-gnu
+#18 13.94 checking for PHP prefix... /usr/local
+#18 13.94 checking for PHP includes... -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib
+#18 13.94 checking for PHP extension directory... /usr/local/lib/php/extensions/no-debug-non-zts-20230831
+#18 13.94 checking for PHP installed headers prefix... /usr/local/include/php
+#18 13.94 checking if debug is enabled... no
+#18 13.95 checking if zts is enabled... no
+#18 13.96 checking for gawk... no
+#18 13.96 checking for nawk... nawk
+#18 13.96 checking if nawk is broken... no
+#18 13.96 checking whether to enable Zend OPcache support... yes, shared
+#18 13.96 checking whether to enable copying PHP CODE pages into HUGE PAGES... yes
+#18 13.96 checking whether to enable JIT... yes
+#18 13.97 checking for mprotect... yes
+#18 14.00 checking for memfd_create... yes
+#18 14.03 checking for sysvipc shared memory support... yes
+#18 14.07 checking for mmap() using MAP_ANON shared memory support... yes
+#18 14.11 checking for shm_open in -lrt... yes
+#18 14.17 checking for mmap() using shm_open() shared memory support... checking for shm_unlink in -lrt... yes
+#18 14.24 yes
+#18 14.24 checking whether C compiler accepts -Wno-implicit-fallthrough... yes
+#18 14.29 checking for a sed that does not truncate output... /usr/bin/sed
+#18 14.29 checking for ld used by cc... /usr/bin/ld
+#18 14.29 checking if the linker (/usr/bin/ld) is GNU ld... yes
+#18 14.30 checking for /usr/bin/ld option to reload object files... -r
+#18 14.30 checking for BSD-compatible nm... /usr/bin/nm -B
+#18 14.30 checking whether ln -s works... yes
+#18 14.30 checking how to recognize dependent libraries... pass_all
+#18 14.31 checking for stdio.h... yes
+#18 14.32 checking for stdlib.h... yes
+#18 14.34 checking for string.h... yes
+#18 14.36 checking for inttypes.h... yes
+#18 14.37 checking for stdint.h... yes
+#18 14.39 checking for strings.h... yes
+#18 14.41 checking for sys/stat.h... yes
+#18 14.42 checking for sys/types.h... yes
+#18 14.44 checking for unistd.h... yes
+#18 14.46 checking for dlfcn.h... yes
+#18 14.48 checking the maximum length of command line arguments... 3145728
+#18 14.49 checking command to parse /usr/bin/nm -B output from cc object... ok
+#18 14.54 checking for objdir... .libs
+#18 14.54 checking for ar... ar
+#18 14.54 checking for ranlib... ranlib
+#18 14.54 checking for strip... strip
+#18 14.58 checking if cc supports -fno-rtti -fno-exceptions... no
+#18 14.59 checking for cc option to produce PIC... -fPIC
+#18 14.59 checking if cc PIC flag -fPIC works... yes
+#18 14.61 checking if cc static flag -static works... yes
+#18 14.65 checking if cc supports -c -o file.o... yes
+#18 14.68 checking whether the cc linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+#18 14.69 checking whether -lc should be explicitly linked in... no
+#18 14.70 checking dynamic linker characteristics... GNU/Linux ld.so
+#18 14.72 checking how to hardcode library paths into programs... immediate
+#18 14.72 checking whether stripping libraries is possible... yes
+#18 14.72 checking if libtool supports shared libraries... yes
+#18 14.72 checking whether to build shared libraries... yes
+#18 14.72 checking whether to build static libraries... no
+#18 14.83 
+#18 14.83 creating libtool
+#18 14.84 appending configuration tag "CXX" to libtool
+#18 14.89 configure: patching config.h.in
+#18 14.89 configure: creating ./config.status
+#18 14.93 config.status: creating config.h
+#18 14.95 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/ZendAccelerator.c -o ZendAccelerator.lo  -MMD -MF ZendAccelerator.dep -MT ZendAccelerator.lo
+#18 14.95 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_accelerator_blacklist.c -o zend_accelerator_blacklist.lo  -MMD -MF zend_accelerator_blacklist.dep -MT zend_accelerator_blacklist.lo
+#18 14.95 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_accelerator_debug.c -o zend_accelerator_debug.lo  -MMD -MF zend_accelerator_debug.dep -MT zend_accelerator_debug.lo
+#18 14.96 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_accelerator_hash.c -o zend_accelerator_hash.lo  -MMD -MF zend_accelerator_hash.dep -MT zend_accelerator_hash.lo
+#18 15.07 mkdir .libs
+#18 15.07 mkdir .libs
+#18 15.07 mkdir:  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/ZendAccelerator.c -MMD -MF ZendAccelerator.dep -MT ZendAccelerator.lo  -fPIC -DPIC -o .libs/ZendAccelerator.o
+#18 15.07 cannot create directory '.libs': File exists
+#18 15.07  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_accelerator_blacklist.c -MMD -MF zend_accelerator_blacklist.dep -MT zend_accelerator_blacklist.lo  -fPIC -DPIC -o .libs/zend_accelerator_blacklist.o
+#18 15.07  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_accelerator_hash.c -MMD -MF zend_accelerator_hash.dep -MT zend_accelerator_hash.lo  -fPIC -DPIC -o .libs/zend_accelerator_hash.o
+#18 15.08  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_accelerator_debug.c -MMD -MF zend_accelerator_debug.dep -MT zend_accelerator_debug.lo  -fPIC -DPIC -o .libs/zend_accelerator_debug.o
+#18 15.21 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_accelerator_module.c -o zend_accelerator_module.lo  -MMD -MF zend_accelerator_module.dep -MT zend_accelerator_module.lo
+#18 15.23 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_persist.c -o zend_persist.lo  -MMD -MF zend_persist.dep -MT zend_persist.lo
+#18 15.28 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_persist_calc.c -o zend_persist_calc.lo  -MMD -MF zend_persist_calc.dep -MT zend_persist_calc.lo
+#18 15.33  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_accelerator_module.c -MMD -MF zend_accelerator_module.dep -MT zend_accelerator_module.lo  -fPIC -DPIC -o .libs/zend_accelerator_module.o
+#18 15.36  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_persist.c -MMD -MF zend_persist.dep -MT zend_persist.lo  -fPIC -DPIC -o .libs/zend_persist.o
+#18 15.40  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_persist_calc.c -MMD -MF zend_persist_calc.dep -MT zend_persist_calc.lo  -fPIC -DPIC -o .libs/zend_persist_calc.o
+#18 15.70 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_file_cache.c -o zend_file_cache.lo  -MMD -MF zend_file_cache.dep -MT zend_file_cache.lo
+#18 15.81 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_shared_alloc.c -o zend_shared_alloc.lo  -MMD -MF zend_shared_alloc.dep -MT zend_shared_alloc.lo
+#18 15.81  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_file_cache.c -MMD -MF zend_file_cache.dep -MT zend_file_cache.lo  -fPIC -DPIC -o .libs/zend_file_cache.o
+#18 15.94  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_shared_alloc.c -MMD -MF zend_shared_alloc.dep -MT zend_shared_alloc.lo  -fPIC -DPIC -o .libs/zend_shared_alloc.o
+#18 16.15 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_accelerator_util_funcs.c -o zend_accelerator_util_funcs.lo  -MMD -MF zend_accelerator_util_funcs.dep -MT zend_accelerator_util_funcs.lo
+#18 16.18 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/shared_alloc_shm.c -o shared_alloc_shm.lo  -MMD -MF shared_alloc_shm.dep -MT shared_alloc_shm.lo
+#18 16.24  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/zend_accelerator_util_funcs.c -MMD -MF zend_accelerator_util_funcs.dep -MT zend_accelerator_util_funcs.lo  -fPIC -DPIC -o .libs/zend_accelerator_util_funcs.o
+#18 16.28  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/shared_alloc_shm.c -MMD -MF shared_alloc_shm.dep -MT shared_alloc_shm.lo  -fPIC -DPIC -o .libs/shared_alloc_shm.o
+#18 16.40 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/shared_alloc_mmap.c -o shared_alloc_mmap.lo  -MMD -MF shared_alloc_mmap.dep -MT shared_alloc_mmap.lo
+#18 16.42 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/shared_alloc_posix.c -o shared_alloc_posix.lo  -MMD -MF shared_alloc_posix.dep -MT shared_alloc_posix.lo
+#18 16.53  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/shared_alloc_mmap.c -MMD -MF shared_alloc_mmap.dep -MT shared_alloc_mmap.lo  -fPIC -DPIC -o .libs/shared_alloc_mmap.o
+#18 16.54  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/shared_alloc_posix.c -MMD -MF shared_alloc_posix.dep -MT shared_alloc_posix.lo  -fPIC -DPIC -o .libs/shared_alloc_posix.o
+#18 16.66 cc /usr/src/php/ext/opcache/jit/dynasm/minilua.c -lm -o minilua
+#18 16.66 make: Circular jit/zend_jit.lo <- jit/zend_jit.lo dependency dropped.
+#18 16.68 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/jit/zend_jit_gdb.c -o jit/zend_jit_gdb.lo  -MMD -MF jit/zend_jit_gdb.dep -MT jit/zend_jit_gdb.lo
+#18 16.79 mkdir jit/.libs
+#18 16.80  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/jit/zend_jit_gdb.c -MMD -MF jit/zend_jit_gdb.dep -MT jit/zend_jit_gdb.lo  -fPIC -DPIC -o jit/.libs/zend_jit_gdb.o
+#18 16.84 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/jit/zend_jit_vm_helpers.c -o jit/zend_jit_vm_helpers.lo  -MMD -MF jit/zend_jit_vm_helpers.dep -MT jit/zend_jit_vm_helpers.lo
+#18 16.95  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/jit/zend_jit_vm_helpers.c -MMD -MF jit/zend_jit_vm_helpers.dep -MT jit/zend_jit_vm_helpers.lo  -fPIC -DPIC -o jit/.libs/zend_jit_vm_helpers.o
+#18 17.26 ./minilua /usr/src/php/ext/opcache/jit/dynasm/dynasm.lua  -D X64=1 -o jit/zend_jit_x86.c /usr/src/php/ext/opcache/jit/zend_jit_x86.dasc
+#18 18.19 /bin/bash /usr/src/php/ext/opcache/libtool --tag=CC --mode=compile cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H  -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE    -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/jit/zend_jit.c -o jit/zend_jit.lo  -MMD -MF jit/zend_jit.dep -MT jit/zend_jit.lo
+#18 18.27  cc -I. -I/usr/src/php/ext/opcache -I/usr/src/php/ext/opcache/include -I/usr/src/php/ext/opcache/main -I/usr/src/php/ext/opcache -I/usr/local/include/php -I/usr/local/include/php/main -I/usr/local/include/php/TSRM -I/usr/local/include/php/Zend -I/usr/local/include/php/ext -I/usr/local/include/php/ext/date/lib -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CONFIG_H -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -Wno-implicit-fallthrough -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DZEND_COMPILE_DL_EXT=1 -c /usr/src/php/ext/opcache/jit/zend_jit.c -MMD -MF jit/zend_jit.dep -MT jit/zend_jit.lo  -fPIC -DPIC -o jit/.libs/zend_jit.o
+#18 ...
+
+#26 [vendor 4/6] RUN composer install         --no-dev         --no-interaction         --no-progress         --no-scripts         --prefer-dist         --ignore-platform-reqs
+#26 10.83   - Downloading symfony/event-dispatcher-contracts (v3.8.1)
+#26 11.34   - Downloading brick/math (0.14.8)
+#26 11.84   - Downloading ramsey/uuid (4.9.4)
+#26 12.34   - Downloading symfony/finder (v7.4.23)
+#26 12.85   - Downloading symfony/polyfill-php85 (v1.43.0)
+#26 13.71     Failed to download symfony/event-dispatcher-contracts from dist: The "https://api.github.com/repos/symfony/event-dispatcher-contracts/zipball/658e29751424da3ef4758c60f769e59d1b2981eb" file could not be downloaded (HTTP/2 504 )
+#26 13.73     Failed to download ramsey/uuid from dist: The "https://api.github.com/repos/ramsey/uuid/zipball/75d73f48d02797c2c285a7e9f348fadc0102ffe2" file could not be downloaded (HTTP/2 504 )
+#26 13.74     Failed to download react/dns from dist: The "https://api.github.com/repos/reactphp/dns/zipball/7562c05391f42701c1fccf189c8225fece1cd7c3" file could not be downloaded (HTTP/2 504 )
+#26 13.75     Failed to download brick/math from dist: The "https://api.github.com/repos/brick/math/zipball/63422359a44b7f06cae63c3b429b59e8efcc0629" file could not be downloaded (HTTP/2 504 )
+#26 13.79     Failed to download symfony/polyfill-php85 from dist: The "https://api.github.com/repos/symfony/polyfill-php85/zipball/86a42cbcc07adc331481a5ab310a4024bfc227f6" file could not be downloaded (HTTP/2 504 )
+#26 13.79     Failed to download symfony/finder from dist: The "https://api.github.com/repos/symfony/finder/zipball/c723f990aefe8c1053b18374faf4231eba84f518" file could not be downloaded (HTTP/2 504 )
+#26 13.87 
+#26 13.87 In CurlDownloader.php line 1027:
+#26 13.87                                                                                
+#26 13.87   The "https://api.github.com/repos/symfony/event-dispatcher-contracts/zipbal  
+#26 13.87   l/658e29751424da3ef4758c60f769e59d1b2981eb" file could not be downloaded (H  
+#26 13.87   TTP/2 504 )                                                                  
+#26 13.87                                                                                
+#26 13.87 
+#26 13.87 install [--prefer-source] [--prefer-dist] [--prefer-install PREFER-INSTALL] [--dry-run] [--download-only] [--dev] [--no-suggest] [--no-dev] [--no-security-blocking] [--no-blocking] [--no-autoloader] [--no-progress] [--no-install] [--audit] [--audit-format AUDIT-FORMAT] [-v|vv|vvv|--verbose] [-o|--optimize-autoloader] [-a|--classmap-authoritative] [--strict-psr-autoloader] [--apcu-autoloader] [--apcu-autoloader-prefix APCU-AUTOLOADER-PREFIX] [--ignore-platform-req IGNORE-PLATFORM-REQ] [--ignore-platform-reqs] [--] [<packages>...]
+#26 13.87 
+#26 ERROR: process "/bin/sh -c composer install         --no-dev         --no-interaction         --no-progress         --no-scripts         --prefer-dist         --ignore-platform-reqs" did not complete successfully: exit code: 100
+
+#18 [runtime  2/16] RUN apt-get update && apt-get install -y --no-install-recommends         nginx         supervisor         curl         ca-certificates         git         unzip         python3         python3-venv         python3-pip         libpq-dev         libzip-dev     && docker-php-ext-install -j"$(nproc)" pdo_pgsql opcache pcntl zip     && rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default     && apt-get clean     && rm -rf /var/lib/apt/lists/*
+#18 CANCELED
+------
+ > [vendor 4/6] RUN composer install         --no-dev         --no-interaction         --no-progress         --no-scripts         --prefer-dist         --ignore-platform-reqs:
+13.87 
+13.87 In CurlDownloader.php line 1027:
+13.87                                                                                
+13.87   The "https://api.github.com/repos/symfony/event-dispatcher-contracts/zipbal  
+13.87   l/658e29751424da3ef4758c60f769e59d1b2981eb" file could not be downloaded (H  
+13.87   TTP/2 504 )                                                                  
+13.87                                                                                
+13.87 
+13.87 install [--prefer-source] [--prefer-dist] [--prefer-install PREFER-INSTALL] [--dry-run] [--download-only] [--dev] [--no-suggest] [--no-dev] [--no-security-blocking] [--no-blocking] [--no-autoloader] [--no-progress] [--no-install] [--audit] [--audit-format AUDIT-FORMAT] [-v|vv|vvv|--verbose] [-o|--optimize-autoloader] [-a|--classmap-authoritative] [--strict-psr-autoloader] [--apcu-autoloader] [--apcu-autoloader-prefix APCU-AUTOLOADER-PREFIX] [--ignore-platform-req IGNORE-PLATFORM-REQ] [--ignore-platform-reqs] [--] [<packages>...]
+13.87 
+------
+ERROR: failed to build: failed to solve: process "/bin/sh -c composer install         --no-dev         --no-interaction         --no-progress         --no-scripts         --prefer-dist         --ignore-platform-reqs" did not complete successfully: exit code: 100
