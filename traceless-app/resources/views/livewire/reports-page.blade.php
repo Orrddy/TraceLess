@@ -34,7 +34,7 @@
                         </span>
                         <span class="mt-1 block font-body text-[11px] leading-snug text-muted">Extended narrative for Deep Scan subscribers.</span>
                         @unless($isDeepScan)
-                            <span class="mt-2 inline-flex items-center gap-1 font-mono text-[9px] text-muted"><span class="material-symbols-outlined text-[12px]">lock</span>Requires Deep Scan</span>
+                            <span class="mt-2 inline-flex items-center gap-1 font-mono text-[9px] text-muted"><span class="material-symbols-outlined text-[12px]">lock</span>Free during v1.0 beta</span>
                         @endunless
                     </button>
                 </div>

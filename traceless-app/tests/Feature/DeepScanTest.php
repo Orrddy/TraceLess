@@ -73,15 +73,15 @@ class DeepScanTest extends TestCase
         $mock = Mockery::mock(PythonScannerClient::class);
         $mock->shouldReceive('scanReport')
             ->once()
-            ->with('username', 'janedoe', true, 'deep')
+            ->with('username', 'janedoe', true, 'deep', Mockery::type('int'))
             ->andReturn($this->report('GitHub', 'username'));
         $mock->shouldReceive('scanReport')
             ->once()
-            ->with('email', 'jane@example.com', true, 'deep')
+            ->with('email', 'jane@example.com', true, 'deep', Mockery::type('int'))
             ->andReturn($this->report('Letterboxd', 'email'));
         $mock->shouldReceive('scanReport')
             ->once()
-            ->with('phone', '+12025550143', true, 'deep')
+            ->with('phone', '+12025550143', true, 'deep', Mockery::type('int'))
             ->andReturn($this->report('Zoho', 'phone'));
         $this->app->instance(PythonScannerClient::class, $mock);
 
@@ -125,13 +125,13 @@ class DeepScanTest extends TestCase
 
         $mock = Mockery::mock(PythonScannerClient::class);
         $mock->shouldReceive('scanReport')
-            ->with('username', 'janedoe', true, 'deep')
+            ->with('username', 'janedoe', true, 'deep', Mockery::type('int'))
             ->andReturn($this->report('GitHub', 'username'));
         $mock->shouldReceive('scanReport')
-            ->with('email', 'jane@example.com', true, 'deep')
+            ->with('email', 'jane@example.com', true, 'deep', Mockery::type('int'))
             ->andThrow(new \RuntimeException('Email probe failed.'));
         $mock->shouldReceive('scanReport')
-            ->with('phone', '+12025550143', true, 'deep')
+            ->with('phone', '+12025550143', true, 'deep', Mockery::type('int'))
             ->andReturn(['findings' => [], 'sources' => []]);
         $this->app->instance(PythonScannerClient::class, $mock);
 

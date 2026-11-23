@@ -23,7 +23,7 @@
             </section>
             <section>
                 <h2 class="font-editorial text-2xl text-ink">4. Accounts &amp; billing</h2>
-                <p class="mt-2">You are responsible for safeguarding your account. Paid plans renew according to the plan terms shown at checkout. Demo deployments do not process real payments. You may cancel at any time; access continues until the end of the paid period.</p>
+                <p class="mt-2">You are responsible for safeguarding your account. The v1.0 beta is free; paid plans arrive in v2.0 and will renew according to the plan terms shown at checkout. Demo deployments do not process real payments. You may cancel at any time; access continues until the end of the paid period.</p>
             </section>
             <section>
                 <h2 class="font-editorial text-2xl text-ink">5. Acceptable use</h2>

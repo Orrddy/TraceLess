@@ -139,6 +139,8 @@ class ScanPipelineTest extends TestCase
     public function test_deep_scan_requires_an_active_plan(): void
     {
         Queue::fake();
+        // Plan gates apply outside the free beta (v2.0 behaviour).
+        config(['traceless.beta' => false]);
 
         $user = User::factory()->create();
         $profile = $this->makeProfile($user);

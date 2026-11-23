@@ -8,6 +8,7 @@ use App\Models\ConsentRecord;
 use App\Models\EmailOtp;
 use App\Models\Finding;
 use App\Models\IdentityProfile;
+use App\Models\OutboundEmail;
 use App\Models\Scan;
 use App\Models\User;
 use App\Services\ConsentService;
@@ -151,5 +152,45 @@ class RetentionDeletionTest extends TestCase
             ->call('deleteAccount');
 
         $this->assertDatabaseMissing('outbound_emails', ['to_email' => 'jane@example.com']);
+    }
+
+    public function test_outbound_email_retention_never_deletes_recent_rows(): void
+    {
+        $old = OutboundEmail::create([
+            'to_email' => 'old@example.com',
+            'subject' => 'Old code',
+            'status' => 'sent',
+            'sent_at' => now()->subDays(91),
+        ]);
+        $old->forceFill(['created_at' => now()->subDays(91)])->saveQuietly();
+
+        $recent = OutboundEmail::create([
+            'to_email' => 'recent@example.com',
+            'subject' => 'Recent code',
+            'status' => 'sent',
+            'sent_at' => now()->subDays(10),
+        ]);
+        $recent->forceFill(['created_at' => now()->subDays(10)])->saveQuietly();
+
+        $this->artisan('traceless:prune')->assertExitCode(0);
+
+        $this->assertDatabaseMissing('outbound_emails', ['id' => $old->id]);
+        $this->assertDatabaseHas('outbound_emails', ['id' => $recent->id]);
+    }
+
+    public function test_outbound_email_retention_honours_the_configured_window(): void
+    {
+        config(['traceless.retention.outbound_email_days' => 30]);
+
+        $row = OutboundEmail::create([
+            'to_email' => 'thirty-days@example.com',
+            'subject' => 'Code',
+            'status' => 'sent',
+        ]);
+        $row->forceFill(['created_at' => now()->subDays(31)])->saveQuietly();
+
+        $this->artisan('traceless:prune')->assertExitCode(0);
+
+        $this->assertDatabaseMissing('outbound_emails', ['id' => $row->id]);
     }
 }

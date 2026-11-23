@@ -17,7 +17,7 @@
             ['Scans', $stats['scans_total'], $stats['scans_today'].' today'],
             ['Findings', $stats['findings_total'], $stats['findings_new'].' new this week'],
             ['Removals', $stats['removals_total'], $stats['removals_done'].' completed'],
-            ['Unread alerts', $stats['alerts_unread'], $stats['subs_active'].' active plans'],
+            ['Unread alerts', $stats['alerts_unread'], $stats['subs_active'].' active subscriptions'],
         ] as [$label, $value, $note])
             <div class="card p-4">
                 <p class="text-[11px] uppercase tracking-wide text-faint">{{ $label }}</p>

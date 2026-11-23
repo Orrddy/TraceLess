@@ -169,7 +169,8 @@ class MonitoringLifecycleTest extends TestCase
     public function test_the_plan_gate_blocks_users_without_a_plan_when_enabled(): void
     {
         Queue::fake();
-        config(['traceless.monitoring.enforce_plan' => true]);
+        // Plan gates apply outside the free beta (v2.0 behaviour).
+        config(['traceless.monitoring.enforce_plan' => true, 'traceless.beta' => false]);
 
         $profile = $this->profile();
 
