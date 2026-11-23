@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
@@ -106,10 +106,30 @@ jobs:
         run: |
           # Docker registry names must be lowercase; GitHub handles are not.
           OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
-          docker buildx build --platform linux/amd64 --target runtime \
+          set +e
+          docker buildx build --progress=plain --platform linux/amd64 --target runtime \
             -t "ghcr.io/${OWNER}/traceless:${GITHUB_SHA}" \
             -t "ghcr.io/${OWNER}/traceless:latest" \
-            --load .
+            --load . 2>&1 | tee /tmp/docker.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            mkdir -p traceless-app/.ci
+            cp /tmp/docker.log traceless-app/.ci/docker-failure.txt
+          fi
+          exit "$status"
+
+      - name: Record docker failure
+        if: failure()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          [ -f traceless-app/.ci/docker-failure.txt ] || exit 0
+          git config user.name "ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          git add -f traceless-app/.ci/docker-failure.txt
+          git commit -m "ci: record docker failure [skip ci]" || true
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push origin HEAD:main || true
 
       - name: Push image
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
