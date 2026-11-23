@@ -15,7 +15,6 @@ use App\Models\User;
 use App\Services\ConsentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -218,6 +217,7 @@ class ToolsAndResetTest extends TestCase
             ->assertSee('Cached for 48h')
             ->assertSee('fresh scan in');
     }
+
     public function test_resetting_clears_scan_data_but_keeps_the_identity_and_consent(): void
     {
         $profile = $this->profile();
