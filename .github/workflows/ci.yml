@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
   packages: write
 
 jobs:
@@ -23,9 +23,10 @@ jobs:
     env:
       # Composer runs `artisan package:discover` before .env exists. In
       # production that boots the safety guard (demo mode looks enabled) and
-      # aborts the install. APP_ENV=local keeps the boot out of production mode;
-      # phpunit.xml still forces APP_ENV=testing for the test run.
-      APP_ENV: local
+      # aborts the install. APP_ENV=testing keeps that boot out of production
+      # mode, and is also correct for the suite: PHPUnit does not overwrite an
+      # environment variable that is already set, so CSRF-skipping relies on it.
+      APP_ENV: testing
 
     steps:
       - name: Checkout
@@ -69,29 +70,7 @@ jobs:
         run: vendor/bin/pint --test
 
       - name: Run tests
-        run: |
-          set +e
-          php artisan test --do-not-cache-result 2>&1 | tee /tmp/tests.log
-          status=${PIPESTATUS[0]}
-          if [ "$status" -ne 0 ]; then
-            mkdir -p .ci
-            cp /tmp/tests.log .ci/test-failure.txt
-            echo "::error title=Tests failed::$(grep -E 'FAILED|Tests:' /tmp/tests.log | tail -n 8 | tr '\n' '|' | head -c 3000)"
-          fi
-          exit "$status"
-
-      - name: Record test failure
-        if: failure()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          [ -f .ci/test-failure.txt ] || exit 0
-          git config user.name "ci-bot"
-          git config user.email "ci-bot@users.noreply.github.com"
-          git add -f .ci/test-failure.txt
-          git commit -m "ci: record test failure [skip ci]" || true
-          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git push origin HEAD:main || true
+        run: php artisan test
 
   image:
     name: Container image
