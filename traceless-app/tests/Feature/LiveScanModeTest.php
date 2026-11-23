@@ -214,4 +214,28 @@ class LiveScanModeTest extends TestCase
         $this->assertSame(0, Finding::count());
         $this->assertSame(1, ScanSource::where('scan_id', $scan->id)->count());
     }
+
+    public function test_a_live_scan_fails_instead_of_claiming_an_all_clear_when_the_scanner_is_down(): void
+    {
+        Queue::fake();
+        config(['traceless.demo_mode' => false, 'traceless.scan.stage_delay_ms' => 0]);
+
+        $user = User::factory()->create();
+        $profile = $this->makeProfile($user);
+
+        $mock = Mockery::mock(PythonScannerClient::class);
+        $mock->shouldReceive('scanReport')->andThrow(new \RuntimeException('Scanner worker is not installed.'));
+        $this->app->instance(PythonScannerClient::class, $mock);
+
+        $orchestrator = app(ScanOrchestrator::class);
+        $scan = $orchestrator->queueScan($profile, 'snapshot');
+        $orchestrator->executeScan($scan);
+
+        $scan->refresh();
+
+        $this->assertSame('failed', $scan->fresh()->status);
+        $this->assertStringContainsString('retry', strtolower((string) $scan->error_message));
+        $this->assertDatabaseCount('reports', 0);
+        $this->assertSame(0, Finding::count());
+    }
 }

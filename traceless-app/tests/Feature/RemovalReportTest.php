@@ -11,6 +11,7 @@ use App\Services\ConsentService;
 use App\Services\RemovalWorkflowService;
 use App\Services\ReportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
@@ -90,6 +91,34 @@ class RemovalReportTest extends TestCase
 
         $this->expectException(\InvalidArgumentException::class);
         app(RemovalWorkflowService::class)->updateStatus($task, 'invented_status');
+    }
+
+    public function test_a_mail_outage_does_not_block_a_removal_status_update(): void
+    {
+        Queue::fake();
+
+        $user = User::factory()->create();
+        $profile = $this->profileFor($user);
+        $finding = $this->findingFor($profile);
+
+        $task = RemovalTask::create([
+            'identity_profile_id' => $profile->id,
+            'finding_id' => $finding->id,
+            'source_name' => $finding->source,
+            'status' => 'ready_to_remove',
+        ]);
+
+        config([
+            'mail.default' => 'smtp',
+            'mail.mailers.smtp.host' => '127.0.0.1',
+            'mail.mailers.smtp.port' => 2,
+            'mail.mailers.smtp.timeout' => 1,
+        ]);
+
+        app(RemovalWorkflowService::class)->updateStatus($task, 'in_progress');
+
+        $this->assertSame('in_progress', $task->fresh()->status);
+        $this->assertDatabaseHas('audit_logs', ['action' => 'removal_status_updated']);
     }
 
     public function test_signed_report_download_works_and_is_owner_scoped(): void

@@ -69,7 +69,9 @@ class ScanOrchestrator
     {
         $scan->refresh();
 
-        if ($scan->status === 'cancelled') {
+        // A late or duplicated delivery must not resurrect a scan that a retry,
+        // the stale-scan reaper or an administrator already finished.
+        if (! $scan->isActive()) {
             return;
         }
 
@@ -87,8 +89,17 @@ class ScanOrchestrator
                     'started_at' => $scan->started_at ?? now(),
                 ]);
 
-            $report = $this->discoverFindings($profile, $scan->type === 'deep_scan' ? 'deep' : 'curated');
+            $report = $this->discoverFindings($profile, $scan->type === 'deep_scan' ? 'deep' : 'curated', $scan);
             $findings = $report['findings'];
+
+            if ($this->wasCancelled($scan)) {
+                return;
+            }
+
+            if (! config('traceless.demo_mode') && $report['attempted'] > 0 && $report['sources'] === []) {
+                throw new RuntimeException('No monitored identifier could be checked.');
+            }
+
             $grouped = collect($findings)->groupBy('source');
 
             $this->createScanSources($scan, $report['sources']);
@@ -242,12 +253,12 @@ class ScanOrchestrator
     }
 
     /**
-     * @return array{findings: array<int, array<string, mixed>>, sources: array<int, array<string, mixed>>|null}
+     * @return array{findings: array<int, array<string, mixed>>, sources: array<int, array<string, mixed>>|null, attempted: int}
      */
-    protected function discoverFindings(IdentityProfile $profile, string $mode = 'curated'): array
+    protected function discoverFindings(IdentityProfile $profile, string $mode = 'curated', ?Scan $scan = null): array
     {
         if (config('traceless.demo_mode')) {
-            return ['findings' => $this->demoAdapter->findingsFor($profile), 'sources' => null];
+            return ['findings' => $this->demoAdapter->findingsFor($profile), 'sources' => null, 'attempted' => 0];
         }
 
         $usernames = $profile->publicIdentifiers()
@@ -292,15 +303,25 @@ class ScanOrchestrator
         }
 
         if ($identifiers->isEmpty()) {
-            return ['findings' => [], 'sources' => []];
+            return ['findings' => [], 'sources' => [], 'attempted' => 0];
         }
 
         $findings = [];
         $sources = [];
+        $total = $identifiers->count();
+        $checked = 0;
 
         // Every monitored identifier is checked. Each call is its own worker
-        // process, and the caps in config keep the runtime bounded.
+        // process, and the caps in config keep the runtime bounded. The scan row
+        // is touched between calls so a long deep scan is never mistaken for a
+        // dead one by scans:reap-stale or activeScan().
         foreach ($identifiers as [$type, $value]) {
+            if ($scan && $this->wasCancelled($scan)) {
+                return ['findings' => [], 'sources' => [], 'attempted' => $total];
+            }
+
+            $report = null;
+
             try {
                 $report = $this->pythonScanner->scanReport($type, $value, true, $mode);
             } catch (Throwable $exception) {
@@ -310,18 +331,26 @@ class ScanOrchestrator
                     'mode' => $mode,
                     'reason' => get_class($exception),
                 ]);
-
-                continue;
             }
 
-            foreach ($report['findings'] ?? [] as $finding) {
-                $findings[] = $finding;
+            if ($report !== null) {
+                foreach ($report['findings'] ?? [] as $finding) {
+                    $findings[] = $finding;
+                }
+
+                $sources = $this->mergeSources($sources, $report['sources'] ?? []);
             }
 
-            $sources = $this->mergeSources($sources, $report['sources'] ?? []);
+            $checked++;
+
+            if ($scan) {
+                $scan->update([
+                    'current_stage' => "Checked {$checked}/{$total} monitored identifiers · {$type}",
+                ]);
+            }
         }
 
-        return ['findings' => $findings, 'sources' => array_values($sources)];
+        return ['findings' => $findings, 'sources' => array_values($sources), 'attempted' => $total];
     }
 
     /**

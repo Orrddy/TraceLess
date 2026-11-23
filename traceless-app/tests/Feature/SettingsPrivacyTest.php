@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Services\ConsentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -108,6 +109,12 @@ class SettingsPrivacyTest extends TestCase
         [$user, $profile] = $this->populatedUser();
         $this->actingAs($user);
 
+        $user->notifications()->create([
+            'id' => (string) Str::uuid(),
+            'type' => 'App\\Notifications\\AlertNotification',
+            'data' => ['title' => 'Old alert', 'message' => 'A record appeared.'],
+        ]);
+
         Livewire::test(SettingsPage::class)
             ->set('confirm_data_purge', true)
             ->call('purgeScanData');
@@ -118,6 +125,7 @@ class SettingsPrivacyTest extends TestCase
         $this->assertDatabaseMissing('credential_exposures', ['identity_profile_id' => $profile->id]);
         $this->assertDatabaseMissing('removal_tasks', ['identity_profile_id' => $profile->id]);
         $this->assertDatabaseMissing('alerts', ['identity_profile_id' => $profile->id]);
+        $this->assertDatabaseCount('notifications', 0);
         $this->assertDatabaseHas('identity_profiles', ['id' => $profile->id]);
         $this->assertDatabaseHas('users', ['id' => $user->id]);
     }
@@ -207,5 +215,26 @@ class SettingsPrivacyTest extends TestCase
         $this->assertSame('new@example.com', $user->fresh()->email);
         $this->assertNotNull($user->fresh()->email_verified_at);
         $this->assertDatabaseHas('audit_logs', ['action' => 'email_changed']);
+    }
+
+    public function test_an_email_change_otp_outage_is_a_form_error(): void
+    {
+        [$user] = $this->populatedUser();
+        $this->actingAs($user);
+
+        config([
+            'mail.default' => 'smtp',
+            'mail.mailers.smtp.host' => '127.0.0.1',
+            'mail.mailers.smtp.port' => 2,
+            'mail.mailers.smtp.timeout' => 1,
+        ]);
+
+        Livewire::test(SettingsPage::class)
+            ->set('name', 'Jane Doe')
+            ->set('email', 'new@example.com')
+            ->call('updateProfile')
+            ->assertHasErrors('email');
+
+        $this->assertSame('jane@example.com', $user->fresh()->email);
     }
 }

@@ -35,7 +35,19 @@ class ScanInspector extends Component
             return;
         }
 
-        $new = $orchestrator->queueScan($profile, $this->scan->type);
+        if ($profile->activeScan()) {
+            $this->addError('action', 'This identity already has a scan in progress. Wait for it to finish before retrying.');
+
+            return;
+        }
+
+        try {
+            $new = $orchestrator->queueScan($profile, $this->scan->type);
+        } catch (\RuntimeException $exception) {
+            $this->addError('action', 'The scan could not be retried: '.$exception->getMessage());
+
+            return;
+        }
 
         $audit->log(
             Auth::id(),

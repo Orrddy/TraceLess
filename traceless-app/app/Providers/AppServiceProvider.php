@@ -8,11 +8,13 @@ use App\Support\DestructiveCommandGuard;
 use App\Support\ProductionSafetyGuard;
 use Illuminate\Console\Events\CommandStarting;
 use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Queue\Events\Looping;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Throwable;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -50,5 +52,21 @@ class AppServiceProvider extends ServiceProvider
         // a quiet queue does not look like a dead worker.
         Event::listen(MessageSent::class, fn (MessageSent $event) => app(OutboundEmailRecorder::class)->recordSent($event));
         Event::listen(Looping::class, fn () => Cache::put('heartbeat:queue', now()->toIso8601String(), 3600));
+
+        // A notification mail failure is otherwise invisible: the queue job fails
+        // but /admin/email only knows about OTP transport errors.
+        Event::listen(NotificationFailed::class, function (NotificationFailed $event) {
+            $exception = $event->data['exception'] ?? null;
+            $notifiable = $event->notifiable;
+            $email = is_object($notifiable) && method_exists($notifiable, 'routeNotificationFor')
+                ? $notifiable->routeNotificationFor('mail', $event->notification)
+                : null;
+
+            if ($event->channel !== 'mail' || ! $exception instanceof Throwable || ! is_string($email) || $email === '') {
+                return;
+            }
+
+            app(OutboundEmailRecorder::class)->recordFailed($email, class_basename($event->notification), $exception);
+        });
     }
 }

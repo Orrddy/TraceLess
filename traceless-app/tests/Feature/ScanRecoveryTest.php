@@ -4,13 +4,18 @@ namespace Tests\Feature;
 
 use App\Jobs\RunScanJob;
 use App\Livewire\Credentials\CredentialExposures;
+use App\Models\Finding;
 use App\Models\IdentityProfile;
 use App\Models\Report;
 use App\Models\Scan;
 use App\Models\User;
 use App\Services\ConsentService;
+use App\Services\PythonScannerClient;
+use App\Services\ScanOrchestrator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
+use Mockery;
 use RuntimeException;
 use Tests\TestCase;
 
@@ -110,6 +115,106 @@ class ScanRecoveryTest extends TestCase
         $this->scan($profile, ['status' => 'checking_sources']);
 
         $this->assertNotNull($profile->activeScan());
+    }
+
+    public function test_a_late_job_does_not_resurrect_a_finished_scan(): void
+    {
+        $scan = $this->scan($this->profile(), ['status' => 'failed']);
+
+        (new RunScanJob($scan))->handle(app(ScanOrchestrator::class));
+
+        $this->assertSame('failed', $scan->fresh()->status);
+        $this->assertSame(0, Finding::count());
+    }
+
+    public function test_a_long_live_discovery_keeps_the_scan_fresh(): void
+    {
+        Queue::fake();
+        config(['traceless.demo_mode' => false, 'traceless.scan.stage_delay_ms' => 0]);
+
+        $profile = $this->liveProfile(['alpha', 'beta']);
+        $scan = app(ScanOrchestrator::class)->queueScan($profile, 'snapshot');
+
+        $calls = 0;
+        $scanId = $scan->id;
+
+        $this->fakeScanner(function () use (&$calls, $scanId) {
+            $calls++;
+
+            if ($calls > 1) {
+                $updatedAt = Scan::findOrFail($scanId)->updated_at;
+                $this->assertTrue(
+                    $updatedAt->greaterThan(now()->subMinutes(15)),
+                    'The scan row was not touched between identifier checks.'
+                );
+            }
+
+            // Simulate one slow identifier worker process (the deep timeout
+            // allows several minutes per identifier).
+            $this->travel(20)->minutes();
+
+            return ['findings' => [], 'sources' => [
+                ['name' => 'GitHub', 'category' => 'developer_profile', 'outcome' => 'not_found'],
+            ]];
+        });
+
+        app(ScanOrchestrator::class)->executeScan($scan);
+
+        $this->assertSame(2, $calls);
+        $this->assertSame('completed', $scan->fresh()->status);
+    }
+
+    public function test_cancelling_during_discovery_stops_further_identifier_checks(): void
+    {
+        Queue::fake();
+        config(['traceless.demo_mode' => false, 'traceless.scan.stage_delay_ms' => 0]);
+
+        $profile = $this->liveProfile(['alpha', 'beta']);
+        $scan = app(ScanOrchestrator::class)->queueScan($profile, 'snapshot');
+
+        $checked = [];
+
+        $this->fakeScanner(function (string $type, string $value) use (&$checked, $scan) {
+            $checked[] = $value;
+
+            $scan->update([
+                'status' => 'cancelled',
+                'current_stage' => 'Scan cancelled by user.',
+                'cancelled_at' => now(),
+                'completed_at' => now(),
+            ]);
+
+            return ['findings' => [], 'sources' => [
+                ['name' => 'GitHub', 'category' => 'developer_profile', 'outcome' => 'not_found'],
+            ]];
+        });
+
+        app(ScanOrchestrator::class)->executeScan($scan);
+
+        $this->assertSame(['alpha'], $checked);
+        $this->assertSame('cancelled', $scan->fresh()->status);
+    }
+
+    private function liveProfile(array $usernames): IdentityProfile
+    {
+        $profile = $this->profile();
+
+        foreach ($usernames as $username) {
+            $profile->publicIdentifiers()->create([
+                'type' => 'username',
+                'value' => $username,
+                'is_monitored' => true,
+            ]);
+        }
+
+        return $profile;
+    }
+
+    private function fakeScanner(callable $callback): void
+    {
+        $mock = Mockery::mock(PythonScannerClient::class);
+        $mock->shouldReceive('scanReport')->andReturnUsing($callback);
+        $this->app->instance(PythonScannerClient::class, $mock);
     }
 
     public function test_the_report_download_url_is_signed(): void

@@ -135,4 +135,21 @@ class RetentionDeletionTest extends TestCase
         $this->assertDatabaseHas('audit_logs', ['action' => 'consent_evidence_retained']);
         $this->assertGreaterThan(0, AuditLog::where('action', 'consent_evidence_retained')->count());
     }
+
+    public function test_deleting_an_account_removes_its_email_delivery_records(): void
+    {
+        $user = User::factory()->create(['email' => 'jane@example.com']);
+        $this->profileFor($user);
+
+        $otp = app(OtpService::class)->issue($user->email, EmailOtp::PURPOSE_DELETE_ACCOUNT, '10.0.0.9', 'test');
+
+        $this->assertDatabaseHas('outbound_emails', ['to_email' => 'jane@example.com']);
+
+        Livewire::actingAs($user)->test(SettingsPage::class)
+            ->set('delete_code', $otp->plainCode)
+            ->set('confirm_account_delete', true)
+            ->call('deleteAccount');
+
+        $this->assertDatabaseMissing('outbound_emails', ['to_email' => 'jane@example.com']);
+    }
 }

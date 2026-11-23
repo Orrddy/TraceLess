@@ -58,6 +58,15 @@ class DispatchDueMonitoringScans implements ShouldQueue
                         continue;
                     }
 
+                    // The owner may be running a manual scan; queueing a second
+                    // one would double the work and duplicate alerts.
+                    if ($profile->activeScan()) {
+                        Log::info('monitoring_skipped_active_scan', ['subscription_id' => $subscription->id]);
+                        $subscription->update(['next_scan_at' => now()->addHour()]);
+
+                        continue;
+                    }
+
                     try {
                         $orchestrator->queueScan($profile, 'deep_scan');
 

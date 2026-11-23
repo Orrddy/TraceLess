@@ -121,6 +121,33 @@ class MonitoringLifecycleTest extends TestCase
         $this->assertSame(0, Scan::count());
     }
 
+    public function test_monitoring_waits_when_the_owner_already_has_a_scan_running(): void
+    {
+        Queue::fake();
+        $profile = $this->profile();
+
+        $subscription = MonitoringSubscription::create([
+            'identity_profile_id' => $profile->id,
+            'is_active' => true,
+            'cadence' => 'weekly',
+            'next_scan_at' => now()->subDay(),
+        ]);
+
+        Scan::create([
+            'identity_profile_id' => $profile->id,
+            'type' => 'deep_scan',
+            'status' => 'checking_sources',
+            'progress_percentage' => 40,
+            'current_stage' => 'Checking sources',
+            'demo_mode' => false,
+        ]);
+
+        (new DispatchDueMonitoringScans)->handle(app(ScanOrchestrator::class));
+
+        $this->assertSame(1, Scan::count());
+        $this->assertTrue($subscription->fresh()->next_scan_at->isFuture());
+    }
+
     public function test_missing_consent_advances_instead_of_retrying_every_hour(): void
     {
         Queue::fake();

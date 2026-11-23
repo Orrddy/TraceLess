@@ -47,12 +47,18 @@ class AuthController extends Controller
             'remember' => false,
         ]);
 
-        $this->otp->issue(
-            $email,
-            EmailOtp::PURPOSE_REGISTER,
-            $request->ip(),
-            $request->userAgent(),
-        );
+        try {
+            $this->otp->issue(
+                $email,
+                EmailOtp::PURPOSE_REGISTER,
+                $request->ip(),
+                $request->userAgent(),
+            );
+        } catch (\Throwable) {
+            return back()->withErrors([
+                'email' => 'We could not send a verification email just now. Please try again in a minute.',
+            ])->onlyInput('name', 'email');
+        }
 
         AuditLog::create([
             'user_id' => null,
@@ -95,12 +101,18 @@ class AuthController extends Controller
             $wait = $this->otp->secondsUntilResend($email, EmailOtp::PURPOSE_LOGIN);
 
             if (! $wait) {
-                $this->otp->issue(
-                    $email,
-                    EmailOtp::PURPOSE_LOGIN,
-                    $request->ip(),
-                    $request->userAgent(),
-                );
+                try {
+                    $this->otp->issue(
+                        $email,
+                        EmailOtp::PURPOSE_LOGIN,
+                        $request->ip(),
+                        $request->userAgent(),
+                    );
+                } catch (\Throwable) {
+                    return back()->withErrors([
+                        'email' => 'We could not send a sign-in code just now. Please try again in a minute.',
+                    ])->onlyInput('email');
+                }
 
                 AuditLog::create([
                     'user_id' => $user->id,
@@ -229,12 +241,18 @@ class AuthController extends Controller
 
         // Never reveal whether an account exists for a login challenge.
         if ($pending['purpose'] !== EmailOtp::PURPOSE_LOGIN || $user) {
-            $this->otp->issue(
-                $pending['email'],
-                $pending['purpose'],
-                $request->ip(),
-                $request->userAgent(),
-            );
+            try {
+                $this->otp->issue(
+                    $pending['email'],
+                    $pending['purpose'],
+                    $request->ip(),
+                    $request->userAgent(),
+                );
+            } catch (\Throwable) {
+                return back()->withErrors([
+                    'code' => 'We could not send a new code just now. Please try again in a minute.',
+                ]);
+            }
 
             AuditLog::create([
                 'user_id' => $user?->id,

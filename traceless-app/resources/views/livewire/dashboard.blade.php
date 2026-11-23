@@ -1,214 +1,402 @@
-<div class="space-y-8">
-    @if(!$profile)
-        <!-- Identity Initialization Banner -->
-        <div class="ops-card p-10 text-center max-w-xl mx-auto space-y-4">
-            <span class="material-symbols-outlined text-4xl text-accent">fingerprint</span>
-            <h2 class="font-display text-2xl font-semibold tracking-[-0.02em] text-ink">Establish your monitored identity</h2>
-            <p class="text-sm text-body leading-relaxed">
-                Before deploying automated OSINT discovery, link your target identifiers under explicit legal authorization.
-            </p>
-            <div class="pt-2">
-                <a href="{{ route('identity.create') }}" class="btn-ops-primary text-xs py-3 px-6">
-                    <span>Initialize Profile</span>
-                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                </a>
+@php
+    $riskDots = [
+        'critical' => 'v-dot-red',
+        'high' => 'v-dot-amber',
+        'moderate' => 'v-dot-blue',
+        'low' => 'v-dot-gray',
+    ];
+    $scanDots = [
+        'completed' => 'v-dot-green',
+        'failed' => 'v-dot-red',
+        'cancelled' => 'v-dot-gray',
+        'queued' => 'v-dot-gray',
+    ];
+    $score = (int) ($scoreData['privacy_score'] ?? $profile?->privacy_score ?? 0);
+    $elevated = (int) (($scoreData['critical_count'] ?? 0) + ($scoreData['high_count'] ?? 0));
+    $findingsTotal = (int) ($scoreData['total_findings'] ?? 0);
+    $removed = (int) ($removalProgress['removed'] ?? 0);
+    $removalTotal = (int) ($removalProgress['total'] ?? 0);
+    $removalPercent = (int) ($removalProgress['percent'] ?? 0);
+    $riskTotal = max(1, array_sum($riskDistribution ?? []));
+@endphp
+
+<div class="v-page">
+    @if(! $profile)
+        <div class="flex min-h-[70vh] items-center justify-center">
+            <div class="v-card w-full max-w-md px-8 py-10 text-center">
+                <p class="v-kicker">Get started</p>
+                <h1 class="v-h1 mt-2">Set up your identity</h1>
+                <p class="v-body mx-auto mt-3 max-w-sm">
+                    TraceLess only finds records for an identity you are legally allowed to monitor.
+                    Create yours once — it takes a minute.
+                </p>
+                <div class="mt-6 flex items-center justify-center gap-2">
+                    <a href="{{ route('identity.create') }}" class="v-btn v-btn-primary">
+                        Create identity
+                        <span aria-hidden="true">→</span>
+                    </a>
+                    <a href="{{ route('privacy') }}" class="v-btn v-btn-secondary">How it works</a>
+                </div>
             </div>
         </div>
     @else
-        <!-- Identity Header / Operational Status Bar -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-line">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2">
-                    <span class="ops-badge ops-badge-cyan">PROFILE ACTIVE</span>
-                    <span class="font-mono text-[10px] text-faint">ID: TR-{{ str_pad($profile->id, 5, '0', STR_PAD_LEFT) }}</span>
-                </div>
-                <h1 class="font-display text-2xl font-semibold tracking-[-0.03em] text-ink sm:text-3xl">{{ $profile->full_name }}</h1>
-                <div class="font-mono text-xs text-body flex items-center gap-4">
-                    <span>Target: {{ $profile->primary_email ?? 'No Primary Email' }}</span>
-                    <span>Region: {{ $profile->region ?? 'Global' }}</span>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-3">
-                <button wire:click="triggerQuickScan" class="btn-ops-primary text-xs py-2.5 px-4">
-                    <span class="material-symbols-outlined text-[16px]">radar</span>
-                    <span>Run a scan</span>
-                </button>
-
-                <button wire:click="resetForNewScan"
-                        wire:confirm="Delete every scan, finding, report and removal task for this identity? Your account and consent record are kept."
-                        class="btn-secondary text-xs py-2.5 px-3">
-                    <span class="material-symbols-outlined text-[16px]">restart_alt</span>
-                    <span>Reset data</span>
-                </button>
-                <a href="{{ route('reports') }}" class="btn-ops-secondary text-xs py-2.5 px-3">
-                    <span class="material-symbols-outlined text-[16px]">article</span>
-                    <span>Dossier</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Metric Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <!-- Privacy Score Dial -->
-            <div class="ops-card p-5 flex flex-col justify-between">
-                <div class="flex items-center justify-between text-xs font-mono text-body">
-                    <span>POSTURE INDEX</span>
-                    <span class="material-symbols-outlined text-[16px] text-accent">speed</span>
-                </div>
-                <div class="my-4 flex items-baseline gap-2">
-                    <span class="font-mono text-4xl font-bold text-ink">{{ $scoreData['privacy_score'] ?? $profile->privacy_score }}</span>
-                    <span class="font-mono text-xs text-faint">/ 100</span>
-                </div>
-                <div class="w-full h-1.5 bg-canvas rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-[#55D6E8] to-[#4ADE9B]" style="width: {{ $scoreData['privacy_score'] ?? $profile->privacy_score }}%"></div>
-                </div>
-                <div class="mt-3 font-mono text-[9px] text-faint leading-tight">
-                    {{ $scoreData['disclaimer'] ?? 'Score is an estimate for prioritizing action.' }}
-                </div>
-            </div>
-
-            <!-- Total Findings -->
-            <div class="ops-card p-5 flex flex-col justify-between">
-                <div class="flex items-center justify-between text-xs font-mono text-body">
-                    <span>INDEXED NODES</span>
-                    <span class="material-symbols-outlined text-[16px] text-body">hub</span>
-                </div>
-                <div class="my-4 font-mono text-4xl font-bold text-ink">
-                    {{ $scoreData['total_findings'] ?? 0 }}
-                </div>
-                <div class="font-mono text-[10px] text-body flex items-center justify-between">
-                    <span>Public Accounts & Traces</span>
-                    <a href="{{ route('findings') }}" class="text-accent hover:underline">View →</a>
-                </div>
-            </div>
-
-            <!-- Elevated Risk Alerts -->
-            <div class="ops-card p-5 flex flex-col justify-between">
-                <div class="flex items-center justify-between text-xs font-mono text-body">
-                    <span>ELEVATED THREATS</span>
-                    <span class="material-symbols-outlined text-[16px] text-danger">warning</span>
-                </div>
-                <div class="my-4 font-mono text-4xl font-bold text-danger">
-                    {{ ($scoreData['critical_count'] ?? 0) + ($scoreData['high_count'] ?? 0) }}
-                </div>
-                <div class="font-mono text-[10px] text-body flex items-center justify-between">
-                    <span>High-risk records</span>
-                    <span class="ops-badge ops-badge-coral text-[8px]">ACTION REQ</span>
-                </div>
-            </div>
-
-            <!-- Removals In-Flight -->
-            <div class="ops-card p-5 flex flex-col justify-between">
-                <div class="flex items-center justify-between text-xs font-mono text-body">
-                    <span>OPT-OUT QUEUE</span>
-                    <span class="material-symbols-outlined text-[16px] text-success">task_alt</span>
-                </div>
-                <div class="my-4 font-mono text-4xl font-bold text-success">
-                    {{ $activeTasks->where('status', 'removed')->count() }}<span class="text-sm font-normal text-faint">/{{ $activeTasks->count() }}</span>
-                </div>
-                <div class="font-mono text-[10px] text-body flex items-center justify-between">
-                    <span>Remediated Listings</span>
-                    <a href="{{ route('removals') }}" class="text-accent hover:underline">Removals →</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Reconnaissance Feed & Credential Alerts -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <!-- Findings Feed -->
-            <div class="lg:col-span-8 ops-card p-6 space-y-4">
-                <div class="flex items-center justify-between border-b border-line pb-3">
-                    <div class="flex items-center gap-2 font-mono text-xs font-semibold text-ink">
-                        <span class="material-symbols-outlined text-accent text-[16px]">radar</span>
-                        <span>RECENT DISCOVERED NODES</span>
-                    </div>
-                    <a href="{{ route('findings') }}" class="font-mono text-[11px] text-accent hover:underline">Full Report →</a>
-                </div>
-
-                @if($recentFindings->count())
-                    <div class="divide-y divide-line">
-                        @foreach($recentFindings as $f)
-                            <div class="py-3 flex items-center justify-between gap-4 font-mono text-xs">
-                                <div class="flex items-center gap-3">
-                                    <span class="material-symbols-outlined text-[18px] 
-                                        @if($f->risk === 'critical') text-danger
-                                        @elseif($f->risk === 'high') text-warning
-                                        @else text-accent @endif">
-                                        @if($f->category === 'data_broker') corporate_fare
-                                        @elseif($f->category === 'public_paste') article
-                                        @else account_box @endif
-                                    </span>
-                                    <div>
-                                        <div class="text-ink font-medium">{{ $f->source }}</div>
-                                        <div class="text-[10px] text-faint">{{ $f->identifier_value }} // {{ str_replace('_', ' ', strtoupper($f->category)) }}</div>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center gap-3">
-                                    <span class="ops-badge 
-                                        @if($f->risk === 'critical') ops-badge-coral
-                                        @elseif($f->risk === 'high') ops-badge-amber
-                                        @else ops-badge-cyan @endif">
-                                        {{ strtoupper($f->risk) }}
-                                    </span>
-                                    @if($f->url)
-                                        <a href="{{ $f->url }}" target="_blank" rel="noopener" class="text-body hover:text-ink" title="Open source">
-                                            <span class="material-symbols-outlined text-[16px]">open_in_new</span>
-                                        </a>
-                                    @endif
-                                </div>
+        <div class="flex flex-col gap-5">
+            {{-- Unread alerts: one quiet line each, dismissible. --}}
+            @if(count($alerts))
+                <div class="v-card divide-y divide-black/5">
+                    @foreach($alerts as $alert)
+                        @php
+                            $alertDot = match ($alert->severity) {
+                                'critical' => 'v-dot-red',
+                                'high', 'warning' => 'v-dot-amber',
+                                'info' => 'v-dot-blue',
+                                default => 'v-dot-gray',
+                            };
+                        @endphp
+                        <div class="flex items-start gap-3 px-5 py-3">
+                            <span class="v-dot {{ $alertDot }} mt-1.5"></span>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-[13px] font-medium text-[color:var(--v-ink)]">{{ $alert->title }}</p>
+                                @if($alert->message)
+                                    <p class="v-small line-clamp-2 mt-0.5 md:line-clamp-1">{{ $alert->message }}</p>
+                                @endif
                             </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="py-12 text-center font-mono text-xs text-faint">
-                        No findings yet. Run a scan to see what is public about you.
-                    </div>
-                @endif
-            </div>
+                            @if($alert->action_url)
+                                <a href="{{ $alert->action_url }}" class="v-link shrink-0">View</a>
+                            @endif
+                            <button type="button" wire:click="dismissAlert({{ $alert->id }})"
+                                    class="shrink-0 rounded p-1 text-[color:var(--v-muted)] hover:bg-[#F2F2F2] hover:text-[color:var(--v-ink)]"
+                                    aria-label="Dismiss alert">
+                                <span class="text-sm leading-none">×</span>
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
 
-            <!-- Credential Exposures Sidepanel -->
-            <div class="lg:col-span-4 ops-card p-6 space-y-4">
-                <div class="flex items-center justify-between border-b border-line pb-3">
-                    <div class="flex items-center gap-2 font-mono text-xs font-semibold text-ink">
-                        <span class="material-symbols-outlined text-warning text-[16px]">vpn_key</span>
-                        <span>BREACH METADATA</span>
+            {{-- Page header --}}
+            <header class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                <div class="min-w-0">
+                    <p class="v-kicker">Workspace / Overview</p>
+                    <h1 class="v-h1 mt-1">Overview</h1>
+                    <p class="v-small mt-1.5">
+                        Everything TraceLess currently knows about
+                        <span class="font-medium text-[color:var(--v-ink)]">{{ $profile->full_name }}</span>.
+                    </p>
+
+                    <div class="mt-4 flex flex-wrap items-center gap-2">
+                        <span class="v-pill">
+                            <span class="v-dot v-dot-green"></span>
+                            Active
+                        </span>
+                        <span class="v-pill font-[family-name:'Geist_Mono',ui-monospace,monospace]">
+                            TR-{{ str_pad($profile->id, 5, '0', STR_PAD_LEFT) }}
+                        </span>
+                        @if($profile->primary_email)
+                            <span class="v-pill">{{ $profile->primary_email }}</span>
+                        @endif
+                        <span class="v-pill">{{ $profile->region ?? 'Global' }}</span>
+                        @if($isScanning)
+                            <span class="v-pill">
+                                <span class="v-dot v-dot-blue"></span>
+                                Scan in progress
+                            </span>
+                        @endif
                     </div>
-                    <span class="ops-badge ops-badge-faint text-[9px]">ZERO PASSWORDS</span>
                 </div>
 
-                @if($credentialExposures->count())
-                    <div class="space-y-3 font-mono text-xs">
-                        @foreach($credentialExposures as $c)
-                            <div class="p-3 rounded bg-canvas border border-line space-y-2">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-ink font-semibold">{{ $c->service_name }}</span>
-                                    @if($c->is_resolved)
-                                        <span class="text-success text-[10px]">RESOLVED</span>
-                                    @else
-                                        <button wire:click="markResolved({{ $c->id }})" class="ops-badge ops-badge-amber text-[9px] hover:bg-[#E9B45D]/20">
-                                            Fix & Rotate
-                                        </button>
-                                    @endif
-                                </div>
-                                <div class="text-[10px] text-body">Exposed: {{ $c->email }}</div>
-                                <div class="text-[9px] text-faint">Date: {{ $c->breach_date ?? 'Archived' }}</div>
-                            </div>
-                        @endforeach
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" wire:click="triggerQuickScan" class="v-btn v-btn-primary">
+                        Run a scan
+                        <span aria-hidden="true">→</span>
+                    </button>
+                    <a href="{{ route('reports') }}" class="v-btn v-btn-secondary">Dossier</a>
+                    <button type="button"
+                            wire:click="resetForNewScan"
+                            wire:confirm="Delete every scan, finding, report and removal task for this identity? Your account and consent record are kept."
+                            class="v-btn v-btn-ghost">
+                        Reset data
+                    </button>
+                </div>
+            </header>
+
+            @error('scan')
+                <p class="text-[13px] text-[#E5484D]">{{ $message }}</p>
+            @enderror
+
+            {{-- Metrics --}}
+            <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Key metrics">
+                <div class="v-card v-card-pad">
+                    <div class="flex items-center justify-between">
+                        <p class="v-kicker">Privacy score</p>
+                        <span class="v-dot {{ $score >= 70 ? 'v-dot-green' : ($score >= 40 ? 'v-dot-amber' : 'v-dot-red') }}"></span>
                     </div>
-                @else
-                    @if(config('traceless.breach.provider'))
-                        <div class="py-12 text-center font-mono text-xs text-success">
-                            ✓ No active credential exposures found across public disclosure lists.
+                    <div class="mt-3 flex items-baseline gap-1.5">
+                        <p class="v-metric">{{ $score }}</p>
+                        <span class="v-small">/ 100</span>
+                    </div>
+                    <div class="v-progress mt-4" role="img" aria-label="Privacy score {{ $score }} out of 100">
+                        <span style="width: {{ min(100, max(0, $score)) }}%"></span>
+                    </div>
+                    <p class="v-small mt-3">Higher is safer · an estimate to prioritise action</p>
+                </div>
+
+                <div class="v-card v-card-pad">
+                    <div class="flex items-center justify-between">
+                        <p class="v-kicker">Public findings</p>
+                        <span class="v-dot v-dot-purple"></span>
+                    </div>
+                    <div class="mt-3 flex items-baseline gap-1.5">
+                        <p class="v-metric">{{ $findingsTotal }}</p>
+                        <span class="v-small">records</span>
+                    </div>
+                    <p class="v-small mt-4">
+                        Across {{ count($categoryStats) }} {{ Str::plural('category', count($categoryStats)) }}
+                    </p>
+                    <a href="{{ route('findings') }}" class="v-link mt-1 inline-block">View findings →</a>
+                </div>
+
+                <div class="v-card v-card-pad">
+                    <div class="flex items-center justify-between">
+                        <p class="v-kicker">Elevated risk</p>
+                        <span class="v-dot v-dot-red"></span>
+                    </div>
+                    <div class="mt-3 flex items-baseline gap-1.5">
+                        <p class="v-metric">{{ $elevated }}</p>
+                        <span class="v-small">high &amp; critical</span>
+                    </div>
+                    <p class="v-small mt-4">
+                        {{ (int) ($riskDistribution['critical'] ?? 0) }} critical ·
+                        {{ (int) ($riskDistribution['high'] ?? 0) }} high
+                    </p>
+                    <a href="{{ route('findings') }}" class="v-link mt-1 inline-block">Review risks →</a>
+                </div>
+
+                <div class="v-card v-card-pad">
+                    <div class="flex items-center justify-between">
+                        <p class="v-kicker">Removals</p>
+                        <span class="v-dot {{ $removalTotal > 0 ? 'v-dot-green' : 'v-dot-gray' }}"></span>
+                    </div>
+                    <div class="mt-3 flex items-baseline gap-1.5">
+                        <p class="v-metric">{{ $removed }}</p>
+                        <span class="v-small">of {{ $removalTotal }} requested</span>
+                    </div>
+                    <div class="v-progress mt-4" role="img" aria-label="Removals {{ $removalPercent }} percent complete">
+                        <span style="width: {{ min(100, max(0, $removalPercent)) }}%"></span>
+                    </div>
+                    <a href="{{ route('removals') }}" class="v-link mt-3 inline-block">Open removal center →</a>
+                </div>
+            </section>
+
+            {{-- Findings + side rail --}}
+            <div class="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.6fr)_minmax(300px,1fr)]">
+                <section class="v-card overflow-hidden" aria-label="Recent findings">
+                    <div class="flex items-center justify-between px-5 py-4">
+                        <div>
+                            <h2 class="v-h2">Recent findings</h2>
+                            <p class="v-small mt-0.5">Public records discovered by the last scans</p>
+                        </div>
+                        <a href="{{ route('findings') }}" class="v-link whitespace-nowrap">View all</a>
+                    </div>
+
+                    @if(count($recentFindings))
+                        <div class="hidden overflow-hidden md:block">
+                            <table class="w-full table-fixed text-left">
+                                <thead>
+                                    <tr class="border-t border-black/5">
+                                        <th scope="col" class="v-table-head px-5 py-2.5 font-medium">Source</th>
+                                        <th scope="col" class="v-table-head px-3 py-2.5 font-medium">Identifier</th>
+                                        <th scope="col" class="v-table-head px-3 py-2.5 font-medium">Category</th>
+                                        <th scope="col" class="v-table-head px-3 py-2.5 font-medium">Risk</th>
+                                        <th scope="col" class="v-table-head px-5 py-2.5 text-right font-medium">Found</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-black/5">
+                                    @foreach($recentFindings as $finding)
+                                        <tr class="v-row">
+                                            <td class="px-5 py-3 text-[13px] font-medium text-[color:var(--v-ink)]">
+                                                <a href="{{ route('findings.show', $finding) }}" class="hover:text-[color:var(--v-blue)]">
+                                                    <span class="block truncate">{{ $finding->source }}</span>
+                                                </a>
+                                            </td>
+                                            <td class="px-3 py-3 text-[13px] text-[color:var(--v-body)]">
+                                                <span class="block truncate">{{ $finding->identifier_value }}</span>
+                                                <span class="v-kicker block truncate">{{ $finding->identifier_type }}</span>
+                                            </td>
+                                            <td class="px-3 py-3 text-[13px] capitalize text-[color:var(--v-body)]">
+                                                <span class="block truncate">{{ str_replace('_', ' ', $finding->category) }}</span>
+                                            </td>
+                                            <td class="px-3 py-3">
+                                                <span class="flex items-center gap-2 text-[13px] text-[color:var(--v-body)]">
+                                                    <span class="v-dot {{ $riskDots[$finding->risk] ?? 'v-dot-gray' }}"></span>
+                                                    <span class="truncate">{{ ucfirst($finding->risk) }}</span>
+                                                </span>
+                                            </td>
+                                            <td class="whitespace-nowrap px-5 py-3 text-right text-[13px] text-[color:var(--v-muted)]">
+                                                {{ $finding->discovered_at?->shortRelativeDiffForHumans() ?? '—' }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {{-- Mobile rows --}}
+                        <div class="divide-y divide-black/5 border-t border-black/5 md:hidden">
+                            @foreach($recentFindings as $finding)
+                                <a href="{{ route('findings.show', $finding) }}" class="v-row flex items-start gap-3 px-5 py-3.5">
+                                    <span class="v-dot {{ $riskDots[$finding->risk] ?? 'v-dot-gray' }} mt-1.5"></span>
+                                    <span class="min-w-0 flex-1">
+                                        <span class="block text-[13px] font-medium text-[color:var(--v-ink)]">{{ $finding->source }}</span>
+                                        <span class="v-small block truncate">{{ $finding->identifier_value }}</span>
+                                        <span class="v-kicker block">{{ str_replace('_', ' ', $finding->category) }} · {{ ucfirst($finding->risk) }}</span>
+                                    </span>
+                                    <span class="v-small shrink-0">{{ $finding->discovered_at?->shortRelativeDiffForHumans() ?? '—' }}</span>
+                                </a>
+                            @endforeach
                         </div>
                     @else
-                        <div class="py-12 text-center font-mono text-xs leading-relaxed text-faint">
-                            <span class="mb-2 block text-warning">PROVIDER NOT CONFIGURED</span>
-                            Breach metadata is not enabled in this environment. TraceLess shows nothing here rather than infer or invent exposures.
+                        <div class="v-empty border-t border-black/5">
+                            No findings yet. Run a scan to see what is public about you.
                         </div>
                     @endif
-                @endif
+                </section>
+
+                <div class="flex flex-col gap-4">
+                    {{-- Scan activity --}}
+                    <section class="v-card overflow-hidden" aria-label="Scan activity">
+                        <div class="flex items-center justify-between px-5 py-4">
+                            <h2 class="v-h2">Scans</h2>
+                            <a href="{{ route('scans.index') }}" class="v-link whitespace-nowrap">History</a>
+                        </div>
+
+                        @if(count($recentScans))
+                            <div class="divide-y divide-black/5 border-t border-black/5">
+                                @foreach($recentScans as $scan)
+                                    @php
+                                        $scanDot = $scanDots[$scan->status] ?? 'v-dot-blue';
+                                    @endphp
+                                    <a href="{{ route('scans.show', $scan) }}" class="v-row flex items-center gap-3 px-5 py-3">
+                                        <span class="v-dot {{ $scanDot }}"></span>
+                                        <span class="min-w-0 flex-1">
+                                            <span class="block text-[13px] font-medium capitalize text-[color:var(--v-ink)]">
+                                                {{ str_replace('_', ' ', $scan->type) }}
+                                            </span>
+                                            <span class="v-kicker block">
+                                                {{ $scan->statusLabel() }} · {{ $scan->created_at?->diffForHumans(short: true) }}
+                                            </span>
+                                        </span>
+                                        <span class="v-small shrink-0">{{ (int) $scan->findings_count }} found</span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="v-empty border-t border-black/5">No scans yet.</div>
+                        @endif
+                    </section>
+
+                    {{-- Credential exposures --}}
+                    <section class="v-card overflow-hidden" aria-label="Credential exposures">
+                        <div class="flex items-center justify-between px-5 py-4">
+                            <h2 class="v-h2">Credential exposures</h2>
+                            <span class="v-pill">Zero passwords</span>
+                        </div>
+
+                        @if(count($credentialExposures))
+                            <div class="divide-y divide-black/5 border-t border-black/5">
+                                @foreach($credentialExposures as $exposure)
+                                    <div class="flex items-start gap-3 px-5 py-3">
+                                        <span class="v-dot {{ $exposure->is_resolved ? 'v-dot-green' : 'v-dot-amber' }} mt-1.5"></span>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="text-[13px] font-medium text-[color:var(--v-ink)]">{{ $exposure->service_name }}</p>
+                                            <p class="v-kicker truncate">{{ $exposure->email }}</p>
+                                            <p class="v-kicker">Breach date: {{ $exposure->breach_date ?? 'archived' }}</p>
+                                        </div>
+                                        @if($exposure->is_resolved)
+                                            <span class="v-small shrink-0">Resolved</span>
+                                        @else
+                                            <button type="button" wire:click="markResolved({{ $exposure->id }})" class="v-link shrink-0">
+                                                Mark resolved
+                                            </button>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="v-empty border-t border-black/5">
+                                @if(config('traceless.breach.provider'))
+                                    <span class="v-dot v-dot-green mr-1.5 inline-block align-middle"></span>
+                                    No active credential exposures found.
+                                @else
+                                    Breach metadata is not enabled, so nothing is shown here rather than guessed.
+                                @endif
+                            </div>
+                        @endif
+                    </section>
+                </div>
+            </div>
+
+            {{-- Removal progress + risk distribution --}}
+            <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                <section class="v-card v-card-pad" aria-label="Removal pipeline">
+                    <div class="flex items-center justify-between">
+                        <h2 class="v-h2">Removal pipeline</h2>
+                        <a href="{{ route('removals') }}" class="v-link whitespace-nowrap">Manage</a>
+                    </div>
+
+                    @if(count($activeTasks))
+                        <div class="mt-4 space-y-3">
+                            @foreach($activeTasks as $task)
+                                @php
+                                    $taskDot = match ($task->status) {
+                                        'removed' => 'v-dot-green',
+                                        'in_progress', 'submitted' => 'v-dot-blue',
+                                        'failed' => 'v-dot-red',
+                                        default => 'v-dot-gray',
+                                    };
+                                @endphp
+                                <div class="flex items-center gap-3">
+                                    <span class="v-dot {{ $taskDot }}"></span>
+                                    <span class="min-w-0 flex-1 truncate text-[13px] text-[color:var(--v-ink)]">
+                                        {{ $task->source_name }}
+                                    </span>
+                                    <span class="v-kicker">{{ str_replace('_', ' ', $task->status) }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="v-small mt-3">
+                            No removal requests yet. Open a finding to see the opt-out path for that source.
+                        </p>
+                    @endif
+                </section>
+
+                <section class="v-card v-card-pad" aria-label="Risk distribution">
+                    <h2 class="v-h2">Risk distribution</h2>
+
+                    @if($findingsTotal > 0)
+                        <div class="mt-4 space-y-3">
+                            @foreach(['critical' => 'Critical', 'high' => 'High', 'moderate' => 'Moderate', 'low' => 'Low'] as $riskKey => $riskLabel)
+                                @php
+                                    $count = (int) ($riskDistribution[$riskKey] ?? 0);
+                                    $width = (int) round(($count / $riskTotal) * 100);
+                                @endphp
+                                <div class="flex items-center gap-3">
+                                    <span class="flex w-24 items-center gap-2 text-[13px] text-[color:var(--v-body)]">
+                                        <span class="v-dot {{ $riskDots[$riskKey] }}"></span>
+                                        {{ $riskLabel }}
+                                    </span>
+                                    <div class="v-progress flex-1">
+                                        <span style="width: {{ $width }}%"></span>
+                                    </div>
+                                    <span class="w-8 text-right text-[13px] tabular-nums text-[color:var(--v-muted)]">{{ $count }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="v-small mt-3">Run a scan to see how the risks split across your findings.</p>
+                    @endif
+                </section>
             </div>
         </div>
     @endif

@@ -10,7 +10,10 @@ use App\Models\User;
 use App\Notifications\AlertNotification;
 use App\Notifications\ScanCompletedNotification;
 use App\Services\ConsentService;
+use App\Services\ScanOrchestrator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\SendQueuedNotifications;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -106,5 +109,58 @@ class NotificationsTest extends TestCase
         Livewire::actingAs($user)->test(NotificationsPanel::class)->call('markAllRead');
 
         $this->assertSame(0, Alert::where('is_read', false)->count());
+    }
+
+    public function test_notifications_are_queued_so_mail_cannot_block_the_request(): void
+    {
+        Queue::fake();
+        [$user, $alert] = $this->ownerWithAlert();
+
+        $user->notify(new AlertNotification($alert));
+
+        Queue::assertPushed(SendQueuedNotifications::class);
+    }
+
+    public function test_a_failed_notification_email_is_recorded_for_operations(): void
+    {
+        [$user, $alert] = $this->ownerWithAlert();
+        $this->breakMail();
+
+        try {
+            $user->notify(new AlertNotification($alert));
+        } catch (\Throwable) {
+            // The test queue is synchronous, so the channel failure surfaces here.
+        }
+
+        $this->assertDatabaseHas('outbound_emails', [
+            'to_email' => $user->email,
+            'status' => 'failed',
+        ]);
+    }
+
+    public function test_a_mail_outage_does_not_fail_a_scan(): void
+    {
+        Queue::fake();
+        config(['traceless.demo_mode' => true, 'traceless.scan.stage_delay_ms' => 0]);
+
+        [$user, $alert] = $this->ownerWithAlert();
+        $this->breakMail();
+
+        $orchestrator = app(ScanOrchestrator::class);
+        $scan = $orchestrator->queueScan($alert->identityProfile, 'snapshot');
+        $orchestrator->executeScan($scan);
+
+        $this->assertSame('completed', $scan->fresh()->status);
+        Queue::assertPushed(SendQueuedNotifications::class);
+    }
+
+    private function breakMail(): void
+    {
+        config([
+            'mail.default' => 'smtp',
+            'mail.mailers.smtp.host' => '127.0.0.1',
+            'mail.mailers.smtp.port' => 2,
+            'mail.mailers.smtp.timeout' => 1,
+        ]);
     }
 }

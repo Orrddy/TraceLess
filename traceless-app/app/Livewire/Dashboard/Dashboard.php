@@ -185,6 +185,6 @@ class Dashboard extends Component
         $this->loadData();
 
         return view('livewire.dashboard')
-            ->layout('layouts.app', ['title' => 'Command Center // TraceLess']);
+            ->layout('layouts.app', ['title' => 'Overview // TraceLess']);
     }
 }

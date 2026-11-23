@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\AuditLog;
 use App\Models\OutboundEmail;
 use App\Models\User;
+use App\Services\OutboundEmailRecorder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -90,6 +91,9 @@ class OpsAlert extends Command
                     $mail->to($email)->subject('TraceLess operations alert: '.count($problems).' issue(s)');
                 });
             } catch (Throwable $exception) {
+                // The watchdog is the last line of defence; if its own mail is
+                // failing that must reach the delivery log too.
+                app(OutboundEmailRecorder::class)->recordFailed($email, 'TraceLess operations alert', $exception);
                 $this->warn("Could not alert {$email}: ".$exception->getMessage());
             }
         }

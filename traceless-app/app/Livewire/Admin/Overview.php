@@ -55,7 +55,7 @@ class Overview extends Component
             'profiles_total' => IdentityProfile::count(),
             'scans_total' => Scan::count(),
             'scans_today' => Scan::where('created_at', '>=', now()->startOfDay())->count(),
-            'scans_active' => Scan::whereIn('status', ['queued', 'checking_sources', 'normalizing_results', 'calculating_risk'])->count(),
+            'scans_active' => Scan::whereIn('status', ['queued', 'initializing', 'checking_sources', 'normalizing_results', 'calculating_risk', 'generating_report'])->count(),
             'scans_failed' => Scan::where('status', 'failed')->count(),
             'findings_total' => Finding::count(),
             'findings_new' => Finding::where('created_at', '>=', now()->subDays(7))->count(),

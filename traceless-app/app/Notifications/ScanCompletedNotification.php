@@ -4,10 +4,11 @@ namespace App\Notifications;
 
 use App\Models\Scan;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ScanCompletedNotification extends Notification
+class ScanCompletedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

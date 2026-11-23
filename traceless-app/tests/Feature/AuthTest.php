@@ -164,6 +164,41 @@ class AuthTest extends TestCase
         $this->get('/settings')->assertRedirect('/login');
     }
 
+    public function test_a_mail_outage_on_login_is_shown_as_a_form_error(): void
+    {
+        $this->breakMail();
+        User::factory()->create(['email' => 'jane@example.com']);
+
+        $this->post('/login', ['email' => 'jane@example.com'])
+            ->assertRedirect()
+            ->assertSessionHasErrors('email');
+
+        $this->assertGuest();
+    }
+
+    public function test_a_mail_outage_on_registration_is_shown_as_a_form_error(): void
+    {
+        $this->breakMail();
+
+        $this->post('/register', [
+            'name' => 'Jane Doe',
+            'email' => 'jane@example.com',
+            'terms' => '1',
+        ])->assertSessionHasErrors('email');
+
+        $this->assertDatabaseMissing('users', ['email' => 'jane@example.com']);
+    }
+
+    private function breakMail(): void
+    {
+        config([
+            'mail.default' => 'smtp',
+            'mail.mailers.smtp.host' => '127.0.0.1',
+            'mail.mailers.smtp.port' => 2,
+            'mail.mailers.smtp.timeout' => 1,
+        ]);
+    }
+
     public function test_authenticated_application_pages_render(): void
     {
         $user = User::factory()->create();

@@ -367,4 +367,72 @@ class AdminOperationsTest extends TestCase
         $this->assertStringContainsString('healthy', Artisan::output());
         $this->assertDatabaseMissing('audit_logs', ['action' => 'ops.alert']);
     }
+
+    public function test_the_watchdog_records_its_own_delivery_failures(): void
+    {
+        $admin = $this->admin();
+        Cache::put('heartbeat:queue', now()->subHour()->toIso8601String(), 3600);
+
+        config([
+            'mail.default' => 'smtp',
+            'mail.mailers.smtp.host' => '127.0.0.1',
+            'mail.mailers.smtp.port' => 2,
+            'mail.mailers.smtp.timeout' => 1,
+        ]);
+
+        Artisan::call('ops:alert');
+
+        $this->assertDatabaseHas('outbound_emails', [
+            'to_email' => $admin->email,
+            'status' => 'failed',
+        ]);
+    }
+
+    // ---------------------------------------------------------- retry guards
+
+    public function test_an_admin_retry_is_refused_while_a_scan_is_already_running(): void
+    {
+        Queue::fake();
+
+        $admin = $this->admin();
+        $client = $this->client();
+        $profile = $this->profileFor($client);
+        $scan = $this->scanFor($profile, ['status' => 'failed']);
+        $this->scanFor($profile, ['status' => 'checking_sources', 'completed_at' => null]);
+
+        Livewire::actingAs($admin)->test(ScanInspector::class, ['scan' => $scan])
+            ->call('retry')
+            ->assertHasErrors('action');
+
+        $this->assertSame(2, Scan::count());
+    }
+
+    public function test_an_admin_retry_without_consent_is_a_form_error(): void
+    {
+        Queue::fake();
+
+        $admin = $this->admin();
+        $client = $this->client();
+        $profile = $this->profileFor($client);
+        app(ConsentService::class)->revoke($profile);
+
+        $scan = $this->scanFor($profile, ['status' => 'failed']);
+
+        Livewire::actingAs($admin)->test(ScanInspector::class, ['scan' => $scan])
+            ->call('retry')
+            ->assertHasErrors('action');
+
+        $this->assertSame(1, Scan::count());
+    }
+
+    public function test_the_operations_overview_counts_every_active_scan_status(): void
+    {
+        $admin = $this->admin();
+        $profile = $this->profileFor($this->client());
+        $this->scanFor($profile, ['status' => 'initializing', 'completed_at' => null]);
+        $this->scanFor($profile, ['status' => 'generating_report', 'completed_at' => null]);
+
+        Livewire::actingAs($admin)->test(Overview::class)
+            ->assertViewHas('stats', fn (array $stats) => $stats['scans_active'] === 2);
+    }
 }

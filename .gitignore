@@ -52,3 +52,5 @@ python-services/.venv/
 
 # Locally staged weeny release
 .release/
+# Local task brief containing real provider API keys (never commit).
+/ip-intelligence.md

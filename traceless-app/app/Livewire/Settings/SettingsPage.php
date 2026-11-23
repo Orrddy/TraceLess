@@ -5,6 +5,7 @@ namespace App\Livewire\Settings;
 use App\Models\AuditLog;
 use App\Models\ConsentRecord;
 use App\Models\EmailOtp;
+use App\Models\OutboundEmail;
 use App\Models\User;
 use App\Services\AuditService;
 use App\Services\OtpService;
@@ -74,12 +75,20 @@ class SettingsPage extends Component
             return;
         }
 
-        $issued = $otp->issue(
-            $this->email,
-            EmailOtp::PURPOSE_CHANGE_EMAIL,
-            request()->ip(),
-            request()->userAgent(),
-        );
+        $issued = null;
+
+        try {
+            $issued = $otp->issue(
+                $this->email,
+                EmailOtp::PURPOSE_CHANGE_EMAIL,
+                request()->ip(),
+                request()->userAgent(),
+            );
+        } catch (\Throwable) {
+            $this->addError('email', 'We could not send the verification email just now. Please try again in a minute.');
+
+            return;
+        }
 
         $this->pending_email = $this->email;
         $this->email_change_sent = true;
@@ -171,12 +180,20 @@ class SettingsPage extends Component
             return;
         }
 
-        $issued = $otp->issue(
-            $user->email,
-            EmailOtp::PURPOSE_DELETE_ACCOUNT,
-            request()->ip(),
-            request()->userAgent(),
-        );
+        $issued = null;
+
+        try {
+            $issued = $otp->issue(
+                $user->email,
+                EmailOtp::PURPOSE_DELETE_ACCOUNT,
+                request()->ip(),
+                request()->userAgent(),
+            );
+        } catch (\Throwable) {
+            $this->addError('delete_code', 'We could not send the deletion code just now. Please try again in a minute.');
+
+            return;
+        }
 
         $this->delete_code_sent = true;
         $this->delete_code = '';
@@ -200,6 +217,9 @@ class SettingsPage extends Component
             $profile->scans()->delete();
             $profile->monitoringSubscription?->delete();
         }
+
+        // The database notification channel keeps its own copy of the alert text.
+        $user->notifications()->delete();
 
         $this->confirm_data_purge = false;
         app(AuditService::class)->log($user->id, 'scan_data_purged', 'User purged all scan findings and reports.', request()->ip());
@@ -255,6 +275,12 @@ class SettingsPage extends Component
 
         EmailOtp::where('email', $user->email)->delete();
         $user->notifications()->delete();
+
+        // Delivery telemetry can contain the address itself, so it must not
+        // outlive the account it belongs to.
+        OutboundEmail::where('user_id', $userId)
+            ->orWhere(fn ($query) => $query->whereNull('user_id')->where('to_email', $user->email))
+            ->delete();
 
         // Log out before deleting the model. SessionGuard::logout cycles the
         // remember token, which would re-insert a model already marked deleted.
