@@ -36,13 +36,23 @@ FROM composer:2 AS vendor
 WORKDIR /app
 
 COPY traceless-app/composer.json traceless-app/composer.lock ./
-RUN composer install \
-        --no-dev \
-        --no-interaction \
-        --no-progress \
-        --no-scripts \
-        --prefer-dist \
-        --ignore-platform-reqs
+# GitHub's dist endpoints occasionally answer 504 to bursty CI traffic; retry the
+# download instead of failing the whole release for a transient network error.
+RUN set -eux; \
+    for attempt in 1 2 3; do \
+        if composer install \
+            --no-dev \
+            --no-interaction \
+            --no-progress \
+            --no-scripts \
+            --prefer-dist \
+            --ignore-platform-reqs; then \
+            exit 0; \
+        fi; \
+        echo "composer install attempt ${attempt} failed; retrying in 10s" >&2; \
+        sleep 10; \
+    done; \
+    exit 1
 
 COPY traceless-app/ ./
 RUN composer dump-autoload --no-dev --optimize --no-scripts
