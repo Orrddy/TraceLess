@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
   packages: write
 
 jobs:
@@ -104,34 +104,16 @@ jobs:
 
       - name: Build image
         run: |
-          set +e
+          # Docker registry names must be lowercase; GitHub handles are not.
+          OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
           docker buildx build --platform linux/amd64 --target runtime \
-            -t "ghcr.io/${{ github.repository_owner }}/traceless:${{ github.sha }}" \
-            -t "ghcr.io/${{ github.repository_owner }}/traceless:latest" \
-            --load . 2>&1 | tee /tmp/docker.log
-          status=${PIPESTATUS[0]}
-          if [ "$status" -ne 0 ]; then
-            mkdir -p traceless-app/.ci
-            cp /tmp/docker.log traceless-app/.ci/docker-failure.txt
-            echo "::error title=Docker build failed::$(tail -n 20 /tmp/docker.log | tr '\n' '|' | head -c 3500)"
-          fi
-          exit "$status"
+            -t "ghcr.io/${OWNER}/traceless:${GITHUB_SHA}" \
+            -t "ghcr.io/${OWNER}/traceless:latest" \
+            --load .
 
       - name: Push image
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
-          docker push "ghcr.io/${{ github.repository_owner }}/traceless:${{ github.sha }}"
-          docker push "ghcr.io/${{ github.repository_owner }}/traceless:latest"
-
-      - name: Record docker failure
-        if: failure()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          [ -f traceless-app/.ci/docker-failure.txt ] || exit 0
-          git config user.name "ci-bot"
-          git config user.email "ci-bot@users.noreply.github.com"
-          git add -f traceless-app/.ci/docker-failure.txt
-          git commit -m "ci: record docker failure [skip ci]" || true
-          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git push origin HEAD:main || true
+          OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
+          docker push "ghcr.io/${OWNER}/traceless:${GITHUB_SHA}"
+          docker push "ghcr.io/${OWNER}/traceless:latest"
