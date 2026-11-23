@@ -142,3 +142,19 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
   automated removals.
 - Image/face deep scans are explicitly marked planned for v2.0, not shipped.
 - The repo is currently public; treat any secret found in chat/history as exposed and rotate.
+
+### Licensed third-party effects (added end of 2026-11-23)
+
+- **Mouse Effects** (github.com/cortiz2894/mouse-effects) — commercial licence purchased;
+  water-ripple shaders and three-target fluid simulation ported to vanilla WebGL2
+  (`resources/js/vendor/water-ripple.js`) and applied as a full-bleed product-film background.
+- **Web Crawlers** (github.com/cyohei9907/web-crawlers) — commercial licence purchased;
+  the page-overlay spider adapted into a factory so two small crawlers run on the landing page
+  (`resources/js/vendor/web-crawler-spider.js`). They walk real page words and glitch them.
+- The film is now edge-to-edge (100vw) and upright; the previous custom ripple and custom
+  crawler implementations were removed.
+- Landing IP experience gained a client-side "👀 We see you" card: device, browser, device
+  spec, screen/locale and battery (only when the browser exposes it). Nothing is sent to
+  the server; no fingerprint is stored.
+- IP cache retains the "Cached for 48h · fresh scan in …" countdown on both the landing card
+  and the network tool page.

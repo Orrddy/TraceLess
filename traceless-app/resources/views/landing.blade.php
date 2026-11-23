@@ -224,39 +224,67 @@
                     The public intelligence sources are briefly unavailable. Retry in a moment, or check any IP manually.
                 </p>
             </div>
-        </div>
-    </section>
 
-    {{-- PRODUCT FILM (water-ripple distortion) --}}
-    <section class="pb-3">
-        <div class="v-card relative overflow-hidden" data-ripple>
-            <video class="aspect-video w-full object-cover" autoplay muted loop playsinline preload="metadata" aria-label="TraceLess product film">
-                <source src="{{ asset('assets/videos/hero-intro.mp4') }}" type="video/mp4">
-            </video>
-            <div class="pointer-events-none absolute inset-0 z-[6] bg-gradient-to-t from-black/60 via-black/5 to-transparent"></div>
-            <div class="film-caption pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-3 p-5 sm:p-6">
-                <div class="text-white">
-                    <p class="text-[10px] uppercase tracking-[0.18em] text-white/70">Product film</p>
-                    <p class="mt-1 text-base font-medium sm:text-lg">How TraceLess finds what is public.</p>
+            {{-- Device / browser check: client-side only, from browser-exposed APIs --}}
+            <div class="v-card mt-4 p-5" data-device-check>
+                <div class="flex items-center justify-between gap-2">
+                    <p class="v-kicker">👀 We see you</p>
+                    <span class="v-pill">Client-side</span>
                 </div>
-                <span class="rounded-full bg-white/10 px-2.5 py-1 text-[11px] text-white/80 backdrop-blur">Move your cursor across the film</span>
+                <p class="mt-1 text-[12px] leading-relaxed text-muted">
+                    What your browser volunteers before you sign up. It stays in your browser — nothing here is sent to TraceLess.
+                </p>
+
+                <dl class="mt-4 grid grid-cols-2 gap-x-4 gap-y-3">
+                    <div class="min-w-0">
+                        <dt class="v-kicker">Device</dt>
+                        <dd class="mt-0.5 truncate text-[13px]" data-device-field="device">Detecting…</dd>
+                    </div>
+                    <div class="min-w-0">
+                        <dt class="v-kicker">Browser</dt>
+                        <dd class="mt-0.5 truncate text-[13px]" data-device-field="browser">Detecting…</dd>
+                    </div>
+                    <div class="min-w-0">
+                        <dt class="v-kicker">Device spec</dt>
+                        <dd class="mt-0.5 truncate text-[13px]" data-device-field="spec">Detecting…</dd>
+                    </div>
+                    <div class="min-w-0">
+                        <dt class="v-kicker">Battery</dt>
+                        <dd class="mt-0.5 truncate text-[13px]" data-device-field="battery">Checking…</dd>
+                    </div>
+                    <div class="col-span-2 min-w-0">
+                        <dt class="v-kicker">Screen &amp; locale</dt>
+                        <dd class="mt-0.5 truncate text-[13px]" data-device-field="screen">Detecting…</dd>
+                    </div>
+                </dl>
+
+                <div class="v-progress mt-3" aria-hidden="true"><span data-battery-bar style="width: 0%"></span></div>
+                <p class="mt-2 text-[10px] leading-relaxed text-muted">Battery is only shown when the browser exposes it. No fingerprint is stored.</p>
             </div>
         </div>
     </section>
 
-    {{-- INTERACTIVE CRAWLERS --}}
-    <section class="border-y border-line/70 py-7" aria-label="Interactive crawlers">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-            <p class="v-kicker">Live specimen · crawlers on public words</p>
-            <p class="text-[11px] text-muted">Hover to steer them · click a word to feed</p>
+    {{-- PRODUCT FILM — full-bleed background with licensed water-ripple distortion --}}
+    <section class="film-bleed border-y border-line/70">
+        <div class="film-stage" data-ripple>
+            <video autoplay muted loop playsinline preload="metadata" aria-label="TraceLess product film" class="film-video">
+                <source src="{{ asset('assets/videos/hero-intro.mp4') }}" type="video/mp4">
+            </video>
+            <div class="film-shade" aria-hidden="true"></div>
+            <div class="film-caption mx-auto flex w-full max-w-[1200px] flex-col justify-end px-5 pb-8 sm:px-8 sm:pb-10">
+                <p class="text-[10px] uppercase tracking-[0.18em] text-white/70">Product film</p>
+                <div class="mt-1 flex flex-wrap items-end justify-between gap-3">
+                    <p class="max-w-xl text-xl font-medium leading-snug text-white sm:text-2xl">How TraceLess finds what is public — and what it refuses to guess.</p>
+                    <span class="rounded-full bg-white/10 px-2.5 py-1 text-[11px] text-white/80 backdrop-blur">Move your cursor across the film</span>
+                </div>
+            </div>
         </div>
-        <div data-crawlers class="mt-4 flex flex-wrap gap-x-7 gap-y-2 font-[family-name:'Geist_Mono',ui-monospace,monospace] text-[13px] sm:text-[15px]">
-            @foreach(['exposure', 'broker', 'breach', 'username', 'phone', 'profile'] as $word)
-                <span data-crawler-word data-word="{{ $word }}" class="crawler-word">{{ $word }}</span>
-            @endforeach
-        </div>
-        <p class="mt-3 text-[11px] leading-relaxed text-muted">Crawlers chew on words, not people. No page content leaves your browser.</p>
     </section>
+
+    <div class="flex flex-wrap items-center justify-between gap-2 py-3 text-[11px] text-muted">
+        <span>👀 Two licensed crawlers are loose on this page. They chew words, not people.</span>
+        <span>Hover to lure them · click to send them flying to a word</span>
+    </div>
 
     {{-- TRUST STRIP (marquee) --}}
     <section class="border-y border-line/70 py-4" aria-label="Product guarantees">

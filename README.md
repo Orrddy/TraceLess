@@ -47,6 +47,7 @@ no scan runs without a recorded ownership attestation.
 | 2026-11-23 | Vercel-style dashboard and app-wide light/dark brand; landing page rebuilt with product film, marquee, checks slider, rotating Nevera wordmark, typing headline and two word-eating crawlers |
 | 2026-11-23 | IP intelligence engine: four providers, 48h cache, single-flight analysis, weighted risk score, public JSON endpoint, honest 503/422 states, enriched IP tool with cache countdown |
 | 2026-11-23 | Free v1.0 beta gate (deep scans + monitoring for every account), deep-scan wall-clock budget, cache pruning, queued notifications and mail-failure recording |
+| 2026-11-23 | Licensed third-party effects integrated (fluid water-ripple film background, two spider crawlers), a browser-exposed device check card, and the 48h IP-cache countdown |
 | 2026-11-24+ | Resend sender verification in production, uptime monitoring, backups, legal copy, secret rotation, live deep-scan QA |
 ### Verified right now
 
@@ -244,3 +245,21 @@ privacy scores are prioritisation aids, not assessments of fact.
 ## Licence
 
 Proprietary. See the project owner before redistribution.
+---
+
+## Third-party effects (commercial licences)
+
+Two interactive effects on the landing page are adapted from effect bundles whose
+commercial-use licences were purchased from their authors' official distribution:
+
+- **Water ripple distortion** — adapted from [Mouse Effects](https://github.com/cortiz2894/mouse-effects)
+  by Christian Ortiz. The React Three Fiber implementation was ported to dependency-free
+  WebGL2 (fluid ping-pong simulation, chromatic aberration, specular highlights) and now
+  samples the product film as its texture. See `resources/js/vendor/water-ripple.js`.
+- **Web Crawlers** — adapted from [Web Crawlers](https://github.com/cyohei9907/web-crawlers)
+  by cyohei9907. The page-overlay spider (closed shadow root, no page mutation) was wrapped
+  in a factory so the landing page runs two small crawlers. See
+  `resources/js/vendor/web-crawler-spider.js`.
+
+Credit is preserved in the source headers. The typewriter, device probe, film composition
+and page layout are original TraceLess work.
