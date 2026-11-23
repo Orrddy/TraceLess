@@ -30,8 +30,14 @@ class IpIntelligenceController extends Controller
                 ->header('Cache-Control', 'no-store');
         }
 
+        $result = $service->lookup($ip);
+
+        // No provider credentials: nothing can be analysed, so say so instead of
+        // caching an empty report or handing out "0 of 4 sources responded".
+        $status = $result['status'] === 'unavailable' ? 503 : 200;
+
         return response()
-            ->json($service->lookup($ip))
+            ->json($result, $status)
             ->header('Cache-Control', 'no-store');
     }
 }

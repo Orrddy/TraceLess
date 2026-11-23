@@ -28,16 +28,18 @@ class IpIntelligenceService
      */
     public function lookup(string $normalizedIp): array
     {
+        // With no provider credentials there is nothing an analysis could add:
+        // answer "unavailable" instead of writing an all-unavailable cache row.
+        if (! $this->runner->hasConfiguredProvider()) {
+            return ['status' => 'unavailable', 'data' => null];
+        }
+
         $row = $this->repository->find($normalizedIp);
 
-        if ($this->repository->isFresh($row)) {
-            $cached = $this->repository->cachedData($row);
+        if (($cached = $this->servableCache($row)) !== null) {
+            $this->metrics->recordCacheHit();
 
-            if ($cached !== null) {
-                $this->metrics->recordCacheHit();
-
-                return ['status' => 'ready', 'data' => $cached];
-            }
+            return ['status' => 'ready', 'data' => $cached];
         }
 
         $token = $this->repository->acquireLock(
@@ -50,9 +52,8 @@ class IpIntelligenceService
             // Either a worker is analyzing this IP right now, or it finished
             // between the cache read and the lock attempt. Re-read once.
             $row = $this->repository->find($normalizedIp);
-            $cached = $this->repository->isFresh($row) ? $this->repository->cachedData($row) : null;
 
-            if ($cached !== null) {
+            if (($cached = $this->servableCache($row)) !== null) {
                 $this->metrics->recordCacheHit();
 
                 return ['status' => 'ready', 'data' => $cached];
@@ -123,6 +124,52 @@ class IpIntelligenceService
         }
 
         return $stored;
+    }
+
+    /**
+     * The cached record to serve, or null when there is nothing usable.
+     *
+     * A fresh row whose provider_status has no "ok" entries was written before
+     * the provider keys existed (or during a total outage). When a provider is
+     * configured now, that row is stale evidence and must be re-analysed rather
+     * than shown as "0 of 4 sources responded". The row itself is kept until the
+     * replacement analysis (or ip:prune / ip:forget) removes it.
+     *
+     * @param  array<string, mixed>|null  $row
+     * @return array<string, mixed>|null
+     */
+    private function servableCache(?array $row): ?array
+    {
+        if (! $this->repository->isFresh($row)) {
+            return null;
+        }
+
+        if ($this->hasZeroCoverage($row)) {
+            return null;
+        }
+
+        return $this->repository->cachedData($row);
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     */
+    private function hasZeroCoverage(array $row): bool
+    {
+        $raw = $row['provider_status'] ?? null;
+
+        if (! is_string($raw) || $raw === '') {
+            return false;
+        }
+
+        $status = json_decode($raw, true);
+
+        if (! is_array($status) || $status === []) {
+            return false;
+        }
+
+        // Only stale when a configured provider could actually produce data now.
+        return ! in_array('ok', array_values($status), true) && $this->runner->hasConfiguredProvider();
     }
 
     /**

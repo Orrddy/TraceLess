@@ -29,6 +29,21 @@ class ProviderRunner
     public function __construct(private IpIntelligenceMetrics $metrics) {}
 
     /**
+     * False when every provider key is empty. The endpoint answers 503 and does
+     * not create cache rows or queue work in that case.
+     */
+    public function hasConfiguredProvider(): bool
+    {
+        foreach ($this->providers() as $provider) {
+            if ($provider->isConfigured()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @return array<string, ProviderResult> keyed by provider name, always all four
      */
     public function gather(string $ip): array
