@@ -1,0 +1,447 @@
+
+   PASS  Tests\Unit\DestructiveCommandGuardTest
+  ✓ it blocks destructive commands on the production branch
+  ✓ it allows additive commands
+  ✓ it allows destructive commands away from neon production
+  ✓ an explicit override disables the guard
+
+   PASS  Tests\Unit\ExampleTest
+  ✓ that true is true
+
+   PASS  Tests\Unit\NeonPostgresConnectorTest
+  ✓ dsn forwards libpq options
+  ✓ dsn omits options when not configured
+
+   PASS  Tests\Unit\RiskScoringServiceTest
+  ✓ clean profile scores near one hundred                                0.23s  
+  ✓ active findings reduce score by severity                             0.01s  
+  ✓ removed findings do not count as active and add recovery             0.01s  
+  ✓ unresolved credentials and monitoring affect score                   0.01s  
+  ✓ score is clamped between minimum and one hundred                     0.01s  
+
+   PASS  Tests\Unit\ScannerResultNormalizerTest
+  ✓ it normalizes a verified report                                      0.01s  
+  ✓ it rejects non success payloads                                      0.01s  
+  ✓ it drops rows without a source name                                  0.01s  
+  ✓ it defaults unknown values to safe choices                           0.01s  
+  ✓ it rejects non http urls and bad hashes                              0.01s  
+  ✓ it strips html and caps long text                                    0.01s  
+  ✓ it falls back to the requested identifier                            0.01s  
+
+   PASS  Tests\Feature\AccountChangeLimitsTest
+  ✓ delete code requests are limited per user                            0.06s  
+  ✓ the limit is per user                                                0.03s  
+  ✓ email change requests are limited per user                           0.03s  
+  ✓ an alert belongs only to its owner                                   0.01s  
+  ✓ marking someone elses alert read is refused                          0.02s  
+
+   PASS  Tests\Feature\AdminOperationsTest
+  ✓ operations pages are admin only                                      0.04s  
+  ✓ clients cannot mount operations components                           0.01s  
+  ✓ the scan inspector shows source outcomes and failure reason          0.02s  
+  ✓ an admin can retry a scan                                            0.02s  
+  ✓ an admin can cancel a running scan and the job does nothing          0.02s  
+  ✓ failed jobs are listed and can be deleted or retried                 0.03s  
+  ✓ sent mail is recorded and surfaced in the panel                      0.02s  
+  ✓ the otp service records a transport failure                          0.01s  
+  ✓ the dashboard reports heartbeat ages                                 0.02s  
+  ✓ the watchdog alerts admins when the queue is stale                   0.01s  
+  ✓ the watchdog stays quiet when everything is healthy                  0.01s  
+
+   PASS  Tests\Feature\AdminPanelTest
+  ✓ guests are redirected to login                                       0.01s  
+  ✓ client accounts cannot reach any admin page                          0.01s  
+  ✓ admins and super admins can reach every admin page                   0.04s  
+  ✓ a suspended admin is blocked                                         0.01s  
+  ✓ a suspended client is blocked from the client app                    0.01s  
+  ✓ admin navigation is only rendered for admins                         0.02s  
+  ✓ the dashboard reports real database counts                           0.01s  
+  ✓ an admin can suspend and reactivate a client                         0.02s  
+  ✓ an admin cannot change roles                                         0.01s  
+  ✓ a super admin can promote and demote an account                      0.02s  
+  ✓ nobody can suspend or demote themselves                              0.01s  
+  ✓ an admin cannot suspend a super admin                                0.02s  
+  ✓ a client cannot invoke admin actions through livewire                0.01s  
+  ✓ clients cannot render any admin component directly                   0.01s  
+  ✓ the user list searches and filters                                   0.02s  
+  ✓ the activity log shows and filters audit entries                     0.02s  
+  ✓ the promote command grants admin and logs it                         0.01s  
+  ✓ the promote command rejects unknown accounts and roles               0.01s  
+  ✓ the revoke command keeps the last administrator                      0.01s  
+  ✓ new accounts default to the client role                              0.01s  
+  ✓ client functionality still works for an active account               0.03s  
+
+   FAIL  Tests\Feature\AuthTest
+  ✓ public pages render                                                  0.03s  
+  ⨯ registration requires an email code before creating the account      0.01s  
+  ⨯ registration requires terms and a unique email                       0.01s  
+  ⨯ login flow uses an email code and logout clears the session          0.01s  
+  ⨯ login does not reveal whether an account exists                      0.01s  
+  ⨯ wrong codes are rejected and lock the challenge                      0.01s  
+  ⨯ expired codes are rejected                                           0.01s  
+  ✓ guests are redirected from private pages                             0.01s  
+  ✓ authenticated application pages render                               0.06s  
+
+   PASS  Tests\Feature\AuthorizationPolicyTest
+  ✓ the owner reaches their own resources                                0.03s  
+  ✓ a stranger is refused                                                0.01s  
+  ✓ access goes through the gate                                         0.02s  
+[2026-11-23 07:28:15] local.INFO: report_generated {"report_id":1,"profile_id":1,"scan_id":1,"demo_mode":false} 
+[2026-11-23 07:28:15] local.INFO: scan_completed {"scan_id":1,"profile_id":1,"inserted":3,"reappeared":0,"demo_mode":false,"score":92} 
+[2026-11-23 07:28:15] local.INFO: report_generated {"report_id":1,"profile_id":1,"scan_id":1,"demo_mode":false} 
+[2026-11-23 07:28:15] local.INFO: scan_completed {"scan_id":1,"profile_id":1,"inserted":1,"reappeared":0,"demo_mode":false,"score":97} 
+[2026-11-23 07:28:15] local.WARNING: scan_identifier_failed {"type":"email","mode":"deep","reason":"RuntimeException"} 
+[2026-11-23 07:28:15] local.INFO: report_generated {"report_id":1,"profile_id":1,"scan_id":1,"demo_mode":false} 
+[2026-11-23 07:28:15] local.INFO: scan_completed {"scan_id":1,"profile_id":1,"inserted":1,"reappeared":0,"demo_mode":false,"score":97} 
+
+   PASS  Tests\Feature\DeepScanTest
+  ✓ a deep scan checks the email as well as the usernames                0.06s  
+  ✓ a snapshot scan stays on usernames only                              0.02s  
+  ✓ one failing identifier does not discard the others                   0.03s  
+
+   PASS  Tests\Feature\ExampleTest
+  ✓ the application returns a successful response                        0.01s  
+
+   PASS  Tests\Feature\IdentityConsentTest
+  ✓ identity setup requires consent                                      0.02s  
+  ✓ identity setup creates profile consent and identifiers               0.02s  
+  ✓ names and usernames can be added and removed                         0.02s  
+  ✓ get my ip fills the detected address                                 0.01s  
+  ✓ consent service detects missing and valid consent                    0.01s  
+  ✓ a user cannot belong to more than one private profile view           0.01s  
+[2026-11-23 07:28:15] local.INFO: report_generated {"report_id":1,"profile_id":1,"scan_id":1,"demo_mode":false} 
+[2026-11-23 07:28:15] local.INFO: scan_completed {"scan_id":1,"profile_id":1,"inserted":1,"reappeared":0,"demo_mode":false,"score":99} 
+[2026-11-23 07:28:15] local.INFO: report_generated {"report_id":1,"profile_id":1,"scan_id":1,"demo_mode":false} 
+[2026-11-23 07:28:15] local.INFO: scan_completed {"scan_id":1,"profile_id":1,"inserted":0,"reappeared":0,"demo_mode":false,"score":100} 
+[2026-11-23 07:28:16] local.INFO: report_generated {"report_id":1,"profile_id":1,"scan_id":1,"demo_mode":false} 
+[2026-11-23 07:28:16] local.INFO: scan_completed {"scan_id":1,"profile_id":1,"inserted":0,"reappeared":0,"demo_mode":false,"score":100} 
+
+   PASS  Tests\Feature\LiveScanModeTest
+  ✓ live scan persists verified findings and source telemetry            0.03s  
+  ✓ live scan marks absent source findings as unverified                 0.02s  
+  ✓ live scan without a monitored username does not call the worker      0.02s  
+[2026-11-23 07:28:16] local.INFO: monitoring_skipped_no_consent {"subscription_id":1} 
+[2026-11-23 07:28:16] local.INFO: monitoring_skipped_no_plan {"subscription_id":1} 
+[2026-11-23 07:28:16] local.INFO: report_generated {"report_id":1,"profile_id":1,"scan_id":1,"demo_mode":false} 
+[2026-11-23 07:28:16] local.INFO: scan_completed {"scan_id":1,"profile_id":1,"inserted":1,"reappeared":0,"demo_mode":false,"score":100} 
+[2026-11-23 07:28:16] local.INFO: report_generated {"report_id":1,"profile_id":1,"scan_id":1,"demo_mode":false} 
+[2026-11-23 07:28:16] local.INFO: scan_completed {"scan_id":1,"profile_id":1,"inserted":0,"reappeared":1,"demo_mode":false,"score":97} 
+
+   PASS  Tests\Feature\MonitoringLifecycleTest
+  ✓ a subscription without a next run is dispatched                      0.01s  
+  ✓ a subscription that is not due is skipped                            0.01s  
+  ✓ missing consent advances instead of retrying every hour              0.01s  
+  ✓ the plan gate blocks users without a plan when enabled               0.01s  
+  ✓ a live scan raises a monitoring alert                                0.03s  
+  ✓ reappearance reopens the removal task and says so                    0.03s  
+[2026-11-23 07:28:16] local.INFO: report_generated {"report_id":1,"profile_id":1,"scan_id":1,"demo_mode":false} 
+[2026-11-23 07:28:16] local.INFO: scan_completed {"scan_id":1,"profile_id":1,"inserted":2,"reappeared":0,"demo_mode":false,"score":94} 
+[2026-11-23 07:28:16] local.INFO: report_generated {"report_id":1,"profile_id":1,"scan_id":1,"demo_mode":false} 
+[2026-11-23 07:28:16] local.INFO: scan_completed {"scan_id":1,"profile_id":1,"inserted":1,"reappeared":0,"demo_mode":false,"score":97} 
+[2026-11-23 07:28:16] local.INFO: report_generated {"report_id":1,"profile_id":1,"scan_id":1,"demo_mode":false} 
+[2026-11-23 07:28:16] local.INFO: scan_completed {"scan_id":1,"profile_id":1,"inserted":0,"reappeared":0,"demo_mode":false,"score":100} 
+
+   PASS  Tests\Feature\MultiUsernameScanTest
+  ✓ every monitored username is scanned                                  0.03s  
+  ✓ the username count is capped                                         0.02s  
+  ✓ a live scan without usernames reports no sources                     0.02s  
+
+   PASS  Tests\Feature\NotificationsTest
+  ✓ notifications reach the user by email as well as in app              0.01s  
+  ✓ the scan completion notification has a subject and action            0.01s  
+  ✓ the panel is mounted in the app shell                                0.02s  
+  ✓ the panel lists and dismisses an alert                               0.01s  
+  ✓ the panel marks everything read                                      0.01s  
+
+   PASS  Tests\Feature\ProductionSafetyGuardTest
+  ✓ non production environments are never blocked                        0.01s  
+  ✓ production reports every unsafe setting                              0.01s  
+  ✓ production reports only the offending setting
+  ✓ string false is not treated as enabled
+  ✓ strict production configuration is accepted
+  ✓ production with demo mode refuses to boot                            0.01s  
+  ✓ production with on screen codes refuses to boot                      0.01s  
+  ✓ testing and local environments boot normally
+  ✓ the design preview route is gone
+[2026-11-23 07:28:16] local.INFO: Broadcasting [removal.updated] on channels [private-users.1] with payload:
+{
+    "task_id": 1,
+    "status": "in_progress",
+    "source": "Whitepages",
+    "socket": null
+}  
+[2026-11-23 07:28:16] local.INFO: Broadcasting [removal.updated] on channels [private-users.1] with payload:
+{
+    "task_id": 1,
+    "status": "removed",
+    "source": "Whitepages",
+    "socket": null
+}  
+[2026-11-23 07:28:16] local.INFO: report_generated {"report_id":1,"profile_id":1,"scan_id":null,"demo_mode":true} 
+[2026-11-23 07:28:16] local.INFO: report_generated {"report_id":1,"profile_id":1,"scan_id":null,"demo_mode":true} 
+
+   PASS  Tests\Feature\RemovalReportTest
+  ✓ removal status updates finding and completes task                    0.03s  
+  ✓ invalid removal status is rejected                                   0.01s  
+  ✓ signed report download works and is owner scoped                     0.02s  
+  ✓ report download rejects tampered token                               0.01s  
+  ✓ unsigned report url is rejected                                      0.01s  
+  ✓ removal task pages are owner scoped                                  0.02s  
+
+   PASS  Tests\Feature\RetentionDeletionTest
+  ✓ pruning an old scan removes its newer findings                       0.01s  
+  ✓ pruning leaves recent scans alone                                    0.01s  
+  ✓ deleting an account strips ip addresses from the audit trail         0.02s  
+  ✓ deleting an account keeps proof that consent was recorded            0.02s  
+[2026-11-23 07:28:16] local.INFO: report_generated {"report_id":1,"profile_id":1,"scan_id":1,"demo_mode":true} 
+[2026-11-23 07:28:16] local.INFO: scan_completed {"scan_id":1,"profile_id":1,"inserted":8,"reappeared":0,"demo_mode":true,"score":67} 
+
+   PASS  Tests\Feature\ScanPipelineTest
+  ✓ queue scan refuses without consent                                   0.01s  
+  ✓ queue scan dispatches job and creates scan                           0.01s  
+  ✓ demo scan executes end to end and generates report                   0.04s  
+  ✓ scan can be cancelled and is owned                                   0.02s  
+  ✓ scan creation component queues a scan                                0.02s  
+  ✓ deep scan requires an active plan                                    0.02s  
+  ✓ deep scan plan allows deep scan                                      0.02s  
+[2026-11-23 07:28:16] local.WARNING: scan_job_failed {"scan_id":1,"exception":"RuntimeException","message_hash":"82ca17fb3707ff8e50535cd8dcd18bdea8ad5c795e9203ae1dbb94827f40e3fa"} 
+
+   PASS  Tests\Feature\ScanRecoveryTest
+  ✓ a failed job marks the scan failed                                   0.01s  
+  ✓ a failed job does not touch a completed scan                         0.01s  
+  ✓ the reaper closes only stale scans                                   0.01s  
+  ✓ the reaper leaves terminal scans alone                               0.01s  
+  ✓ a stale scan no longer blocks the account                            0.01s  
+  ✓ a fresh scan still blocks a second one                               0.01s  
+  ✓ the report download url is signed                                    0.01s  
+  ✓ the credentials page does not claim the account is clear             0.01s  
+
+   PASS  Tests\Feature\SecurityHeadersTest
+  ✓ baseline headers are sent on public pages                            0.01s  
+  ✓ the content security policy locks the important directives           0.01s  
+  ✓ hsts is not sent over plain http                                     0.01s  
+  ✓ hsts is sent over https                                              0.01s  
+  ✓ headers apply to authenticated responses too                         0.01s  
+
+   PASS  Tests\Feature\SettingsPrivacyTest
+  ✓ purge scan data removes artifacts but keeps account                  0.02s  
+  ✓ purge requires confirmation                                          0.02s  
+  ✓ account deletion requires an email code                              0.03s  
+  ✓ data export returns json attachment without password fields          0.01s  
+  ✓ email change requires a code sent to the new address                 0.03s  
+
+   PASS  Tests\Feature\ToolsAndResetTest
+  ✓ the tools require authentication                                     0.01s  
+  ✓ the password check page renders and allows the breach service        0.01s  
+  ✓ the ip check returns network details                                 0.02s  
+  ✓ a private address falls back to the public one                       0.01s  
+  ✓ the ip check rejects an invalid address                              0.01s  
+  ✓ the ip check reports a provider failure                              0.01s  
+  ✓ the ip check shows abuse reports when configured                     0.02s  
+  ✓ a failed abuse lookup keeps the location result                      0.01s  
+  ✓ resetting clears scan data but keeps the identity and consent        0.02s  
+
+   FAIL  Tests\Feature\VerifyScreenTest
+  ⨯ the code is never rendered on screen                                 0.01s  
+  ⨯ the plaintext code is not stored in the session                      0.01s  
+  ⨯ the screen auto submits once six digits are entered                  0.01s  
+  ⨯ the resend button runs a client side countdown                       0.01s  
+  ⨯ the verify form is still usable without javascript                   0.01s  
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\AuthTest > registration requires an email code befo…   
+  Expected response status code [201, 301, 302, 303, 307, 308] but received 419.
+Failed asserting that false is true.
+
+  at tests/Feature/AuthTest.php:49
+     45▕         $this->post('/register', [
+     46▕             'name' => 'Jane Doe',
+     47▕             'email' => 'Jane@Example.com',
+     48▕             'terms' => '1',
+  ➜  49▕         ])->assertRedirect(route('auth.verify'));
+     50▕ 
+     51▕         $this->assertGuest();
+     52▕         $this->assertDatabaseMissing('users', ['email' => 'jane@example.com']);
+     53▕
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\AuthTest > registration requires terms and a unique…   
+  Session is missing expected key [errors].
+Failed asserting that false is true.
+
+  at tests/Feature/AuthTest.php:72
+     68▕ 
+     69▕         $this->post('/register', [
+     70▕             'name' => 'Jane Doe',
+     71▕             'email' => 'jane@example.com',
+  ➜  72▕         ])->assertSessionHasErrors('terms');
+     73▕ 
+     74▕         $this->post('/register', [
+     75▕             'name' => 'Jane Doe',
+     76▕             'email' => 'existing@example.com',
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\AuthTest > login flow uses an email code and logout…   
+  Expected response status code [201, 301, 302, 303, 307, 308] but received 419.
+Failed asserting that false is true.
+
+  at tests/Feature/AuthTest.php:90
+     86▕ 
+     87▕         $user = User::factory()->create(['email' => 'jane@example.com']);
+     88▕ 
+     89▕         $this->post('/login', ['email' => 'jane@example.com'])
+  ➜  90▕             ->assertRedirect(route('auth.verify'));
+     91▕ 
+     92▕         $this->assertGuest();
+     93▕ 
+     94▕         $this->post('/auth/verify', [
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\AuthTest > login does not reveal whether an account…   
+  Expected response status code [201, 301, 302, 303, 307, 308] but received 419.
+Failed asserting that false is true.
+
+  at tests/Feature/AuthTest.php:110
+    106▕     {
+    107▕         Mail::fake();
+    108▕ 
+    109▕         $this->post('/login', ['email' => 'nobody@example.com'])
+  ➜ 110▕             ->assertRedirect(route('auth.verify'))
+    111▕             ->assertSessionHas('status');
+    112▕ 
+    113▕         Mail::assertNothingSent();
+    114▕
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\AuthTest > wrong codes are rejected and lock the ch…   
+  The expected [App\Mail\OtpCodeMail] mailable was not sent.
+Failed asserting that false is true.
+
+  at vendor/laravel/framework/src/Illuminate/Support/Testing/Fakes/MailFake.php:92
+     88▕ 
+     89▕             return;
+     90▕         }
+     91▕ 
+  ➜  92▕         PHPUnit::assertTrue(
+     93▕             $this->sent($mailable, $callback)->count() > 0,
+     94▕             "The expected [{$mailable}] mailable was not sent.".$suggestion
+     95▕         );
+     96▕     }
+
+      [2m+2 vendor frames [22m
+  3   tests/Feature/AuthTest.php:19
+  4   tests/Feature/AuthTest.php:128
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\AuthTest > expired codes are rejected                  
+  The expected [App\Mail\OtpCodeMail] mailable was not sent.
+Failed asserting that false is true.
+
+  at vendor/laravel/framework/src/Illuminate/Support/Testing/Fakes/MailFake.php:92
+     88▕ 
+     89▕             return;
+     90▕         }
+     91▕ 
+  ➜  92▕         PHPUnit::assertTrue(
+     93▕             $this->sent($mailable, $callback)->count() > 0,
+     94▕             "The expected [{$mailable}] mailable was not sent.".$suggestion
+     95▕         );
+     96▕     }
+
+      [2m+2 vendor frames [22m
+  3   tests/Feature/AuthTest.php:19
+  4   tests/Feature/AuthTest.php:150
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\VerifyScreenTest > the code is never rendered on sc…   
+  Expected response status code [201, 301, 302, 303, 307, 308] but received 419.
+Failed asserting that false is true.
+
+  at tests/Feature/VerifyScreenTest.php:15
+     11▕ 
+     12▕     private function arriveAtVerifyScreen(string $email = 'person@example.test'): void
+     13▕     {
+     14▕         $this->post('/login', ['email' => $email])
+  ➜  15▕             ->assertRedirect(route('auth.verify'));
+     16▕     }
+     17▕ 
+     18▕     public function test_the_code_is_never_rendered_on_screen(): void
+     19▕     {
+
+  1   tests/Feature/VerifyScreenTest.php:20
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\VerifyScreenTest > the plaintext code is not stored…   
+  Expected response status code [201, 301, 302, 303, 307, 308] but received 419.
+Failed asserting that false is true.
+
+  at tests/Feature/VerifyScreenTest.php:15
+     11▕ 
+     12▕     private function arriveAtVerifyScreen(string $email = 'person@example.test'): void
+     13▕     {
+     14▕         $this->post('/login', ['email' => $email])
+  ➜  15▕             ->assertRedirect(route('auth.verify'));
+     16▕     }
+     17▕ 
+     18▕     public function test_the_code_is_never_rendered_on_screen(): void
+     19▕     {
+
+  1   tests/Feature/VerifyScreenTest.php:31
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\VerifyScreenTest > the screen auto submits once six…   
+  Expected response status code [201, 301, 302, 303, 307, 308] but received 419.
+Failed asserting that false is true.
+
+  at tests/Feature/VerifyScreenTest.php:15
+     11▕ 
+     12▕     private function arriveAtVerifyScreen(string $email = 'person@example.test'): void
+     13▕     {
+     14▕         $this->post('/login', ['email' => $email])
+  ➜  15▕             ->assertRedirect(route('auth.verify'));
+     16▕     }
+     17▕ 
+     18▕     public function test_the_code_is_never_rendered_on_screen(): void
+     19▕     {
+
+  1   tests/Feature/VerifyScreenTest.php:40
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\VerifyScreenTest > the resend button runs a client…    
+  Expected response status code [201, 301, 302, 303, 307, 308] but received 419.
+Failed asserting that false is true.
+
+  at tests/Feature/VerifyScreenTest.php:15
+     11▕ 
+     12▕     private function arriveAtVerifyScreen(string $email = 'person@example.test'): void
+     13▕     {
+     14▕         $this->post('/login', ['email' => $email])
+  ➜  15▕             ->assertRedirect(route('auth.verify'));
+     16▕     }
+     17▕ 
+     18▕     public function test_the_code_is_never_rendered_on_screen(): void
+     19▕     {
+
+  1   tests/Feature/VerifyScreenTest.php:50
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\VerifyScreenTest > the verify form is still usable…    
+  Expected response status code [201, 301, 302, 303, 307, 308] but received 419.
+Failed asserting that false is true.
+
+  at tests/Feature/VerifyScreenTest.php:15
+     11▕ 
+     12▕     private function arriveAtVerifyScreen(string $email = 'person@example.test'): void
+     13▕     {
+     14▕         $this->post('/login', ['email' => $email])
+  ➜  15▕             ->assertRedirect(route('auth.verify'));
+     16▕     }
+     17▕ 
+     18▕     public function test_the_code_is_never_rendered_on_screen(): void
+     19▕     {
+
+  1   tests/Feature/VerifyScreenTest.php:60
+
+
+  Tests:    11 failed, 142 passed (530 assertions)
+  Duration: 2.49s
+
