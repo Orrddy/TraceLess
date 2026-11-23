@@ -2,14 +2,23 @@
  * Landing-page effects for TraceLess.
  *
  * - Headline typewriter with realistic corrections (original).
- * - Device/browser probe card, filled only from browser-exposed APIs (original).
- * - Water ripple distortion: adapted from the licensed Mouse Effects bundle
- *   (see vendor/water-ripple.js).
- * - Two crawlers: adapted from the licensed Web Crawlers bundle
- *   (see vendor/web-crawler-spider.js).
+ * - "We see you" browser/device panel using the MIT-licensed @marufme/device-key
+ *   plus direct Web APIs for GPU, storage, capabilities and fingerprint detail.
+ * - Water ripple distortion: adapted from the licensed Mouse Effects bundle.
+ * - Two crawlers: adapted from the licensed Web Crawlers bundle.
  *
- * Everything degrades: reduced motion, no WebGL2 or no JS leave the page static.
+ * Everything degrades honestly: unsupported APIs show "Not exposed" rather than
+ * a guess, reduced motion disables animation, and nothing is sent to the server.
  */
+import {
+    getOSInfo,
+    getBrowserInfo,
+    getNetworkInfo,
+    getBatteryInfo,
+    getDeviceId,
+    generateFingerprint,
+    getCanvasFingerprint,
+} from '@marufme/device-key';
 
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -82,117 +91,217 @@ function initTypewriter() {
 }
 
 /* -------------------------------------------------------------------------
- * 2. "We see you" device card — only what the browser itself exposes.
+ * 2. "We see you" device panel.
  * ---------------------------------------------------------------------- */
-function browserLabel() {
-    const uaData = navigator.userAgentData;
-    if (uaData && Array.isArray(uaData.brands) && uaData.brands.length) {
-        const meaningful = uaData.brands.filter((b) => !/Not.?A.?Brand|Chromium/i.test(b.brand));
-        const chosen = meaningful.find((b) => /Chrome|Edge|Opera|Brave|Samsung|Vivaldi/i.test(b.brand)) || meaningful[0] || uaData.brands[0];
+const number = (value, unit = '') => (value === null || value === undefined || Number.isNaN(value) ? null : `${value}${unit}`);
 
-        return chosen ? `${chosen.brand}${chosen.version ? ' ' + chosen.version : ''}` : 'Unknown browser';
-    }
-
-    const ua = navigator.userAgent;
-    const patterns = [
-        [/Edg\/(\d+)/, 'Microsoft Edge'],
-        [/OPR\/(\d+)/, 'Opera'],
-        [/SamsungBrowser\/(\d+)/, 'Samsung Internet'],
-        [/Firefox\/(\d+)/, 'Firefox'],
-        [/CriOS\/(\d+)/, 'Chrome on iOS'],
-        [/Chrome\/(\d+)/, 'Google Chrome'],
-        [/Version\/(\d+).*Safari/, 'Safari'],
-    ];
-    for (const [pattern, name] of patterns) {
-        const match = ua.match(pattern);
-        if (match) return `${name} ${match[1]}`;
-    }
-
-    return 'Unknown browser';
-}
-
-function platformLabel(high = {}) {
-    const ua = navigator.userAgent;
-    const platform = high.platform || navigator.userAgentData?.platform || navigator.platform || '';
-    const version = high.platformVersion || '';
-
-    if (/Android/i.test(ua) || /Android/i.test(platform)) {
-        const androidVersion = (ua.match(/Android\s([\d.]+)/) || [])[1] || version.split('.')[0];
-        return {
-            device: high.model || 'Android phone',
-            spec: `Android${androidVersion ? ' ' + androidVersion : ''}`,
-        };
-    }
-
-    if (/iPhone/i.test(ua)) return { device: 'iPhone', spec: (ua.match(/OS (\d+)_/) ? 'iOS ' + ua.match(/OS (\d+)_/)[1] : 'iOS') };
-    if (/iPad/i.test(ua)) return { device: 'iPad', spec: (ua.match(/OS (\d+)_/) ? 'iPadOS ' + ua.match(/OS (\d+)_/)[1] : 'iPadOS') };
-
-    if (/Windows/i.test(ua) || /Windows/i.test(platform)) {
-        const major = parseInt(version.split('.')[0] || '0', 10);
-        const label = major >= 13 ? 'Windows 11' : (major >= 1 ? 'Windows 10' : 'Windows');
-        return { device: 'Windows PC', spec: label };
-    }
-
-    if (/Mac/i.test(platform) || /Mac OS X/i.test(ua)) {
-        const major = (ua.match(/Mac OS X (\d+)[._](\d+)/) || []).slice(1);
-        return { device: 'Mac', spec: major.length === 2 ? `macOS ${major[0]}.${major[1]}` : 'macOS' };
-    }
-
-    if (/Linux/i.test(platform)) return { device: 'Linux workstation', spec: 'Linux' };
-
-    return { device: platform || 'Unknown device', spec: high.architecture ? `${high.architecture}${high.bitness ? ' · ' + high.bitness + '-bit' : ''}` : 'Unavailable' };
-}
-
-async function initDeviceCheck() {
-    const root = document.querySelector('[data-device-check]');
-    if (!root) return;
-
-    const field = (name) => root.querySelector(`[data-device-field="${name}"]`);
-    const set = (name, value) => {
-        const el = field(name);
-        if (el) el.textContent = value;
-    };
-
-    set('browser', browserLabel());
-
-    let high = {};
+function gpuInfo() {
     try {
-        if (navigator.userAgentData?.getHighEntropyValues) {
-            high = await navigator.userAgentData.getHighEntropyValues(['model', 'platformVersion', 'architecture', 'bitness']);
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        if (!gl) return null;
+
+        const debug = gl.getExtension('WEBGL_debug_renderer_info');
+        const vendor = debug ? gl.getParameter(debug.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR);
+        const renderer = debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+        const maxTexture = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+
+        return {
+            vendor: vendor || null,
+            renderer: renderer || null,
+            capabilities: `${maxTexture}px tex · ${gl.getParameter(gl.MAX_VIEWPORT_DIMS)?.join('×')} viewport${gl.getContextAttributes()?.antialias ? ' · AA' : ''}`,
+        };
+    } catch (error) {
+        return null;
+    }
+}
+
+function capabilities() {
+    const media = navigator.mediaDevices;
+    const touch = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
+    const camera = typeof media?.getUserMedia === 'function';
+    const devices = typeof media?.enumerateDevices === 'function';
+
+    return {
+        touch,
+        camera,
+        devices,
+        media: media ? 'available (permission required)' : 'not exposed',
+    };
+}
+
+async function storageInfo() {
+    const local = (() => {
+        try {
+            localStorage.setItem('__tl_probe', '1');
+            localStorage.removeItem('__tl_probe');
+
+            return true;
+        } catch (error) {
+            return false;
+        }
+    })();
+
+    const indexed = typeof window.indexedDB !== 'undefined';
+    let quota = null;
+
+    try {
+        const estimate = await navigator.storage?.estimate?.();
+        if (estimate?.quota) {
+            const gb = estimate.quota / 1024 ** 3;
+            quota = gb >= 1 ? `${gb.toFixed(1)} GB available` : `${Math.round(estimate.quota / 1024 ** 2)} MB available`;
         }
     } catch (error) {
-        high = {};
+        quota = null;
     }
 
-    const platform = platformLabel(high);
-    set('device', platform.device);
-    set('spec', `${platform.spec} · ${window.screen.width}×${window.screen.height}${navigator.maxTouchPoints > 0 ? ' · touch' : ' · pointer'}`);
-    set('screen', `${window.screen.width}×${window.screen.height} · ${window.devicePixelRatio.toFixed(1)}x · ${navigator.language || 'unknown locale'}`);
+    return {
+        local,
+        indexed,
+        quota,
+    };
+}
 
-    const batteryField = field('battery');
-    if (!batteryField) return;
+function privacyNotes() {
+    const ua = navigator.userAgent;
+    const ios = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const safari = /Safari/i.test(ua) && !/Chrome|Chromium|Edg|OPR|CriOS|Firefox|Android/i.test(ua);
+    const firefox = /Firefox|FxiOS/i.test(ua);
 
-    if (!navigator.getBattery) {
-        batteryField.textContent = 'Not exposed by this browser';
-
-        return;
+    if (ios) {
+        return 'iOS limits this hard: Safari exposes no battery API, device memory, network details or user-agent client hints. “Not exposed” here is the browser protecting you — not a failed check.';
     }
 
+    if (safari) {
+        return 'Safari hides most fingerprinting surfaces: no user-agent client hints, device memory or network information, and bot-checked canvas/WebGL values. “Not exposed” is expected on macOS.';
+    }
+
+    if (firefox) {
+        return 'Firefox resists fingerprinting: user-agent client hints and device memory are withheld, and canvas/WebGL signatures may be randomised per session.';
+    }
+
+    return 'Chrome and Edge expose the most: user-agent client hints, device memory, network estimates and battery (on some platforms). Everything here stays in your browser.';
+}
+
+function setField(name, value) {
+    document.querySelectorAll(`[data-device-field="${name}"]`).forEach((el) => {
+        el.textContent = value === null || value === undefined || value === '' ? 'Not exposed' : value;
+    });
+}
+
+async function initDevicePanel() {
+    const compact = document.querySelector('[data-device-check]');
+    const detailed = document.querySelector('[data-device-detail]');
+    if (!compact && !detailed) return;
+
+    const os = getOSInfo();
+    const browser = getBrowserInfo();
+    const network = getNetworkInfo();
+    const ua = navigator.userAgent;
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
+    const deviceType = /iPad|Tablet/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+        ? 'Tablet'
+        : (/Mobi|Android|iPhone|iPod/i.test(ua) ? 'Mobile' : 'Desktop');
+
+    const mac = /mac/i.test(os.name || '') || navigator.platform === 'MacIntel';
+
+    let model = null;
     try {
-        const battery = await navigator.getBattery();
-        const paint = () => {
-            const level = Math.round(battery.level * 100);
-            batteryField.textContent = `${level}% · ${battery.charging ? 'charging' : 'on battery'}`;
-            set('battery-bar', '');
-            const bar = root.querySelector('[data-battery-bar]');
-            if (bar) bar.style.width = `${level}%`;
-        };
-        paint();
-        battery.addEventListener('levelchange', paint);
-        battery.addEventListener('chargingchange', paint);
+        if (navigator.userAgentData?.getHighEntropyValues) {
+            const high = await navigator.userAgentData.getHighEntropyValues(['model']);
+            model = high.model || null;
+        }
     } catch (error) {
-        batteryField.textContent = 'Not exposed by this browser';
+        model = null;
     }
+
+    const deviceModel = model
+        || (/iPhone/i.test(ua) ? 'iPhone (model hidden by Safari)' : null)
+        || (/iPad/i.test(ua) ? 'iPad (model hidden by Safari)' : null)
+        || (mac ? 'Mac (model hidden by Safari)' : null)
+        || (deviceType === 'Desktop' ? `${os.name || 'PC'} ${deviceType.toLowerCase()}` : null)
+        || 'Not exposed';
+
+    const browserLine = [browser.name || 'Unknown', browser.version, browser.engine, browser.vendor].filter(Boolean).join(' · ');
+    const osLine = [os.name || 'Unknown OS', os.version, os.architecture].filter(Boolean).join(' · ');
+
+    // Compact card (hero).
+    setField('device', deviceModel);
+    setField('browser', [browser.name, browser.version].filter(Boolean).join(' ') || 'Unknown browser');
+    setField('spec', `${osLine} · ${window.screen.width}×${window.screen.height}${capabilities().touch ? ' · touch' : ' · pointer'}`);
+    setField('screen', `${window.screen.width}×${window.screen.height} · ${window.devicePixelRatio.toFixed(1)}x · ${navigator.language || 'unknown locale'}`);
+
+    // Detailed panel.
+    setField('d-browser', browserLine);
+    setField('d-os', osLine);
+    setField('d-type', deviceType);
+    setField('d-model', deviceModel);
+    setField('d-cpu', number(navigator.hardwareConcurrency, ' logical cores') || 'Not exposed');
+    setField('d-memory', navigator.deviceMemory ? `≈ ${navigator.deviceMemory} GB RAM` : 'Not exposed');
+    setField('d-display', `${window.screen.width}×${window.screen.height} · ${window.devicePixelRatio.toFixed(2)}x · ${window.screen.colorDepth}-bit`);
+
+    const gpu = gpuInfo();
+    setField('d-gpu', gpu ? `${gpu.vendor || 'Unknown vendor'} · ${gpu.renderer || 'Unknown renderer'}` : 'Not exposed');
+    setField('d-gpu-cap', gpu?.capabilities || 'Not exposed');
+
+    const networkLine = [
+        network.connectionType || connection?.type,
+        connection?.effectiveType ? `${connection.effectiveType}` : null,
+        connection?.downlink ? `≈ ${connection.downlink} Mb/s` : null,
+        connection?.rtt ? `${connection.rtt} ms RTT` : null,
+    ].filter(Boolean).join(' · ');
+    setField('d-network', networkLine || 'Not exposed (Safari/Firefox hide this)');
+
+    const caps = capabilities();
+    setField('d-capabilities', `${caps.touch ? 'touch' : 'no touch'} · camera/mic API ${caps.camera ? 'available' : 'unavailable'} · media devices ${caps.devices ? 'enumerable' : 'unavailable'}`);
+
+    setField('d-ua', ua);
+    setField('d-locale', `${navigator.language || 'unknown'} · ${Intl.DateTimeFormat().resolvedOptions().timeZone || 'unknown timezone'}`);
+
+    // Battery (async, may be unavailable by design).
+    if (navigator.getBattery) {
+        try {
+            const battery = await getBatteryInfo();
+            const level = Math.round((battery.level ?? 0) * 100);
+            const charging = battery.charging ? 'charging' : 'on battery';
+            const chargeTime = battery.charging && Number.isFinite(battery.chargingTime) && battery.chargingTime > 0
+                ? ` · ${Math.round(battery.chargingTime / 60)} min to full`
+                : '';
+            setField('battery', `${level}% · ${charging}${chargeTime}`);
+            setField('d-battery', `${level}% · ${charging}${chargeTime}`);
+            const bar = detailed?.querySelector('[data-battery-bar]') || compact?.querySelector('[data-battery-bar]');
+            if (bar) bar.style.width = `${level}%`;
+        } catch (error) {
+            setField('battery', 'Not exposed by this browser');
+            setField('d-battery', 'Not exposed by this browser');
+        }
+    } else {
+        setField('battery', 'Not exposed by this browser');
+        setField('d-battery', 'Not exposed by this browser');
+    }
+
+    // Storage (async).
+    const storage = await storageInfo();
+    setField('d-storage', [
+        storage.local ? 'LocalStorage' : 'no LocalStorage',
+        storage.indexed ? 'IndexedDB' : 'no IndexedDB',
+        storage.quota,
+    ].filter(Boolean).join(' · '));
+
+    // Fingerprinting (async, local only — never stored or sent).
+    try {
+        const [fingerprint, identity] = await Promise.all([generateFingerprint(), getDeviceId().catch(() => null)]);
+        const canvas = getCanvasFingerprint();
+        setField('d-fingerprint', `${String(fingerprint).slice(0, 16)}… · canvas ${canvas ? 'signature captured' : 'blocked'}`);
+        setField('d-device-id', identity?.deviceId ? `${String(identity.deviceId).slice(0, 18)}…` : 'Not exposed');
+    } catch (error) {
+        setField('d-fingerprint', 'Not exposed (browser blocked fingerprinting)');
+        setField('d-device-id', 'Not exposed');
+    }
+
+    const note = document.querySelector('[data-device-privacy-note]');
+    if (note) note.textContent = privacyNotes();
 }
 
 /* -------------------------------------------------------------------------
@@ -229,7 +338,7 @@ function startCrawlers() {
 
 export function initLandingEffects() {
     initTypewriter();
-    initDeviceCheck();
+    initDevicePanel();
     initRipple();
     startCrawlers();
 }

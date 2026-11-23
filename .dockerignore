@@ -2,7 +2,7 @@
 .git
 .github
 **/node_modules
-**/vendor
+traceless-app/vendor
 **/.venv
 **/__pycache__
 **/*.pyc

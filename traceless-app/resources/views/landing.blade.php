@@ -260,7 +260,72 @@
 
                 <div class="v-progress mt-3" aria-hidden="true"><span data-battery-bar style="width: 0%"></span></div>
                 <p class="mt-2 text-[10px] leading-relaxed text-muted">Battery is only shown when the browser exposes it. No fingerprint is stored.</p>
+                <a href="#device-intel" class="v-link mt-2 inline-block">See the full browser fingerprint ↓</a>
             </div>
+        </div>
+    </section>
+
+    {{-- FULL DEVICE / BROWSER PANEL --}}
+    <section id="device-intel" class="border-y border-line/70 py-12" data-device-detail>
+        <div class="flex flex-wrap items-end justify-between gap-3">
+            <div>
+                <p class="v-kicker">👀 We see you</p>
+                <h2 class="mt-1 text-[clamp(1.4rem,2.2vw,1.75rem)] font-semibold tracking-[-1px]">What your browser reveals before you sign up.</h2>
+                <p class="mt-2 max-w-2xl text-[13px] leading-relaxed text-body">
+                    Read locally with the MIT-licensed <span class="font-medium text-ink">@marufme/device-key</span> package plus plain Web APIs.
+                    Nothing on this panel is sent to TraceLess or persisted.
+                </p>
+            </div>
+            <span class="v-pill">Client-side · not stored</span>
+        </div>
+
+        <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {{-- System & browser --}}
+            <div class="v-card p-5">
+                <p class="v-kicker">System &amp; browser</p>
+                <dl class="mt-3 space-y-2.5 text-[13px]">
+                    <div><dt class="v-kicker">Browser · engine · vendor</dt><dd class="mt-0.5 break-words" data-device-field="d-browser">Reading…</dd></div>
+                    <div><dt class="v-kicker">Operating system</dt><dd class="mt-0.5" data-device-field="d-os">Reading…</dd></div>
+                    <div><dt class="v-kicker">Device type</dt><dd class="mt-0.5" data-device-field="d-type">Reading…</dd></div>
+                    <div><dt class="v-kicker">Device model</dt><dd class="mt-0.5 break-words" data-device-field="d-model">Reading…</dd></div>
+                    <div><dt class="v-kicker">Language &amp; timezone</dt><dd class="mt-0.5" data-device-field="d-locale">Reading…</dd></div>
+                    <div><dt class="v-kicker">User agent</dt><dd class="mt-0.5 break-all font-[family-name:'Geist_Mono',ui-monospace,monospace] text-[11px] leading-relaxed text-muted" data-device-field="d-ua">Reading…</dd></div>
+                </dl>
+            </div>
+
+            {{-- Hardware & display --}}
+            <div class="v-card p-5">
+                <p class="v-kicker">Hardware &amp; display</p>
+                <dl class="mt-3 space-y-2.5 text-[13px]">
+                    <div><dt class="v-kicker">CPU</dt><dd class="mt-0.5" data-device-field="d-cpu">Reading…</dd></div>
+                    <div><dt class="v-kicker">Memory (approximate)</dt><dd class="mt-0.5" data-device-field="d-memory">Reading…</dd></div>
+                    <div><dt class="v-kicker">GPU</dt><dd class="mt-0.5 break-words" data-device-field="d-gpu">Reading…</dd></div>
+                    <div><dt class="v-kicker">GPU capabilities</dt><dd class="mt-0.5 text-[11px] text-muted" data-device-field="d-gpu-cap">Reading…</dd></div>
+                    <div><dt class="v-kicker">Display</dt><dd class="mt-0.5" data-device-field="d-display">Reading…</dd></div>
+                    <div>
+                        <dt class="v-kicker">Battery</dt>
+                        <dd class="mt-0.5" data-device-field="d-battery">Reading…</dd>
+                        <div class="v-progress mt-2" aria-hidden="true"><span data-battery-bar style="width: 0%"></span></div>
+                    </div>
+                </dl>
+            </div>
+
+            {{-- Network, storage & fingerprint --}}
+            <div class="v-card p-5">
+                <p class="v-kicker">Network, storage &amp; fingerprint</p>
+                <dl class="mt-3 space-y-2.5 text-[13px]">
+                    <div><dt class="v-kicker">Network</dt><dd class="mt-0.5 break-words" data-device-field="d-network">Reading…</dd></div>
+                    <div><dt class="v-kicker">Storage</dt><dd class="mt-0.5 break-words" data-device-field="d-storage">Reading…</dd></div>
+                    <div><dt class="v-kicker">Capabilities</dt><dd class="mt-0.5 break-words" data-device-field="d-capabilities">Reading…</dd></div>
+                    <div><dt class="v-kicker">Fingerprint (canvas + device key)</dt><dd class="mt-0.5 break-all font-[family-name:'Geist_Mono',ui-monospace,monospace] text-[11px]" data-device-field="d-fingerprint">Reading…</dd></div>
+                    <div><dt class="v-kicker">Local device id (not sent)</dt><dd class="mt-0.5 break-all font-[family-name:'Geist_Mono',ui-monospace,monospace] text-[11px]" data-device-field="d-device-id">Reading…</dd></div>
+                </dl>
+            </div>
+        </div>
+
+        <div class="v-card mt-4 p-4">
+            <p class="v-kicker">Why some fields say “Not exposed”</p>
+            <p class="mt-1 text-[12px] leading-relaxed text-muted" data-device-privacy-note>Checking your browser's privacy posture…</p>
         </div>
     </section>
 
