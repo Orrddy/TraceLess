@@ -33,6 +33,9 @@ traceless-app/.tmp_ping.php
 # Holds the deploy key used to push this repository. Never commit it.
 /.secrets/
 
+# Generated environment for the Altare app (contains production secrets).
+traceless-app/deploy/altare.env
+
 # Vendored third-party repositories -------------------------------------------
 # Upstream clones are fetched, not tracked: each is a separate Git repository
 # with its own history, and Git refuses to index files inside them.

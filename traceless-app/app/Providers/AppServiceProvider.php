@@ -11,6 +11,7 @@ use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Queue\Events\Looping;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,6 +31,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Every production deployment terminates TLS at a proxy that may not
+        // forward the request scheme. Generated URLs must stay https:// or the
+        // browser drops the secure session cookie on the first redirect.
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         // Refuse to run production with development conveniences enabled.
         // No-op in local, testing and any non-production environment.
         (new ProductionSafetyGuard)->enforce();
