@@ -48,6 +48,7 @@ no scan runs without a recorded ownership attestation.
 | 2026-11-23 | IP intelligence engine: four providers, 48h cache, single-flight analysis, weighted risk score, public JSON endpoint, honest 503/422 states, enriched IP tool with cache countdown |
 | 2026-11-23 | Free v1.0 beta gate (deep scans + monitoring for every account), deep-scan wall-clock budget, cache pruning, queued notifications and mail-failure recording |
 | 2026-11-23 | Licensed third-party effects integrated (fluid water-ripple film background, two spider crawlers), a browser-exposed device check card, and the 48h IP-cache countdown |
+| 2026-11-23 | Full “We see you” fingerprint panel (device-key + Web APIs) with honest Safari/iOS/Firefox gaps; image build fixed (docker vendor context + composer retries) |
 | 2026-11-24+ | Resend sender verification in production, uptime monitoring, backups, legal copy, secret rotation, live deep-scan QA |
 ### Verified right now
 
@@ -263,3 +264,21 @@ commercial-use licences were purchased from their authors' official distribution
 
 Credit is preserved in the source headers. The typewriter, device probe, film composition
 and page layout are original TraceLess work.
+## Browser fingerprint panel
+
+The landing page's "👀 We see you" panel reads only what the browser itself exposes.
+Device detection, OS, browser/engine/vendor, battery, network estimates and a canvas
+fingerprint come from the MIT-licensed [`@marufme/device-key`](https://github.com/maruf-me/device-key)
+package; GPU/renderer, storage quota, media capabilities and the local device id are
+read directly from Web APIs. Nothing is transmitted or stored.
+
+Safari/iOS and Firefox deliberately withhold parts of this surface. The panel prints
+"Not exposed" with a browser-specific explanation instead of guessing:
+
+- **iOS/iPadOS**: no battery API, no device memory, no network details, no user-agent
+  client hints, and device model hidden. iPadOS is detected from the desktop-class
+  Safari UA (`MacIntel` + touch) and labelled as iPadOS.
+- **macOS Safari**: UA client hints, device memory and network information are hidden;
+  WebGL vendor/renderer are masked. Hard-window model is not exposed.
+- **Firefox**: UA client hints and device memory withheld; canvas/WebGL signatures can
+  be randomised per session.

@@ -197,34 +197,48 @@ async function initDevicePanel() {
     const os = getOSInfo();
     const browser = getBrowserInfo();
     const network = getNetworkInfo();
-    const ua = navigator.userAgent;
-    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    const isIPadDesktop = /iPad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isIPhone = /iPhone|iPod/i.test(ua);
+    const isIOS = isIPhone || isIPadDesktop;
 
-    const deviceType = /iPad|Tablet/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+    const deviceType = isIPadDesktop
         ? 'Tablet'
-        : (/Mobi|Android|iPhone|iPod/i.test(ua) ? 'Mobile' : 'Desktop');
+        : (/Mobi|Android/i.test(ua) ? 'Mobile' : 'Desktop');
 
-    const mac = /mac/i.test(os.name || '') || navigator.platform === 'MacIntel';
+    const mac = !isIOS && (/mac/i.test(os.name || '') || navigator.platform === 'MacIntel');
 
     let model = null;
+    let platformVersion = null;
     try {
         if (navigator.userAgentData?.getHighEntropyValues) {
-            const high = await navigator.userAgentData.getHighEntropyValues(['model']);
+            const high = await navigator.userAgentData.getHighEntropyValues(['model', 'platformVersion']);
             model = high.model || null;
+            platformVersion = high.platformVersion || null;
         }
     } catch (error) {
         model = null;
     }
 
     const deviceModel = model
-        || (/iPhone/i.test(ua) ? 'iPhone (model hidden by Safari)' : null)
-        || (/iPad/i.test(ua) ? 'iPad (model hidden by Safari)' : null)
-        || (mac ? 'Mac (model hidden by Safari)' : null)
-        || (deviceType === 'Desktop' ? `${os.name || 'PC'} ${deviceType.toLowerCase()}` : null)
+        || (isIPhone ? 'iPhone (model hidden by iOS)' : null)
+        || (isIPadDesktop ? 'iPad (model hidden by iPadOS)' : null)
+        || (mac ? 'Mac (hardware model not exposed)' : null)
+        || (deviceType === 'Desktop'
+            ? (/windows/i.test(os.name || '') ? 'Windows PC' : (os.name || 'PC'))
+            : `${os.name || 'Mobile device'} ${deviceType.toLowerCase()}`)
         || 'Not exposed';
 
-    const browserLine = [browser.name || 'Unknown', browser.version, browser.engine, browser.vendor].filter(Boolean).join(' · ');
-    const osLine = [os.name || 'Unknown OS', os.version, os.architecture].filter(Boolean).join(' · ');
+    const engine = isIOS ? 'WebKit' : (browser.engine || 'Unknown engine');
+    const vendor = isIOS ? 'Apple (WebKit required on iOS)' : (browser.vendor || 'Unknown vendor');
+    const browserLine = [browser.name || 'Unknown', browser.version, engine, vendor].filter(Boolean).join(' · ');
+    const windowsMajor = parseInt(String(platformVersion || '').split('.')[0] || '0', 10);
+    const osName = isIPadDesktop
+        ? 'iPadOS'
+        : (/windows/i.test(os.name || '') && windowsMajor >= 13 ? 'Windows 11' : (os.name || 'Unknown OS'));
+    const osVersion = isIPadDesktop
+        ? (navigator.userAgent.match(/OS (\d+)[._]/)?.[1] && `iPadOS ${navigator.userAgent.match(/OS (\d+)[._]/)[1]}`)
+        : (/windows/i.test(os.name || '') && windowsMajor >= 13 ? null : os.version);
+    const osLine = [osName, osVersion, os.architecture].filter(Boolean).join(' · ');
 
     // Compact card (hero).
     setField('device', deviceModel);
@@ -245,9 +259,12 @@ async function initDevicePanel() {
     setField('d-gpu', gpu ? `${gpu.vendor || 'Unknown vendor'} · ${gpu.renderer || 'Unknown renderer'}` : 'Not exposed');
     setField('d-gpu-cap', gpu?.capabilities || 'Not exposed');
 
-    const networkLine = [
+    const networkTypes = [...new Set([
         network.connectionType || connection?.type,
-        connection?.effectiveType ? `${connection.effectiveType}` : null,
+        connection?.effectiveType,
+    ].filter(Boolean))];
+    const networkLine = [
+        networkTypes.join(' / '),
         connection?.downlink ? `≈ ${connection.downlink} Mb/s` : null,
         connection?.rtt ? `${connection.rtt} ms RTT` : null,
     ].filter(Boolean).join(' · ');
@@ -263,7 +280,8 @@ async function initDevicePanel() {
     if (navigator.getBattery) {
         try {
             const battery = await getBatteryInfo();
-            const level = Math.round((battery.level ?? 0) * 100);
+            const rawLevel = Number(battery.level ?? 0);
+            const level = Math.min(100, Math.round(rawLevel > 1 ? rawLevel : rawLevel * 100));
             const charging = battery.charging ? 'charging' : 'on battery';
             const chargeTime = battery.charging && Number.isFinite(battery.chargingTime) && battery.chargingTime > 0
                 ? ` · ${Math.round(battery.chargingTime / 60)} min to full`

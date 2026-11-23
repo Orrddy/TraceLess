@@ -158,3 +158,17 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
   the server; no fingerprint is stored.
 - IP cache retains the "Cached for 48h · fresh scan in …" countdown on both the landing card
   and the network tool page.
+### Late 2026-11-23 — browser fingerprint panel
+
+- Landing "👀 We see you" panel expanded to a full client-side readout: browser /
+  engine / vendor, OS, device type/model, battery (level, charging, charge time),
+  CPU, device memory, GPU vendor+renderer+capabilities, display, network estimates,
+  UA/language/timezone, storage (LocalStorage/IndexedDB/quota), media capabilities,
+  canvas+device fingerprint and local device id.
+- Built on the MIT `@marufme/device-key` package plus direct Web APIs; nothing sent
+  to the server, nothing persisted. Safari/iOS/Firefox gaps are labelled "Not
+  exposed" with a per-browser privacy explanation; iPadOS is detected from the
+  desktop-class Safari UA and every iOS browser reports the WebKit engine.
+- Container image build fixed: `.dockerignore` no longer excludes
+  `resources/js/vendor`, and `composer install` retries three times because GitHub
+  dist endpoints intermittently answer 504 to CI traffic.
