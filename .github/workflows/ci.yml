@@ -108,6 +108,7 @@ jobs:
           OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
           set +e
           docker buildx build --progress=plain --platform linux/amd64 --target runtime \
+            -f traceless-app/Dockerfile \
             -t "ghcr.io/${OWNER}/traceless:${GITHUB_SHA}" \
             -t "ghcr.io/${OWNER}/traceless:latest" \
             --load . 2>&1 | tee /tmp/docker.log
