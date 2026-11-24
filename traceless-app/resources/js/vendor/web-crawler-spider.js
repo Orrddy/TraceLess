@@ -55,7 +55,13 @@ window.createTraceLessCrawler = function (apiKey) {
   };
   const SIZE = { S: .75, M: 1, L: 1.3 };
 
-  let opts = { autoRead: false, size: 'M', density: 'normal' };
+  let opts = { autoRead: false, size: 'M', density: 'normal', zone: [0, 1] };
+
+  // TraceLess: two crawlers run at once; each keeps to its own horizontal lane.
+  const zoneBounds = (s) => {
+    const z = Array.isArray(opts.zone) && opts.zone.length === 2 ? opts.zone : [0, 1];
+    return [s.l + (s.r - s.l) * z[0], s.l + (s.r - s.l) * z[1]];
+  };
   let D = DENSITY.normal;
 
   // ---------- overlay ----------
@@ -368,14 +374,16 @@ window.createTraceLessCrawler = function (apiKey) {
     const s = viewBox();
     if (R() < T.stopChance) {
       const c = add(S.p, mul(S.v, .3));
-      S.target = V(clamp(c.x, s.l, s.r), c.y);
+      const [zl, zr] = zoneBounds(s);
+      S.target = V(clamp(c.x, zl, zr), c.y);
       S.tUntil = S.stopUntil = now + range(T.stopTime);
       S.brake = true;
       return;
     }
     S.brake = false;
     const g = (R() + R() + R() - 1.5) / 1.5;
-    const x = clamp(mix((s.l + s.r) / 2 + g * (s.r - s.l) / 2 * .8, S.p.x, .4), s.l, s.r);
+    const [zl, zr] = zoneBounds(s);
+      const x = clamp(mix((zl + zr) / 2 + g * (zr - zl) / 2 * .8, S.p.x, .4), zl, zr);
     let y;
     const atBottom = sy() + H >= docH - 4;
     if (reading() && !atBottom) {
@@ -682,7 +690,8 @@ window.createTraceLessCrawler = function (apiKey) {
     resize();
     buildLegs();
     // enter from the top of the current view, near the middle
-    S.p = V(sx() + W * (.4 + R() * .2), sy() + Math.min(H * .9, 760));
+    const [zl, zr] = zoneBounds({ l: sx(), r: sx() + W });
+      S.p = V(zl + (zr - zl) * (.35 + R() * .3), sy() + Math.min(H * .9, 760));
     S.v = V(); S.heading = Math.PI / 2;
     S.abd = add(S.p, V(0, -17 * SCALE)); S.spin = add(S.p, V(0, -30 * SCALE));
     camY = viewY = lastY = sy();

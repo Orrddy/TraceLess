@@ -20,6 +20,8 @@ import {
     getCanvasFingerprint,
 } from '@marufme/device-key';
 
+import { initWaterRipple } from './vendor/water-ripple';
+
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* -------------------------------------------------------------------------
@@ -186,6 +188,7 @@ function privacyNotes() {
 function setField(name, value) {
     document.querySelectorAll(`[data-device-field="${name}"]`).forEach((el) => {
         el.textContent = value === null || value === undefined || value === '' ? 'Not exposed' : value;
+        el.classList.remove('device-loading');
     });
 }
 
@@ -194,9 +197,13 @@ async function initDevicePanel() {
     const detailed = document.querySelector('[data-device-detail]');
     if (!compact && !detailed) return;
 
+    document.querySelectorAll('[data-device-field]').forEach((el) => el.classList.add('device-loading'));
+
     const os = getOSInfo();
     const browser = getBrowserInfo();
     const network = getNetworkInfo();
+    const ua = navigator.userAgent;
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     const isIPadDesktop = /iPad/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const isIPhone = /iPhone|iPod/i.test(ua);
     const isIOS = isIPhone || isIPadDesktop;
@@ -328,9 +335,11 @@ async function initDevicePanel() {
 function initRipple() {
     if (reduceMotion()) return;
 
-    import('./vendor/water-ripple').then(({ initWaterRipple }) => {
+    try {
         initWaterRipple();
-    });
+    } catch (error) {
+        // WebGL2 unavailable: the plain film video stays visible.
+    }
 }
 
 function startCrawlers() {
@@ -341,8 +350,8 @@ function startCrawlers() {
         if (typeof factory !== 'function') return;
 
         [
-            ['__tlCrawlerOne', { autoRead: false, size: 'S', density: 'calm' }],
-            ['__tlCrawlerTwo', { autoRead: false, size: 'S', density: 'calm' }],
+            ['__tlCrawlerOne', { autoRead: false, size: 'S', density: 'calm', zone: [0.03, 0.47] }],
+            ['__tlCrawlerTwo', { autoRead: false, size: 'S', density: 'calm', zone: [0.53, 0.97] }],
         ].forEach(([key, options]) => {
             try {
                 factory(key);

@@ -297,7 +297,7 @@ export function initWaterRipple(container = document.querySelector('[data-ripple
                 const prev = (current + 2) % 3;
                 const next = (current + 1) % 3;
 
-                velocity = Math.min(0.04, Math.hypot(mouse.x - prevMouse.x, mouse.y - prevMouse.y));
+                velocity = Math.min(0.025, Math.hypot(mouse.x - prevMouse.x, mouse.y - prevMouse.y));
 
                 // 1. Fluid simulation pass.
                 gl.useProgram(fluid);
@@ -312,11 +312,11 @@ export function initWaterRipple(container = document.querySelector('[data-ripple
                 gl.uniform1i(fluidUniforms.uCurrentState, 1);
                 gl.uniform2f(fluidUniforms.uResolution, SIM_SIZE, SIM_SIZE);
                 gl.uniform1f(fluidUniforms.uViscosity, 0.96);
-                gl.uniform1f(fluidUniforms.uDecay, 0.985);
+                gl.uniform1f(fluidUniforms.uDecay, 0.975);
                 gl.uniform2f(fluidUniforms.uMouse, mouse.x, mouse.y);
                 gl.uniform2f(fluidUniforms.uPrevMouse, prevMouse.x, prevMouse.y);
-                gl.uniform1f(fluidUniforms.uRadius, 0.075);
-                gl.uniform1f(fluidUniforms.uIntensity, 0.55);
+                gl.uniform1f(fluidUniforms.uRadius, 0.045);
+                gl.uniform1f(fluidUniforms.uIntensity, 0.28);
                 gl.uniform1f(fluidUniforms.uMouseVelocity, velocity);
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
@@ -340,10 +340,10 @@ export function initWaterRipple(container = document.querySelector('[data-ripple
                 const imageAspect = (video.videoWidth || 16) / (video.videoHeight || 9);
                 gl.uniform1f(screenUniforms.uImageAspect, imageAspect);
                 gl.uniform1f(screenUniforms.uPlaneAspect, canvas.width / Math.max(1, canvas.height));
-                gl.uniform1f(screenUniforms.uDistortionStrength, 0.045);
-                gl.uniform1f(screenUniforms.uAberration, 0.006);
-                gl.uniform1f(screenUniforms.uLightIntensity, 1.15);
-                gl.uniform1f(screenUniforms.uSpecularPower, 42.0);
+                gl.uniform1f(screenUniforms.uDistortionStrength, 0.018);
+                gl.uniform1f(screenUniforms.uAberration, 0.0022);
+                gl.uniform1f(screenUniforms.uLightIntensity, 0.7);
+                gl.uniform1f(screenUniforms.uSpecularPower, 64.0);
                 gl.uniform2f(screenUniforms.uResolution, SIM_SIZE, SIM_SIZE);
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 

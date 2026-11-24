@@ -1101,3 +1101,65 @@
         .subtitle-loop { animation: none !important; }
     }
 }
+
+/* Device panel: shimmering loading placeholders */
+[data-device-field].device-loading {
+    position: relative;
+    display: inline-block;
+    min-width: 5.5rem;
+    min-height: 0.95em;
+    overflow: hidden;
+    color: transparent !important;
+    border-radius: 3px;
+    background: rgba(120, 120, 128, 0.14);
+    vertical-align: middle;
+}
+[data-device-field].device-loading::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+    animation: device-sheen 1.35s ease-in-out infinite;
+}
+.dark [data-device-field].device-loading::after {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+}
+@keyframes device-sheen {
+    100% { transform: translateX(100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+    [data-device-field].device-loading::after { animation: none; opacity: 0; }
+}
+
+/* Mobile: show the whole film, edge to edge, instead of a cropped tall crop */
+@media (max-width: 640px) {
+    .film-bleed {
+        left: auto;
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+    }
+    .film-stage {
+        height: auto;
+        min-height: 0;
+        max-height: none;
+        aspect-ratio: 16 / 9;
+    }
+    .film-stage .film-video {
+        height: 100%;
+        object-fit: cover;
+    }
+    .film-caption {
+        padding: 0.75rem 1rem 0.85rem;
+    }
+    .film-caption > p:first-child {
+        font-size: 9px;
+    }
+    .film-caption .max-w-xl {
+        font-size: 0.95rem;
+        line-height: 1.35;
+    }
+    .film-caption span {
+        display: none; /* the pointer hint makes no sense on touch */
+    }
+}
