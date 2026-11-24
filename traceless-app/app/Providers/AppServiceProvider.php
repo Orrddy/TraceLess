@@ -12,6 +12,7 @@ use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Queue\Events\Looping;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Throwable;
@@ -43,6 +44,25 @@ class AppServiceProvider extends ServiceProvider
         // Refuse to run production with development conveniences enabled.
         // No-op in local, testing and any non-production environment.
         (new ProductionSafetyGuard)->enforce();
+
+        // Resend selected but its key missing (a half-finished deployment) must
+        // not take sign-in down. Fall back to the authenticated DirectAdmin
+        // mailbox when one is configured, and use its address as the sender so
+        // the relay accepts the message. Prefer the Resend key once it is set.
+        if (config('mail.default') === 'resend' && blank(config('services.resend.key'))) {
+            $smtp = config('mail.mailers.smtp');
+
+            if (! empty($smtp['username']) && ! empty($smtp['password'])) {
+                config([
+                    'mail.default' => 'smtp',
+                    'mail.from.address' => $smtp['username'],
+                ]);
+
+                Log::warning('mail_resend_key_missing_using_smtp_fallback', [
+                    'from' => $smtp['username'],
+                ]);
+            }
+        }
 
         // Refuse data-destroying commands against the Neon production branch.
         Event::listen(CommandStarting::class, fn (CommandStarting $event) => (new DestructiveCommandGuard)->handle($event));

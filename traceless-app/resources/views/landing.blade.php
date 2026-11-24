@@ -271,10 +271,6 @@
             <div>
                 <p class="v-kicker">👀 We see you</p>
                 <h2 class="mt-1 text-[clamp(1.4rem,2.2vw,1.75rem)] font-semibold tracking-[-1px]">What your browser reveals before you sign up.</h2>
-                <p class="mt-2 max-w-2xl text-[13px] leading-relaxed text-body">
-                    Read locally with the MIT-licensed <span class="font-medium text-ink">@marufme/device-key</span> package plus plain Web APIs.
-                    Nothing on this panel is sent to TraceLess or persisted.
-                </p>
             </div>
             <span class="v-pill">Client-side · not stored</span>
         </div>
