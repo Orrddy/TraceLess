@@ -14,6 +14,7 @@ no scan runs without a recorded ownership attestation.
 > queue + scheduler) with Neon Postgres, the multi-provider IP intelligence
 > engine and a Vercel-style light/dark interface. Billing arrives in v2.0.
 > Current state and next steps: [PROGRESS.md](PROGRESS.md).
+> Full source inventory and deep-scan limits: [SCANNING.md](SCANNING.md).
 
 ---
 

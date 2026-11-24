@@ -236,7 +236,8 @@ function initClock(root) {
     }
 
     const offset = Number.isFinite(serverNow) ? serverNow - Date.now() : 0;
-    const startAt = deadline - (root.dataset.type === 'deep_scan' ? 7200 : 120) * 1000;
+    const etaSeconds = Number(root.dataset.etaSeconds) || (root.dataset.type === 'deep_scan' ? 7200 : 120);
+    const startAt = deadline - etaSeconds * 1000;
     const total = deadline - startAt;
 
     const stageItems = [...root.querySelectorAll('[data-stage-item]')];

@@ -118,7 +118,7 @@ supervise() {
 ln -sfn "$APP_ROOT" "$HOME/traceless-current" 2>/dev/null || true
 
 cd "$APP_ROOT" || exit 1
-supervise queue php artisan queue:work --queue=scans,default --sleep=3 --tries=1 --timeout=610
+supervise queue php artisan queue:work --queue=scans,default --sleep=3 --tries=1 --timeout=7800
 supervise schedule php artisan schedule:work
 
 # --- Caddy (main process) -------------------------------------------------

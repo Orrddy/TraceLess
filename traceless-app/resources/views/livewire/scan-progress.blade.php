@@ -12,6 +12,7 @@
      data-status="{{ $scan->status }}"
      data-active="{{ $active ? '1' : '0' }}"
      data-type="{{ $scan->type }}"
+     data-eta-seconds="{{ $scan->estimatedDurationSeconds() }}"
      data-progress="{{ $scan->progress_percentage }}"
      data-stage="{{ $scan->current_stage }}"
      data-server-now-ms="{{ now()->getTimestampMs() }}"

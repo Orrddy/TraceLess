@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\RunScanJob;
 use App\Livewire\Scans\ScanProgress;
 use App\Mail\DeepScanStartedMail;
 use App\Models\IdentityProfile;
@@ -118,5 +119,12 @@ class ScanConsoleTest extends TestCase
             ->assertSee('Sweep complete')
             ->assertSee('7 public records found')
             ->assertSee('Open results');
+    }
+
+    public function test_the_deep_scan_budget_allows_two_hours(): void
+    {
+        $this->assertSame(7200, (int) config('traceless.scan.deep_wall_clock_seconds'));
+        $this->assertSame(7600, (new RunScanJob(new Scan))->timeout);
+        $this->assertGreaterThanOrEqual(8100, (int) config('queue.connections.database.retry_after'));
     }
 }

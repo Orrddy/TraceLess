@@ -55,7 +55,7 @@ _Last updated: 2026-11-23 (end of day)_
 ### Beta & operations
 - `BetaAccess` gate: while `TRACELESS_BETA=true`, every active account gets deep scans and
   recurring monitoring; v2.0 flips it off to restore plan checks. No billing path exists.
-- Deep-scan wall-clock budget (480s) so a scan fails cleanly before the 600s job timeout.
+- Deep-scan wall-clock budget raised to 7200s (two hours); the queue worker timeout is 7800s and the database retry window 8100s so a long crawl is never re-delivered.
 - Notifications queue (`ShouldQueue`); mail failures are recorded to `/admin/email` and
   surface as form errors instead of 500s.
 - Retention: `traceless:prune` also prunes `outbound_emails`; IP cache prune daily.
@@ -187,5 +187,5 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
 - **Uptime monitor**: `.github/workflows/uptime.yml` probes `/up` from GitHub every five
   minutes and emails via Resend on failure. Requires repo secrets `RESEND_API_KEY` and
   `ALERT_EMAIL`; optional variable `PROD_URL`.
-- Deep scans still complete as soon as the crawl finishes (usually minutes); the
+- Deep scans are now allowed to crawl for the full two hours (worker timeout 7800s, job timeout 7600s, queue retry window 8100s, stale reaper untouched because the scan row is refreshed between identifiers). They complete as soon as the crawl finishes; the
   2-hour figure is an upper-bound estimate, and the UI jumps to the results when done.

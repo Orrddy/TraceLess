@@ -61,9 +61,10 @@ return [
         'stage_delay_ms' => (int) env('TRACELESS_SCAN_DELAY_MS', 900),
         'minimum_score' => 5,
         // Total wall-clock budget for a deep scan (discovery plus source
-        // processing). It must stay below the 600s job timeout so the scan is
-        // failed cleanly instead of the worker being killed mid-write.
-        'deep_wall_clock_seconds' => (int) env('TRACELESS_DEEP_WALL_CLOCK', 480),
+        // processing). A full deep crawl probes thousands of public sources, so
+        // it is allowed to run for up to two hours. It stays below the queue
+        // worker/job timeouts so the scan fails cleanly instead of being killed.
+        'deep_wall_clock_seconds' => max(7200, (int) env('TRACELESS_DEEP_WALL_CLOCK', 7200)),
         // What the user is told to expect; the scan often finishes earlier.
         'deep_estimated_seconds' => (int) env('TRACELESS_DEEP_ESTIMATED', 7200),
         'snapshot_estimated_seconds' => (int) env('TRACELESS_SNAPSHOT_ESTIMATED', 120),
