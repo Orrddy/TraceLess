@@ -225,7 +225,8 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
 - The "Your TraceLess scan is complete" email now uses a fully branded template
   with the app icon, Nevera wordmark, reference, findings count, privacy score
   and a results button — Laravel's default button/URL footer is gone.
-- Added a global branded **page loader** for the app and auth pages (rotating
-  mark, wordmark, sweeping progress bar) with reduced-motion and no-JS
-  fallbacks. Drop a loading.io export at `public/brand/page-loader.gif` (or
-  .svg/.webp/.png) to use it instead of the default brand animation.
+- Added a global branded **page loader** for the app and auth pages: an original
+  monochrome dot-globe with three 3D orbit rings, a pulse core and Nevera
+  wordmark. Reduced-motion, no-JS and timeout fallbacks are included; a custom
+  export can still override it at `public/brand/page-loader.gif` (or
+  .svg/.webp/.png).
