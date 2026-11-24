@@ -25,7 +25,9 @@ return [
     ],
 
     'resend' => [
-        'key' => env('RESEND_KEY'),
+        // Laravel's Resend transport reads RESEND_API_KEY; older TraceLess
+        // environments used RESEND_KEY, so accept both (new name wins).
+        'key' => env('RESEND_API_KEY') ?: env('RESEND_KEY'),
     ],
 
     'slack' => [
