@@ -9,13 +9,10 @@ use App\Models\IdentityProfile;
 use App\Models\RemovalTask;
 use App\Models\Scan;
 use App\Services\AuditService;
-use App\Services\ConsentService;
 use App\Services\DataResetService;
 use App\Services\RiskScoringService;
-use App\Services\ScanOrchestrator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 
 class Dashboard extends Component
@@ -135,33 +132,22 @@ class Dashboard extends Component
         $this->redirectRoute('scans.create');
     }
 
-    public function triggerQuickScan(ScanOrchestrator $orchestrator, ConsentService $consent)
+    /**
+     * "Run a scan" takes the user to their digital footprint first, so they can
+     * review the identifiers and explicitly choose snapshot vs deep scan.
+     * An already-running scan still opens its console.
+     */
+    public function triggerQuickScan()
     {
         if (! $this->profile) {
             return redirect()->route('identity.create');
         }
 
-        if (! $consent->hasValidConsent($this->profile)) {
-            $this->addError('scan', 'Consent is missing for this identity. Re-confirm consent before scanning.');
-
-            return null;
+        if ($scan = $this->profile->presentedActiveScan()) {
+            return redirect()->route('scans.show', $scan);
         }
 
-        $key = 'quick-scan:'.Auth::id();
-        if (RateLimiter::tooManyAttempts($key, 3)) {
-            $this->addError('scan', 'Please wait a moment before starting another scan.');
-
-            return null;
-        }
-        RateLimiter::hit($key, 60);
-
-        if ($this->profile->presentedActiveScan()) {
-            return redirect()->route('scans.show', $this->profile->presentedActiveScan());
-        }
-
-        $scan = $orchestrator->queueScan($this->profile, 'snapshot');
-
-        return redirect()->route('scans.show', $scan);
+        return redirect()->route('identity');
     }
 
     public function markResolved(int $credId): void

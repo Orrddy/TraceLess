@@ -48,33 +48,55 @@ function initScene(root) {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(38, mount.clientWidth / Math.max(1, mount.clientHeight), 0.1, 100);
-    camera.position.set(0, 0.15, 4.3);
+    camera.position.set(0, 0.15, 4.15);
 
     const group = new THREE.Group();
     scene.add(group);
 
-    const textureUrl = root.dataset.texture || '';
+    const loader = new THREE.TextureLoader();
+    const anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+
+    const dayMap = root.dataset.texture ? loader.load(root.dataset.texture, (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.anisotropy = anisotropy;
+    }) : null;
+    const bumpMap = root.dataset.bump ? loader.load(root.dataset.bump) : null;
+    const specularMap = root.dataset.specular ? loader.load(root.dataset.specular) : null;
+    const cloudMap = root.dataset.clouds ? loader.load(root.dataset.clouds) : null;
+
+    // Physically-lit blue marble: day texture, land relief, ocean specular and a
+    // separately-rotating cloud shell for a Google-Earth-like look.
     const globe = new THREE.Mesh(
-        new THREE.SphereGeometry(1.35, 96, 64),
-        new THREE.MeshStandardMaterial({
-            color: textureUrl ? 0xffffff : 0x0c2333,
-            map: textureUrl ? new THREE.TextureLoader().load(textureUrl, (tex) => {
-                tex.colorSpace = THREE.SRGBColorSpace;
-                tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
-            }) : null,
-            roughness: 0.82,
-            metalness: 0.12,
-            emissive: new THREE.Color(0x061a2a),
-            emissiveIntensity: 0.55,
+        new THREE.SphereGeometry(1.35, 128, 96),
+        new THREE.MeshPhongMaterial({
+            color: dayMap ? 0xffffff : 0x0c2333,
+            map: dayMap,
+            bumpMap,
+            bumpScale: 0.022,
+            specularMap,
+            specular: new THREE.Color(0x3f6f8d),
+            shininess: 18,
+            emissive: new THREE.Color(0x020912),
+            emissiveIntensity: 0.22,
         }),
     );
     group.add(globe);
 
-    // Graticule overlay for the sci-fi scan-console look.
-    group.add(new THREE.Mesh(
-        new THREE.SphereGeometry(1.352, 48, 32),
-        new THREE.MeshBasicMaterial({ color: 0x49d7ff, wireframe: true, transparent: true, opacity: 0.055 }),
-    ));
+    let cloudShell = null;
+    if (cloudMap) {
+        cloudShell = new THREE.Mesh(
+            new THREE.SphereGeometry(1.365, 128, 96),
+            new THREE.MeshPhongMaterial({
+                color: 0xffffff,
+                alphaMap: cloudMap,
+                transparent: true,
+                opacity: 0.5,
+                depthWrite: false,
+                specular: new THREE.Color(0x222222),
+            }),
+        );
+        group.add(cloudShell);
+    }
 
     // Atmosphere halo.
     const atmosphere = new THREE.Mesh(
@@ -168,11 +190,11 @@ function initScene(root) {
     starsGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
     scene.add(new THREE.Points(starsGeometry, new THREE.PointsMaterial({ color: 0xcfe9ff, size: 0.035, transparent: true, opacity: 0.55 })));
 
-    scene.add(new THREE.AmbientLight(0x35506b, 1.6));
-    const keyLight = new THREE.DirectionalLight(0xdfefff, 2.4);
-    keyLight.position.set(4, 2.5, 5);
+    scene.add(new THREE.AmbientLight(0x7f95a8, 2.0));
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.9);
+    keyLight.position.set(3.2, 1.8, 5.5);
     scene.add(keyLight);
-    const rimLight = new THREE.DirectionalLight(0x49d7ff, 1.1);
+    const rimLight = new THREE.DirectionalLight(0x5fbcff, 0.7);
     rimLight.position.set(-4, -1, -3);
     scene.add(rimLight);
 
@@ -185,6 +207,7 @@ function initScene(root) {
         if (!reduced) {
             group.rotation.y += 0.0019;
             group.rotation.x = Math.sin(t * 0.11) * 0.045;
+            if (cloudShell) cloudShell.rotation.y += 0.0007;
 
             scanBand.position.y = Math.sin(t * 0.62) * 1.18;
             scanGlow.position.y = scanBand.position.y;

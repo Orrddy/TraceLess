@@ -22,3 +22,13 @@ if (document.querySelector('[data-scan-fx]')) {
 if (document.querySelector('[data-live-deadline]')) {
     initLiveClocks();
 }
+// One licensed spider visits the scan console (the landing page runs two).
+if (document.querySelector('[data-scan-fx]') && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    import('./vendor/web-crawler-spider').then(() => {
+        const factory = window.createTraceLessCrawler;
+        if (typeof factory === 'function') {
+            factory('__tlScanCrawler');
+            window.__tlScanCrawler?.start({ autoRead: false, size: 'S', density: 'calm' });
+        }
+    });
+}

@@ -1434,10 +1434,19 @@
     position: relative;
     overflow: hidden;
     border-color: rgba(73, 215, 255, 0.32) !important;
-    background:
-        linear-gradient(110deg, rgba(73, 215, 255, 0.06), transparent 42%),
-        var(--v-card, #fff);
     transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.live-scan-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.85;
+    background: linear-gradient(110deg, rgba(73, 215, 255, 0.1), transparent 45%);
+}
+.live-scan-card > * {
+    position: relative;
+    z-index: 1;
 }
 .live-scan-card::after {
     content: "";

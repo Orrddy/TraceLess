@@ -205,3 +205,15 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
   an internal scroll area; the avatar in the top bar links to account settings.
 - Browser titles are professional page names (Dashboard, Exposure report, Scan
   progress, Account settings, …) instead of ids and `//` separators.
+### 2026-11-24 — realistic globe, scan-page spider, dashboard clarity
+
+- Earth upgraded from a flat texture to a physically-lit blue marble with land
+  relief, ocean specular, a separately rotating cloud shell and atmosphere glow
+  (NASA Blue Marble, public domain). The graticule overlay was removed.
+- One licensed Web Crawler now walks the scan console only; the landing page
+  keeps its two raiders.
+- Dashboard live card no longer overrides the theme background (it was a white
+  box in dark mode), its “click to watch” copy and button were removed, and the
+  card remains clickable with a server-timed countdown.
+- “Run a scan” now opens Digital footprint so the identity and scan type are
+  explicit; beta accounts default to the two-hour deep scan on the scan form.

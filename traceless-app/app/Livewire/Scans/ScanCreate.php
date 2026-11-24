@@ -31,6 +31,12 @@ class ScanCreate extends Component
     {
         $this->profiles = IdentityProfile::where('user_id', Auth::id())->latest()->get();
         $this->profile_id = $this->profiles->first()?->id;
+
+        // Free beta: deep scan is the default so the two-hour crawl is the
+        // normal experience; snapshot remains available for a quick check.
+        if (Auth::user()?->isDeepScan()) {
+            $this->type = 'deep_scan';
+        }
     }
 
     public function start(ScanOrchestrator $orchestrator, ConsentService $consent, AuditService $audit)

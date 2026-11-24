@@ -140,7 +140,7 @@
                                 @if($presentedScan->isHoldingResults())
                                     Results arrive when the countdown ends; we will email you.
                                 @else
-                                    Click to watch the scan console and live telemetry.
+                                    Live server-side crawl in progress.
                                 @endif
                             </p>
                         </div>
@@ -149,7 +149,6 @@
                         <span class="font-[family-name:'Geist_Mono',ui-monospace,monospace] text-lg tabular-nums text-[color:var(--v-ink)]"
                               data-live-deadline="{{ $presentedScan->estimatedCompletionAt()?->getTimestampMs() }}"
                               data-live-server="{{ now()->getTimestampMs() }}">--:--:--</span>
-                        <span class="v-btn v-btn-secondary">Open live view →</span>
                     </div>
                 </a>
             @endif

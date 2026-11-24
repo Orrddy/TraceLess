@@ -26,7 +26,10 @@
      data-server-now-ms="{{ now()->getTimestampMs() }}"
      data-deadline-ms="{{ $eta?->getTimestampMs() }}"
      data-status-url="{{ route('scans.status', $scan) }}"
-     data-texture="{{ asset('assets/earth/earth-map.jpg') }}">
+     data-texture="{{ asset('assets/earth/earth-map.jpg') }}"
+     data-bump="{{ asset('assets/earth/earth-bump.jpg') }}"
+     data-specular="{{ asset('assets/earth/earth-specular.jpg') }}"
+     data-clouds="{{ asset('assets/earth/earth-clouds.jpg') }}">
 
     <div class="scan-grid" aria-hidden="true"></div>
     <div class="scan-earth" data-earth aria-hidden="true"></div>
