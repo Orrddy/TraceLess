@@ -342,10 +342,6 @@
         </div>
     </section>
 
-    <div class="flex flex-wrap items-center justify-between gap-2 py-3 text-[11px] text-muted">
-        <span>👀 Two licensed crawlers are loose on this page. They chew words, not people.</span>
-        <span>Hover to lure them · click to send them flying to a word</span>
-    </div>
 
     {{-- TRUST STRIP (marquee) --}}
     <section class="border-y border-line/70 py-4" aria-label="Product guarantees">

@@ -29,6 +29,8 @@
 </head>
 <body class="min-h-screen bg-canvas text-ink antialiased ops-shell v-shell" x-data="{ mobileNav: false }">
 
+    @include('partials.page-loader')
+
     <header class="sticky top-0 z-50 border-b border-line/70 bg-canvas/85 backdrop-blur-md">
         <div class="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-4 px-5 sm:px-8">
             <div class="flex items-center gap-8">

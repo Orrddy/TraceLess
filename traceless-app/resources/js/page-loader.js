@@ -10,28 +10,41 @@ export function initPageLoader() {
     if (!loader) return;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // The loader is a deliberate brand moment: keep it visible long enough to
+    // read the orbit instead of flashing for 80ms on a warm cache.
+    const minVisibleMs = reduced ? 250 : 1100;
+    const shownAt = performance.now();
     let hideTimer = null;
+    let hideAt = null;
 
     const show = () => {
         window.clearTimeout(hideTimer);
-        loader.classList.remove('is-hidden');
+        loader.classList.remove('is-hidden', 'is-leaving');
         document.documentElement.classList.add('is-page-loading');
     };
 
     const hide = () => {
+        window.clearTimeout(hideTimer);
+        loader.classList.add('is-leaving');
         loader.classList.add('is-hidden');
         document.documentElement.classList.remove('is-page-loading');
     };
 
+    const hideAfterMinimum = () => {
+        const remaining = Math.max(0, minVisibleMs - (performance.now() - shownAt));
+        window.clearTimeout(hideAt);
+        hideAt = window.setTimeout(hide, remaining);
+    };
+
     if (document.readyState === 'complete') {
-        hide();
+        hideAfterMinimum();
     } else {
-        window.addEventListener('load', hide, { once: true });
+        window.addEventListener('load', hideAfterMinimum, { once: true });
         // Never trap the user behind the loader if a third-party asset hangs.
-        hideTimer = window.setTimeout(hide, reduced ? 2500 : 6000);
+        hideTimer = window.setTimeout(hide, reduced ? 2500 : 7000);
     }
 
-    window.addEventListener('pageshow', hide);
+    window.addEventListener('pageshow', hideAfterMinimum);
     window.addEventListener('beforeunload', show);
 
     document.addEventListener('click', (event) => {

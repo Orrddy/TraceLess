@@ -230,3 +230,13 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
   wordmark. Reduced-motion, no-JS and timeout fallbacks are included; a custom
   export can still override it at `public/brand/page-loader.gif` (or
   .svg/.webp/.png).
+### 2026-11-24 — loader on the landing page, white brand, orbit delay
+
+- The monochrome dot-globe loader now also covers the marketing/landing layout.
+- Loader backdrop is a deep navy gradient in both themes; the TraceLess Nevera
+  wordmark, progress sweep and globe are white so the brand reads clearly.
+- The loader keeps a deliberate ~1.1s minimum on screen (250ms with reduced
+  motion) before fading, so the 3D orbit is actually visible on fast loads;
+  movement uses linear GPU transforms with will-change for smoothness.
+- Removed the landing-page crawler instruction strip; the licensed crawlers
+  still run, they just no longer carry explanatory copy.
