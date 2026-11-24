@@ -18,8 +18,8 @@
                                         <img src="{{ $logoUrl }}" width="44" height="44" alt="TraceLess" style="display:block;width:44px;height:44px;border:0;outline:none;text-decoration:none;border-radius:10px;">
                                     </td>
                                     <td style="vertical-align:middle;">
-                                        <span style="font-family:Georgia,'Times New Roman',serif;font-size:24px;color:#FFFFFF;letter-spacing:-0.5px;">TraceLess</span>
-                                        <span style="display:block;margin-top:4px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#7DE3FF;">Secure access // one-time code</span>
+                                        <img src="{{ $wordmarkUrl }}" width="240" height="30" alt="TraceLess" style="display:block;width:240px;height:30px;border:0;outline:none;text-decoration:none;font-family:Georgia,'Times New Roman',serif;font-size:24px;color:#FFFFFF;">
+                                        <span style="display:block;margin-top:6px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#7DE3FF;">Secure access // one-time code</span>
                                     </td>
                                 </tr>
                             </table>

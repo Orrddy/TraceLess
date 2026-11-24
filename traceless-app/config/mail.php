@@ -119,5 +119,6 @@ return [
     */
 
     'logo_url' => env('MAIL_LOGO_URL'),
+    'wordmark_url' => env('MAIL_WORDMARK_URL'),
 
 ];

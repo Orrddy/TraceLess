@@ -39,6 +39,7 @@ class OtpCodeMail extends Mailable
                 'code' => $this->code,
                 'expiresInMinutes' => $this->expiresInMinutes,
                 'logoUrl' => config('mail.logo_url') ?: asset('apple-touch-icon.png'),
+                'wordmarkUrl' => config('mail.wordmark_url') ?: asset('brand/wordmark-email.png'),
                 'purposeLabel' => match ($this->purpose) {
                     EmailOtp::PURPOSE_REGISTER => 'finish creating your account',
                     EmailOtp::PURPOSE_DELETE_ACCOUNT => 'confirm permanent account deletion',

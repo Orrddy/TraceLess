@@ -14,6 +14,7 @@ class OtpMailBrandingTest extends TestCase
 
         $this->assertStringContainsString('apple-touch-icon.png', $html);
         $this->assertStringContainsString('alt="TraceLess"', $html);
+        $this->assertStringContainsString('brand/wordmark-email.png', $html);
         $this->assertStringContainsString('123456', $html);
     }
 }
