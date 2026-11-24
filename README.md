@@ -248,6 +248,27 @@ privacy scores are prioritisation aids, not assessments of fact.
 Proprietary. See the project owner before redistribution.
 ---
 
+## Scan console assets
+
+The scan progress screen renders a rotating 3D globe with **Three.js** (MIT) using the
+NASA **Blue Marble** equirectangular texture (public domain, via Wikimedia Commons).
+The countdown is driven by server timestamps (queue time + the expected deep-scan
+window), not the client clock.
+
+## Uptime monitoring
+
+`.github/workflows/uptime.yml` probes `https://traceless.orrddy.store/up` every five
+minutes from GitHub's infrastructure and emails an alert through Resend when the status
+is not 2xx/3xx. Add these repository secrets for alerts (Settings → Secrets and
+variables → Actions):
+
+- `RESEND_API_KEY` — same Resend key used by the app
+- `ALERT_EMAIL` — where alerts should go (e.g. `orrddy@proton.me`)
+
+Optional repository variable: `PROD_URL` (defaults to `https://traceless.orrddy.store`).
+For SMS/phone escalation, point an UptimeRobot or Better Stack monitor at the same `/up`
+endpoint and use the same alert address.
+
 ## Third-party effects (commercial licences)
 
 Two interactive effects on the landing page are adapted from effect bundles whose

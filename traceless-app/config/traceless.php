@@ -64,6 +64,9 @@ return [
         // processing). It must stay below the 600s job timeout so the scan is
         // failed cleanly instead of the worker being killed mid-write.
         'deep_wall_clock_seconds' => (int) env('TRACELESS_DEEP_WALL_CLOCK', 480),
+        // What the user is told to expect; the scan often finishes earlier.
+        'deep_estimated_seconds' => (int) env('TRACELESS_DEEP_ESTIMATED', 7200),
+        'snapshot_estimated_seconds' => (int) env('TRACELESS_SNAPSHOT_ESTIMATED', 120),
         // Live scans check every monitored username. Each one runs the worker
         // as a separate process, so the count bounds the wall-clock time.
         'max_usernames' => (int) env('TRACELESS_MAX_USERNAMES', 5),

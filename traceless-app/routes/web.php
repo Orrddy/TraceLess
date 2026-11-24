@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountExportController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReportDownloadController;
+use App\Http\Controllers\ScanStatusController;
 use App\Livewire\Admin\ActivityLog;
 use App\Livewire\Admin\EmailDelivery;
 use App\Livewire\Admin\FailedJobs;
@@ -73,6 +74,7 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     Route::get('/scans', ScansIndex::class)->name('scans.index');
     Route::get('/scans/create', ScanCreate::class)->name('scans.create');
+    Route::get('/scans/{scan}/status', ScanStatusController::class)->name('scans.status');
     Route::get('/scans/{scan}', ScanProgress::class)->name('scans.show');
 
     Route::get('/findings', FindingsIndex::class)->name('findings');

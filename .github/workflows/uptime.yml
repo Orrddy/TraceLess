@@ -1,0 +1,74 @@
+name: Uptime
+
+on:
+  schedule:
+    # GitHub's minimum schedule interval. The probe runs from GitHub's
+    # infrastructure, so it still fires when the Altare container is down.
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Probe production health endpoint
+        id: probe
+        env:
+          PROD_URL: ${{ vars.PROD_URL }}
+        run: |
+          base="${PROD_URL:-https://traceless.orrddy.store}"
+          url="${base%/}/up"
+          code=$(curl -sS -o /tmp/up-body -w '%{http_code}' --max-time 20 --retry 2 --retry-delay 5 "$url" || echo 000)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          echo "HTTP $code from $url"
+          head -c 500 /tmp/up-body || true
+          if [ "$code" -ge 200 ] && [ "$code" -lt 400 ]; then
+            exit 0
+          fi
+          echo "::error::Production health check failed with HTTP $code"
+          exit 1
+
+      - name: Email the alert
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          CODE: ${{ steps.probe.outputs.code }}
+          URL: ${{ steps.probe.outputs.url }}
+        run: |
+          if [ -z "$RESEND_API_KEY" ] || [ -z "$ALERT_EMAIL" ]; then
+            echo "::warning::RESEND_API_KEY or ALERT_EMAIL secret is not configured; no alert email sent."
+            exit 0
+          fi
+          python3 - <<'PY'
+          import json, os, urllib.request
+          code = os.environ.get("CODE") or "unknown"
+          url = os.environ.get("URL") or "https://traceless.orrddy.store/up"
+          run_url = os.environ.get("RUN_URL", "")
+          body = {
+              "from": "TracelessBot <do-not-reply@orrddy.store>",
+              "to": [os.environ["ALERT_EMAIL"]],
+              "subject": f"[TraceLess] UPTIME ALERT — production returned {code}",
+              "text": (
+                  f"TraceLess production health check failed.\n\n"
+                  f"Endpoint: {url}\nHTTP status: {code}\nChecked from: GitHub Actions\n\n"
+                  f"Open the run: {run_url}\n\n"
+                  "If the container is unhealthy, redeploy the last good image and check Altare logs."
+              ),
+          }
+          req = urllib.request.Request(
+              "https://api.resend.com/emails",
+              data=json.dumps(body).encode(),
+              headers={"Authorization": f"Bearer {os.environ['RESEND_API_KEY']}", "Content-Type": "application/json"},
+              method="POST",
+          )
+          with urllib.request.urlopen(req, timeout=30) as response:
+              print("alert email sent", response.status)
+          PY

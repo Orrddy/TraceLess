@@ -1163,3 +1163,249 @@
         display: none; /* the pointer hint makes no sense on touch */
     }
 }
+
+/* ---------------------------------------------------------------------------
+ * Scan console (resources/js/scan-fx.js)
+ * ------------------------------------------------------------------------- */
+.scan-page {
+    position: relative;
+    min-height: 74vh;
+    overflow: hidden;
+    border-radius: 22px;
+    border: 1px solid rgba(90, 180, 220, 0.2);
+    background: radial-gradient(circle at 50% 42%, #0a2133 0%, #06101c 52%, #03070c 100%);
+    color: #eaf9ff;
+    isolation: isolate;
+}
+.scan-grid {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image:
+        linear-gradient(rgba(73, 215, 255, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(73, 215, 255, 0.055) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse at 50% 48%, black 30%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 48%, black 30%, transparent 78%);
+}
+.scan-earth {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+.scan-earth canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.scan-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, rgba(3, 7, 12, 0.72) 0%, transparent 26%, transparent 62%, rgba(3, 7, 12, 0.86) 100%),
+        radial-gradient(ellipse at 50% 45%, transparent 40%, rgba(3, 7, 12, 0.55) 100%);
+}
+.scan-hud {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    min-height: 74vh;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.75rem;
+    padding: clamp(1.1rem, 3vw, 2rem);
+    pointer-events: none;
+}
+.scan-hud a,
+.scan-hud button { pointer-events: auto; }
+.scan-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    border: 1px solid rgba(125, 227, 255, 0.28);
+    background: rgba(6, 20, 32, 0.72);
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #7de3ff;
+    backdrop-filter: blur(6px);
+}
+.scan-pill-muted {
+    border-color: rgba(122, 160, 180, 0.22);
+    color: #9cc4d6;
+}
+.scan-live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #6cf0c2;
+    box-shadow: 0 0 0 0 rgba(108, 240, 194, 0.7);
+    animation: scan-ping 1.8s ease-out infinite;
+}
+@keyframes scan-ping {
+    0% { box-shadow: 0 0 0 0 rgba(108, 240, 194, 0.6); }
+    70% { box-shadow: 0 0 0 8px rgba(108, 240, 194, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(108, 240, 194, 0); }
+}
+.scan-kicker {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #6ea9c2;
+}
+.scan-title {
+    margin-top: 0.35rem;
+    font-size: clamp(1.7rem, 3.4vw, 2.6rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: #f2fbff;
+}
+.scan-sub {
+    margin-top: 0.35rem;
+    max-width: 34rem;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #9cc4d6;
+}
+.scan-timer {
+    margin-top: 0.2rem;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: clamp(2.1rem, 6.2vw, 3.6rem);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    color: #effcff;
+    text-shadow: 0 0 26px rgba(73, 215, 255, 0.35);
+    font-variant-numeric: tabular-nums;
+}
+.scan-hint {
+    margin-top: 0.4rem;
+    max-width: 32rem;
+    font-size: 11px;
+    line-height: 1.55;
+    color: #7fa6b8;
+}
+.scan-bar {
+    position: relative;
+    height: 4px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(125, 227, 255, 0.12);
+}
+.scan-bar span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #2f7fa8, #49d7ff 60%, #6cf0c2);
+    box-shadow: 0 0 14px rgba(73, 215, 255, 0.55);
+    transition: width 0.8s ease;
+}
+.scan-stat {
+    border: 1px solid rgba(110, 169, 194, 0.18);
+    border-radius: 8px;
+    padding: 0.55rem 0.65rem;
+    background: rgba(6, 18, 29, 0.55);
+}
+.scan-stat dt { color: #6ea9c2; }
+.scan-stat dd {
+    margin-top: 0.2rem;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: #eaf9ff;
+}
+.scan-stages {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    align-self: end;
+}
+.scan-stage-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6f96a8;
+    opacity: 0.55;
+    transition: opacity 0.4s ease, color 0.4s ease;
+}
+.scan-stage-item.is-active {
+    color: #7de3ff;
+    opacity: 1;
+}
+.scan-stage-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: currentColor;
+    box-shadow: 0 0 8px currentColor;
+}
+.scan-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: 7px;
+    border: 1px solid rgba(125, 227, 255, 0.26);
+    background: rgba(8, 24, 38, 0.8);
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #cdefff;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    backdrop-filter: blur(6px);
+}
+.scan-button:hover { background: rgba(20, 55, 78, 0.9); border-color: rgba(125, 227, 255, 0.5); }
+.scan-button-ghost { color: #8ab8cc; }
+.scan-button-primary {
+    margin-top: 1rem;
+    border-color: #7de3ff;
+    background: #7de3ff;
+    color: #041019;
+}
+.scan-result {
+    align-self: center;
+    width: min(34rem, 100%);
+    border: 1px solid rgba(125, 227, 255, 0.28);
+    border-radius: 14px;
+    padding: 1.25rem 1.4rem;
+    background: rgba(5, 16, 26, 0.9);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(12px);
+    text-align: left;
+}
+.scan-result-title {
+    margin-top: 0.3rem;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #f2fbff;
+}
+.scan-result-copy {
+    margin-top: 0.4rem;
+    font-size: 12px;
+    line-height: 1.55;
+    color: #9cc4d6;
+}
+.scan-no-webgl .scan-earth {
+    background:
+        radial-gradient(circle at 50% 46%, rgba(73, 215, 255, 0.16), transparent 48%),
+        repeating-radial-gradient(circle at 50% 46%, rgba(125, 227, 255, 0.12) 0 1px, transparent 1px 22px);
+}
+@media (max-width: 640px) {
+    .scan-page, .scan-hud { min-height: 78vh; }
+    .scan-stages { display: none; }
+    .scan-hud { gap: 1.25rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .scan-live-dot { animation: none; }
+}

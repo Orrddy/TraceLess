@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 class Scan extends Model
 {
@@ -62,6 +63,33 @@ class Scan extends Model
     public function statusLabel(): string
     {
         return ScanStatus::tryFrom($this->status)?->label() ?? ucfirst($this->status);
+    }
+
+    /**
+     * Expected duration shown to the user. Deep scans are a full crawl; the
+     * actual job usually finishes sooner, but the countdown must stay stable
+     * across logout/login and multiple devices.
+     */
+    public function estimatedDurationSeconds(): int
+    {
+        return $this->type === 'deep_scan'
+            ? (int) config('traceless.scan.deep_estimated_seconds', 7200)
+            : (int) config('traceless.scan.snapshot_estimated_seconds', 120);
+    }
+
+    /**
+     * Absolute completion estimate, derived from the persisted queue time.
+     * Never relative to the client clock.
+     */
+    public function estimatedCompletionAt(): ?Carbon
+    {
+        if ($this->completed_at) {
+            return $this->completed_at;
+        }
+
+        $anchor = $this->created_at ?? $this->started_at;
+
+        return $anchor?->copy()->addSeconds($this->estimatedDurationSeconds());
     }
 
     public function durationForHumans(): string

@@ -8,6 +8,7 @@ use App\Events\ReportGenerated;
 use App\Events\ScanCompleted;
 use App\Events\ScanProgressUpdated;
 use App\Jobs\RunScanJob;
+use App\Mail\DeepScanStartedMail;
 use App\Models\Alert;
 use App\Models\CredentialExposure;
 use App\Models\Finding;
@@ -21,6 +22,7 @@ use App\Notifications\ScanCompletedNotification;
 use App\Support\ScanBudgetExceededException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use RuntimeException;
 use Throwable;
 
@@ -61,6 +63,19 @@ class ScanOrchestrator
             'sources_checked' => 0,
             'findings_count' => 0,
         ]);
+
+        // Tell the account email that a deep scan started, with the honest
+        // upper bound. Queued so a slow mail provider never delays the redirect.
+        if ($type === 'deep_scan' && ($email = $profile->user?->email)) {
+            try {
+                Mail::to($email)->queue(new DeepScanStartedMail($scan, $scan->estimatedDurationSeconds()));
+            } catch (Throwable $exception) {
+                Log::warning('deep_scan_started_mail_failed', [
+                    'scan_id' => $scan->id,
+                    'reason' => get_class($exception),
+                ]);
+            }
+        }
 
         RunScanJob::dispatch($scan)->onQueue('scans');
 

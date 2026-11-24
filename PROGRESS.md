@@ -172,3 +172,20 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
 - Container image build fixed: `.dockerignore` no longer excludes
   `resources/js/vendor`, and `composer install` retries three times because GitHub
   dist endpoints intermittently answer 504 to CI traffic.
+### 2026-11-24 — scan console, deep-scan email, uptime
+
+- **Scan console**: `/scans/{id}` now loads instantly with a Three.js rotating Earth
+  (NASA Blue Marble, public domain), atmosphere, orbital rings, moving scan band and
+  pulsing hit points, plus a sci-fi HUD. Countdown is an **absolute server timestamp**
+  derived from the queue time and the 2-hour deep-scan window, so signing out, signing
+  in on another browser or opening a second phone shows the same remaining time.
+  `/scans/{id}/status` exposes the same state as JSON; the page polls it and reloads
+  when the scan reaches a terminal state.
+- **Deep scan started email**: queued to the account email when a deep scan is created.
+  It states the scan can take up to 2 hours, links to the live progress page and notes
+  that progress continues while signed out. Uses the Nevera wordmark header.
+- **Uptime monitor**: `.github/workflows/uptime.yml` probes `/up` from GitHub every five
+  minutes and emails via Resend on failure. Requires repo secrets `RESEND_API_KEY` and
+  `ALERT_EMAIL`; optional variable `PROD_URL`.
+- Deep scans still complete as soon as the crawl finishes (usually minutes); the
+  2-hour figure is an upper-bound estimate, and the UI jumps to the results when done.

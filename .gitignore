@@ -54,3 +54,9 @@ python-services/.venv/
 .release/
 # Local task brief containing real provider API keys (never commit).
 /ip-intelligence.md
+# Local commercial effect bundles and handoff artefacts
+anti-slop/
+HANDOFF.md
+ROADMAP.txt
+traceless-release.tar.gz
+python-services/smtp_probe.php

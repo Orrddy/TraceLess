@@ -10,3 +10,9 @@ if (document.querySelector('[data-landing]')) {
         initLandingEffects();
     });
 }
+// Scan console (3D Earth, server-timed countdown) only where it is used.
+if (document.querySelector('[data-scan-fx]')) {
+    import('./scan-fx').then(({ initScanFx }) => {
+        initScanFx();
+    });
+}
