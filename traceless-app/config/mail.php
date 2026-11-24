@@ -113,4 +113,11 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    | Optional absolute HTTPS URL for the logo shown in the header of TraceLess
+    | emails. Defaults to the hosted app icon. Remote images must be public.
+    */
+
+    'logo_url' => env('MAIL_LOGO_URL'),
+
 ];

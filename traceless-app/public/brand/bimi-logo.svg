@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny-ps" viewBox="0 0 512 512">
+  <title>TraceLess</title>
+  <rect width="512" height="512" rx="96" fill="#07111F"/>
+  <g fill="none" stroke-linecap="round" transform="translate(28 28) scale(9.5)">
+    <circle cx="24" cy="24" r="9" stroke="#49D7FF" stroke-width="3.4" stroke-dasharray="45.24 11.31" transform="rotate(-72 24 24)"/>
+    <circle cx="24" cy="24" r="16" stroke="#F5F8FC" stroke-width="3" stroke-dasharray="64.79 35.74" transform="rotate(48 24 24)"/>
+    <circle cx="24" cy="24" r="21.5" stroke="#49D7FF" stroke-width="2.4" stroke-dasharray="1.4 8.2" transform="rotate(-20 24 24)"/>
+  </g>
+  <circle cx="256" cy="256" r="28.5" fill="#F5F8FC"/>
+</svg>

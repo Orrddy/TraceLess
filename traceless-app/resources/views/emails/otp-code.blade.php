@@ -12,8 +12,17 @@
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:520px;background:#FFFFFF;border:1px solid #E5E1D8;border-radius:20px;overflow:hidden;">
                     <tr>
                         <td style="background:#07111F;padding:24px 32px;">
-                            <span style="font-family:Georgia,'Times New Roman',serif;font-size:24px;color:#FFFFFF;letter-spacing:-0.5px;">TraceLess</span>
-                            <span style="display:block;margin-top:4px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#7DE3FF;">Secure access // one-time code</span>
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                <tr>
+                                    <td style="vertical-align:middle;padding-right:14px;">
+                                        <img src="{{ $logoUrl }}" width="44" height="44" alt="TraceLess" style="display:block;width:44px;height:44px;border:0;outline:none;text-decoration:none;border-radius:10px;">
+                                    </td>
+                                    <td style="vertical-align:middle;">
+                                        <span style="font-family:Georgia,'Times New Roman',serif;font-size:24px;color:#FFFFFF;letter-spacing:-0.5px;">TraceLess</span>
+                                        <span style="display:block;margin-top:4px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#7DE3FF;">Secure access // one-time code</span>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                     <tr>
