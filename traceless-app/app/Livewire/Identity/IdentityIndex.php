@@ -114,6 +114,6 @@ class IdentityIndex extends Component
     public function render()
     {
         return view('livewire.identity-index')
-            ->layout('layouts.app', ['title' => 'My Identity // TraceLess']);
+            ->layout('layouts.app', ['title' => 'Digital footprint — TraceLess']);
     }
 }

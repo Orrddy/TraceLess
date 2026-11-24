@@ -321,6 +321,6 @@ class SettingsPage extends Component
             'auditLogs' => Auth::user()->auditLogs()->latest()->take(10)->get(),
             'subscription' => Auth::user()->activeSubscription(),
             'profile' => Auth::user()->latestProfile(),
-        ])->layout('layouts.app', ['title' => 'Settings // TraceLess']);
+        ])->layout('layouts.app', ['title' => 'Account settings — TraceLess']);
     }
 }

@@ -34,6 +34,8 @@ class Dashboard extends Component
 
     public $recentScans = [];
 
+    public ?Scan $presentedScan = null;
+
     public array $removalProgress = [];
 
     public array $categoryStats = [];
@@ -66,7 +68,8 @@ class Dashboard extends Component
         $this->credentialExposures = CredentialExposure::where('identity_profile_id', $this->profile->id)->latest()->get();
         $this->alerts = Alert::where('identity_profile_id', $this->profile->id)->where('is_read', false)->latest()->take(4)->get();
         $this->recentScans = Scan::where('identity_profile_id', $this->profile->id)->latest()->take(6)->get();
-        $this->isScanning = (bool) $this->profile->activeScan();
+        $this->presentedScan = $this->profile->presentedActiveScan();
+        $this->isScanning = (bool) $this->presentedScan;
 
         $tasks = RemovalTask::where('identity_profile_id', $this->profile->id)->get();
         $this->removalProgress = [
@@ -152,8 +155,8 @@ class Dashboard extends Component
         }
         RateLimiter::hit($key, 60);
 
-        if ($this->profile->activeScan()) {
-            return redirect()->route('scans.show', $this->profile->activeScan());
+        if ($this->profile->presentedActiveScan()) {
+            return redirect()->route('scans.show', $this->profile->presentedActiveScan());
         }
 
         $scan = $orchestrator->queueScan($this->profile, 'snapshot');
@@ -185,6 +188,6 @@ class Dashboard extends Component
         $this->loadData();
 
         return view('livewire.dashboard')
-            ->layout('layouts.app', ['title' => 'Overview // TraceLess']);
+            ->layout('layouts.app', ['title' => 'Dashboard — TraceLess']);
     }
 }

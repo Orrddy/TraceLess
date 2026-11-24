@@ -48,6 +48,6 @@ class RemovalCenter extends Component
             : collect();
 
         return view('livewire.removal-center', compact('tasks', 'byStatus'))
-            ->layout('layouts.app', ['title' => 'Removal Actions // TraceLess']);
+            ->layout('layouts.app', ['title' => 'Removal guidance — TraceLess']);
     }
 }

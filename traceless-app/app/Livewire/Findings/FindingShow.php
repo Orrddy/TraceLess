@@ -79,6 +79,6 @@ class FindingShow extends Component
     public function render()
     {
         return view('livewire.finding-show')
-            ->layout('layouts.app', ['title' => 'Finding Detail // TraceLess']);
+            ->layout('layouts.app', ['title' => 'Finding details — TraceLess']);
     }
 }

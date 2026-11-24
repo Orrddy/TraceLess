@@ -59,6 +59,6 @@ class ReportsPage extends Component
         return view('livewire.reports-page', [
             'reports' => $reports,
             'isDeepScan' => Auth::user()->isDeepScan(),
-        ])->layout('layouts.app', ['title' => 'Reports // TraceLess']);
+        ])->layout('layouts.app', ['title' => 'Reports — TraceLess']);
     }
 }

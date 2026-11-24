@@ -229,6 +229,7 @@ function initClock(root) {
     let status = root.dataset.status || 'queued';
     let progress = Number(root.dataset.progress || 0);
     let active = root.dataset.active === '1';
+    const holding = root.dataset.holding === '1';
 
     if (!deadline || !Number.isFinite(deadline)) {
         // No estimate (already finished): leave server-rendered copy.
@@ -273,7 +274,7 @@ function initClock(root) {
         }
 
         if (statusPill && active) {
-            statusPill.textContent = remaining <= 0 ? 'FINALIZING' : 'SCANNING';
+            statusPill.textContent = holding || remaining <= 0 ? 'FINALIZING' : 'SCANNING';
         }
     };
 
@@ -302,9 +303,13 @@ function initClock(root) {
                 if (findings) findings.textContent = data.findings_count;
                 if (statusPill) statusPill.textContent = data.status_label?.toUpperCase() || String(status).toUpperCase();
 
-                if (!data.is_active) {
+                if (!data.is_presented_active) {
                     clearInterval(ticker);
                     window.location.reload();
+                } else if (data.holding_results) {
+                    if (statusPill) statusPill.textContent = 'FINALIZING';
+                    if (stageLabel) stageLabel.textContent = 'High traffic — finalizing the evidence package';
+                    if (stageTicker) stageTicker.textContent = 'Assembling the evidence graph';
                 }
             } catch (error) {
                 // Network blip: the countdown keeps using the server timestamps.

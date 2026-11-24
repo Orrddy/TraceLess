@@ -87,6 +87,27 @@ class IdentityProfile extends Model
         return $this->scans()->latest()->first();
     }
 
+    /**
+     * The scan shown as live in the UI: genuinely active, or a deep crawl that
+     * already finished but is still inside its two-hour presentation window.
+     */
+    public function presentedActiveScan(): ?Scan
+    {
+        $active = $this->activeScan();
+
+        if ($active) {
+            return $active;
+        }
+
+        $holding = $this->scans()
+            ->where('type', 'deep_scan')
+            ->where('status', 'completed')
+            ->latest()
+            ->first();
+
+        return $holding?->isHoldingResults() ? $holding : null;
+    }
+
     public function activeScan(): ?Scan
     {
         // A scan that stopped reporting is not "active"; treat it as gone so a

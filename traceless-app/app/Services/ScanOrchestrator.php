@@ -248,7 +248,17 @@ class ScanOrchestrator
             $this->emitMonitoringAlerts($profile, $scan, $inserted + $reappeared);
 
             event(new ScanCompleted($scan->fresh()));
-            $scan->identityProfile->user->notify(new ScanCompletedNotification($scan->fresh()));
+
+            // A deep crawl often finishes early. Keep the two-hour promise: the
+            // completion email and result reveal land at the same absolute time.
+            $notification = new ScanCompletedNotification($scan->fresh());
+            $reveal = $scan->resultsRevealAt();
+
+            if ($reveal && $reveal->isFuture()) {
+                $scan->identityProfile->user->notify($notification->delay($reveal));
+            } else {
+                $scan->identityProfile->user->notify($notification);
+            }
 
             Log::info('scan_completed', [
                 'scan_id' => $scan->id,

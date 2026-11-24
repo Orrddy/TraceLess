@@ -104,6 +104,6 @@ class IpCheck extends Component
     public function render()
     {
         return view('livewire.tools.ip-check')
-            ->layout('layouts.app', ['title' => 'Network intelligence // TraceLess']);
+            ->layout('layouts.app', ['title' => 'IP intelligence — TraceLess']);
     }
 }

@@ -98,11 +98,14 @@
                             <span class="v-pill">{{ $profile->primary_email }}</span>
                         @endif
                         <span class="v-pill">{{ $profile->region ?? 'Global' }}</span>
-                        @if($isScanning)
-                            <span class="v-pill">
-                                <span class="v-dot v-dot-blue"></span>
-                                Scan in progress
-                            </span>
+                        @if($presentedScan)
+                            <a href="{{ route('scans.show', $presentedScan) }}" class="v-pill live-scan-pill" aria-label="Open the live scan">
+                                <span class="v-dot v-dot-green live-dot"></span>
+                                <span>{{ $presentedScan->isHoldingResults() ? 'Finalizing' : 'Scan in progress' }}</span>
+                                <span class="font-[family-name:'Geist_Mono',ui-monospace,monospace] tabular-nums"
+                                      data-live-deadline="{{ $presentedScan->estimatedCompletionAt()?->getTimestampMs() }}"
+                                      data-live-server="{{ now()->getTimestampMs() }}">--:--:--</span>
+                            </a>
                         @endif
                     </div>
                 </div>
@@ -121,6 +124,35 @@
                     </button>
                 </div>
             </header>
+
+            @if($presentedScan)
+                <a href="{{ route('scans.show', $presentedScan) }}"
+                   class="live-scan-card v-card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+                   aria-label="Open the live scan">
+                    <div class="flex items-center gap-3">
+                        <span class="live-lights" aria-hidden="true"><i class="g"></i><i class="p"></i><i class="r"></i><i class="b"></i></span>
+                        <div>
+                            <p class="text-[13px] font-medium text-[color:var(--v-ink)]">
+                                {{ $presentedScan->type === 'deep_scan' ? 'Deep scan' : 'Scan' }} is running
+                                @if($presentedScan->isHoldingResults()) — high traffic, finalizing @endif
+                            </p>
+                            <p class="v-kicker mt-0.5">
+                                @if($presentedScan->isHoldingResults())
+                                    Results arrive when the countdown ends; we will email you.
+                                @else
+                                    Click to watch the scan console and live telemetry.
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 sm:shrink-0">
+                        <span class="font-[family-name:'Geist_Mono',ui-monospace,monospace] text-lg tabular-nums text-[color:var(--v-ink)]"
+                              data-live-deadline="{{ $presentedScan->estimatedCompletionAt()?->getTimestampMs() }}"
+                              data-live-server="{{ now()->getTimestampMs() }}">--:--:--</span>
+                        <span class="v-btn v-btn-secondary">Open live view →</span>
+                    </div>
+                </a>
+            @endif
 
             @error('scan')
                 <p class="text-[13px] text-[#E5484D]">{{ $message }}</p>
@@ -277,15 +309,16 @@
                                 @foreach($recentScans as $scan)
                                     @php
                                         $scanDot = $scanDots[$scan->status] ?? 'v-dot-blue';
+                                        $scanLive = $scan->isPresentedActive();
                                     @endphp
                                     <a href="{{ route('scans.show', $scan) }}" class="v-row flex items-center gap-3 px-5 py-3">
-                                        <span class="v-dot {{ $scanDot }}"></span>
+                                        <span class="v-dot {{ $scanDot }} {{ $scanLive ? 'live-dot' : '' }}"></span>
                                         <span class="min-w-0 flex-1">
                                             <span class="block text-[13px] font-medium capitalize text-[color:var(--v-ink)]">
                                                 {{ str_replace('_', ' ', $scan->type) }}
                                             </span>
                                             <span class="v-kicker block">
-                                                {{ $scan->statusLabel() }} · {{ $scan->created_at?->diffForHumans(short: true) }}
+                                                {{ $scan->isHoldingResults() ? 'Finalizing — results soon' : $scan->statusLabel() }} · {{ $scan->created_at?->diffForHumans(short: true) }}
                                             </span>
                                         </span>
                                         <span class="v-small shrink-0">{{ (int) $scan->findings_count }} found</span>

@@ -55,6 +55,6 @@ class RemovalShow extends Component
     public function render()
     {
         return view('livewire.removal-show')
-            ->layout('layouts.app', ['title' => 'Removal Task // TraceLess']);
+            ->layout('layouts.app', ['title' => 'Removal task — TraceLess']);
     }
 }

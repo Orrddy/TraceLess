@@ -69,6 +69,6 @@ class CredentialExposures extends Component
         ];
 
         return view('livewire.credential-exposures', compact('exposures', 'stats'))
-            ->layout('layouts.app', ['title' => 'Credential Exposure // TraceLess']);
+            ->layout('layouts.app', ['title' => 'Credential monitor — TraceLess']);
     }
 }

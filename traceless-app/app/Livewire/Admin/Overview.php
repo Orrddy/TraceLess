@@ -81,6 +81,6 @@ class Overview extends Component
             'recentScans' => Scan::with('identityProfile.user')->latest()->take(8)->get(),
             'recentUsers' => User::latest()->take(6)->get(),
             'recentAudit' => AuditLog::with('user')->latest()->take(8)->get(),
-        ])->layout('layouts.app', ['title' => 'Admin overview // TraceLess']);
+        ])->layout('layouts.app', ['title' => 'Admin overview — TraceLess']);
     }
 }

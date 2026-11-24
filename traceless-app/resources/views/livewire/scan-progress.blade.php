@@ -1,16 +1,24 @@
 {{-- Scan console: 3D Earth, server-timed countdown, live stage telemetry. --}}
 @php
-    $eta = $scan->estimatedCompletionAt();
+    $holding = $scan->isHoldingResults();
+    $presenting = $scan->isPresentedActive();
+    $queued = $scan->status === 'queued';
     $active = $scan->isActive();
+    $eta = $scan->estimatedCompletionAt();
     $hours = max(1, (int) ceil($scan->estimatedDurationSeconds() / 3600));
     $remaining = $eta ? max(0, $eta->getTimestamp() - now()->getTimestamp()) : null;
     $timerText = $remaining !== null ? sprintf('%02d:%02d:%02d', intdiv($remaining, 3600), intdiv($remaining % 3600, 60), $remaining % 60) : '—';
+    $displayProgress = $holding ? 99 : $scan->progress_percentage;
+    $queuePosition = $queued
+        ? 1 + \App\Models\Scan::whereIn('status', ['queued', 'checking_sources', 'normalizing_results', 'calculating_risk', 'generating_report'])->where('id', '<', $scan->id)->count()
+        : null;
 @endphp
 
 <div class="scan-page"
      data-scan-fx
      data-status="{{ $scan->status }}"
-     data-active="{{ $active ? '1' : '0' }}"
+     data-active="{{ $presenting ? '1' : '0' }}"
+     data-holding="{{ $holding ? '1' : '0' }}"
      data-type="{{ $scan->type }}"
      data-eta-seconds="{{ $scan->estimatedDurationSeconds() }}"
      data-progress="{{ $scan->progress_percentage }}"
@@ -28,8 +36,11 @@
         <div class="flex flex-wrap items-center justify-between gap-3">
             <div class="flex flex-wrap items-center gap-2">
                 <span class="scan-pill"><span class="scan-live-dot"></span>SCAN PROTOCOL // #{{ $scan->id }}</span>
-                <span class="scan-pill scan-pill-muted" data-status-pill>{{ strtoupper($scan->status) }}</span>
+                <span class="scan-pill scan-pill-muted" data-status-pill>{{ $holding ? 'FINALIZING' : strtoupper($scan->status) }}</span>
                 <span class="scan-pill scan-pill-muted uppercase">{{ $scan->type === 'deep_scan' ? 'Deep crawl' : 'Snapshot' }}</span>
+                @if($queued && $queuePosition)
+                    <span class="scan-pill scan-pill-muted">QUEUE POSITION #{{ $queuePosition }}</span>
+                @endif
             </div>
             <div class="flex items-center gap-2">
                 @if($active)
@@ -45,33 +56,43 @@
         </div>
 
         <div class="max-w-xl">
-            <p class="scan-kicker">PUBLIC-SURFACE CRAWL</p>
-            <h1 class="scan-title">{{ $active ? 'Sweeping the public web' : ($scan->status === 'completed' ? 'Sweep complete' : 'Scan stopped') }}</h1>
-            <p class="scan-sub" data-stage-label>{{ $scan->current_stage ?: 'Queued on the scan mesh' }}</p>
+            <p class="scan-kicker">{{ $holding ? 'EVIDENCE PACKAGE IN FINAL ASSEMBLY' : 'PUBLIC-SURFACE CRAWL' }}</p>
+            <h1 class="scan-title">
+                {{ $holding ? 'Still processing — high traffic' : ($active ? 'Sweeping the public web' : ($scan->status === 'completed' ? 'Sweep complete' : 'Scan stopped')) }}
+            </h1>
+            <p class="scan-sub" data-stage-label>
+                {{ $holding ? 'Your crawl finished on our side. We are finalizing the evidence package and will email you the moment it is ready.' : ($scan->current_stage ?: 'Queued on the scan mesh') }}
+            </p>
         </div>
 
         <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
             <div class="space-y-4">
-                <div>
-                    <div class="scan-kicker">{{ $active ? 'EST. TIME REMAINING' : 'FINAL DURATION' }}</div>
-                    <div class="scan-timer" data-timer>{{ $active ? $timerText : $scan->durationForHumans() }}</div>
-                    @if($active)
-                        <p class="scan-hint">This sweep can take up to {{ $hours }} hours. It runs on the server — close the tab, sign out, or open another device and the same countdown continues.</p>
-                    @endif
-                </div>
+                @if($presenting)
+                    <div>
+                        <div class="scan-kicker">{{ $holding ? 'RESULTS ARRIVING IN' : 'EST. TIME REMAINING' }}</div>
+                        <div class="scan-timer" data-timer>{{ $timerText }}</div>
+                        <p class="scan-hint">
+                            @if($holding)
+                                High traffic is slowing the final assembly. Sit back and relax — you can close this tab or sign out and we will email you when the results are ready. The countdown is the same on every device.
+                            @else
+                                This sweep can take up to {{ $hours }} hours. It runs on the server — close the tab, sign out, or open another device and the same countdown continues.
+                            @endif
+                        </p>
+                    </div>
+                @endif
 
                 <div>
-                    <div class="scan-bar"><span data-progress-fill style="width: {{ $scan->progress_percentage }}%"></span></div>
+                    <div class="scan-bar"><span data-progress-fill style="width: {{ $displayProgress }}%"></span></div>
                     <div class="mt-2 flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] uppercase tracking-widest text-[#8ab8cc]">
-                        <span data-stage-ticker>{{ $scan->current_stage ?: 'Waiting for a worker' }}</span>
-                        <span><span data-progress-value>{{ $scan->progress_percentage }}</span>%</span>
+                        <span data-stage-ticker>{{ $holding ? 'Assembling the evidence graph' : ($scan->current_stage ?: 'Waiting for a worker') }}</span>
+                        <span><span data-progress-value>{{ $displayProgress }}</span>%</span>
                     </div>
                 </div>
 
                 <dl class="grid grid-cols-3 gap-3 font-mono text-[10px] uppercase tracking-widest text-[#8ab8cc]">
                     <div class="scan-stat"><dt>Sources probed</dt><dd data-stat-sources>{{ $scan->sources_checked }}/{{ $scan->sources_total ?: '—' }}</dd></div>
                     <div class="scan-stat"><dt>Records found</dt><dd data-stat-findings>{{ $scan->findings_count }}</dd></div>
-                    <div class="scan-stat"><dt>Confidence</dt><dd>{{ $scan->status === 'completed' ? 'READY' : 'LIVE' }}</dd></div>
+                    <div class="scan-stat"><dt>Status</dt><dd>{{ $holding ? 'FINALIZING' : ($queued ? 'QUEUED' : 'LIVE') }}</dd></div>
                 </dl>
             </div>
 
@@ -92,7 +113,7 @@
             </ol>
         </div>
 
-        @if($scan->status === 'completed')
+        @if($scan->status === 'completed' && ! $holding)
             <div class="scan-result">
                 <p class="scan-kicker">NO FURTHER ACTION REQUIRED</p>
                 <h2 class="scan-result-title">{{ $scan->findings_count }} public record{{ $scan->findings_count === 1 ? '' : 's' }} found</h2>

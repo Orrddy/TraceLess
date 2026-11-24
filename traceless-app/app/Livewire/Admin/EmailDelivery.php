@@ -42,6 +42,6 @@ class EmailDelivery extends Component
             'failed24h' => OutboundEmail::where('status', 'failed')->where('created_at', '>=', now()->subDay())->count(),
             'failedTotal' => OutboundEmail::where('status', 'failed')->count(),
             'lastSuccess' => $lastSuccess?->sent_at,
-        ])->layout('layouts.app', ['title' => 'Email delivery // TraceLess']);
+        ])->layout('layouts.app', ['title' => 'Email delivery — TraceLess']);
     }
 }

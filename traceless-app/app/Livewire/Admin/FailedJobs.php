@@ -92,7 +92,7 @@ class FailedJobs extends Component
             'total' => DB::table('failed_jobs')->count(),
             'last24h' => DB::table('failed_jobs')->where('failed_at', '>=', now()->subDay())->count(),
             'pending' => DB::table('jobs')->count(),
-        ])->layout('layouts.app', ['title' => 'Failed jobs // TraceLess']);
+        ])->layout('layouts.app', ['title' => 'Failed jobs — TraceLess']);
     }
 
     /**

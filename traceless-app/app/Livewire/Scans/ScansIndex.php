@@ -51,6 +51,6 @@ class ScansIndex extends Component
         return view('livewire.scans-index', [
             'scans' => $query->paginate(12),
             'stats' => $stats,
-        ])->layout('layouts.app', ['title' => 'Scans // TraceLess']);
+        ])->layout('layouts.app', ['title' => 'Scan history — TraceLess']);
     }
 }

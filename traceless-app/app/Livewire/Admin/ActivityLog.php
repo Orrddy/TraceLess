@@ -67,6 +67,6 @@ class ActivityLog extends Component
             'actions' => AuditLog::query()->select('action')->distinct()->orderBy('action')->limit(60)->pluck('action'),
             'todayCount' => AuditLog::where('created_at', '>=', now()->startOfDay())->count(),
             'weekCount' => AuditLog::where('created_at', '>=', now()->subDays(7))->count(),
-        ])->layout('layouts.app', ['title' => 'Admin activity log // TraceLess']);
+        ])->layout('layouts.app', ['title' => 'Admin activity log — TraceLess']);
     }
 }

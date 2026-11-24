@@ -19,6 +19,9 @@ class ScanStatusController extends Controller
 
         $scan->refresh();
         $eta = $scan->estimatedCompletionAt();
+        $queuePosition = 1 + Scan::whereIn('status', ['queued', 'checking_sources', 'normalizing_results', 'calculating_risk', 'generating_report'])
+            ->where('id', '<', $scan->id)
+            ->count();
 
         return response()->json([
             'id' => $scan->id,
@@ -32,6 +35,9 @@ class ScanStatusController extends Controller
             'findings_count' => (int) $scan->findings_count,
             'is_active' => $scan->isActive(),
             'is_complete' => $scan->status === 'completed',
+            'is_presented_active' => $scan->isPresentedActive(),
+            'holding_results' => $scan->isHoldingResults(),
+            'queue_position' => $queuePosition,
             'error_message' => $scan->error_message,
             'started_at' => $scan->started_at?->toIso8601String(),
             'completed_at' => $scan->completed_at?->toIso8601String(),

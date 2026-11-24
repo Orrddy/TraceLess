@@ -1,5 +1,6 @@
 import './bootstrap';
 import './ambient-scene';
+import { initLiveClocks } from './live-clock';
 
 // Alpine.js is bundled and initialised by Livewire 3. Custom Alpine components
 // are registered from Blade via `Alpine.data(...)` inside `alpine:init` when needed.
@@ -15,4 +16,9 @@ if (document.querySelector('[data-scan-fx]')) {
     import('./scan-fx').then(({ initScanFx }) => {
         initScanFx();
     });
+}
+
+// Server-timed countdowns on dashboards and lists.
+if (document.querySelector('[data-live-deadline]')) {
+    initLiveClocks();
 }

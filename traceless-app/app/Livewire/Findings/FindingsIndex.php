@@ -104,6 +104,6 @@ class FindingsIndex extends Component
         return view('livewire.findings-index', [
             'findings' => $findings->paginate(15),
             'stats' => $stats,
-        ])->layout('layouts.app', ['title' => 'Findings // TraceLess']);
+        ])->layout('layouts.app', ['title' => 'Exposure report — TraceLess']);
     }
 }

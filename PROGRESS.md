@@ -189,3 +189,19 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
   `ALERT_EMAIL`; optional variable `PROD_URL`.
 - Deep scans are now allowed to crawl for the full two hours (worker timeout 7800s, job timeout 7600s, queue retry window 8100s, stale reaper untouched because the scan row is refreshed between identifiers). They complete as soon as the crawl finishes; the
   2-hour figure is an upper-bound estimate, and the UI jumps to the results when done.
+### 2026-11-24 — live dashboard, full-window deep scans, mobile navigation
+
+- Dashboard now shows a **clickable live scan card** with a server-timed countdown,
+  blinking status dot and a four-light (green/purple/red/brown) activity strip.
+  The scan pill in the header also links to the console and counts down.
+- A deep crawl that finishes early no longer collapses the progress screen: the
+  UI keeps the full two-hour countdown with a calm “high traffic — sit back and
+  relax, we will email you” state and hides the results. Both the result reveal
+  and the completion notification happen at the same absolute server time.
+- The queue now runs **two workers**; `/scans/{id}/status` exposes the queue
+  position and whether the UI should still present the scan as active, so eleven
+  simultaneous scans run two at a time with the rest showing queued.
+- Mobile navigation is now grouped (Workspace/Tools/Account/Admin) with icons and
+  an internal scroll area; the avatar in the top bar links to account settings.
+- Browser titles are professional page names (Dashboard, Exposure report, Scan
+  progress, Account settings, …) instead of ids and `//` separators.

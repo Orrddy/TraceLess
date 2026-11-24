@@ -152,6 +152,6 @@ class MonitoringPage extends Component
             'alerts' => $alerts,
             'isDeepScan' => Auth::user()->isDeepScan(),
             'demoMode' => (bool) config('traceless.demo_mode'),
-        ])->layout('layouts.app', ['title' => 'Monitoring // TraceLess']);
+        ])->layout('layouts.app', ['title' => 'Monitoring — TraceLess']);
     }
 }

@@ -178,9 +178,11 @@
                     </a>
 
                     <div class="ml-1 flex items-center gap-2">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-full border border-line bg-elevated/70 text-xs font-semibold text-body">
+                        <a href="{{ route('settings') }}"
+                           class="flex h-8 w-8 items-center justify-center rounded-full border border-line bg-elevated/70 text-xs font-semibold text-body transition hover:border-cyan hover:text-ink"
+                           title="Account settings" aria-label="Account settings">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                        </span>
+                        </a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="rounded-lg border border-transparent p-2 text-body transition hover:border-line hover:bg-elevated/50 hover:text-ink" title="Sign out" aria-label="Sign out">
@@ -209,32 +211,46 @@
     <div x-cloak x-show="mobileNav" class="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
         <div class="absolute inset-0 bg-ink/40" @click="mobileNav = false"></div>
         <div class="ops-sidebar relative flex h-full w-72 flex-col justify-between border-r border-line p-5">
-            <div>
+            <div class="flex min-h-0 flex-1 flex-col">
                 <div class="mb-6 flex items-center justify-between">
                     <x-brand-logo :href="route('dashboard')" size="sm" />
                     <button @click="mobileNav = false" class="rounded-lg p-1.5 text-body hover:bg-surface" aria-label="Close navigation">
                         <span class="material-symbols-outlined">close</span>
                     </button>
                 </div>
-                <nav class="space-y-1">
-                    <a href="{{ route('dashboard') }}" class="nav-link">Overview</a>
-                    <a href="{{ route('identity') }}" class="nav-link">Digital footprint</a>
-                    <a href="{{ route('findings') }}" class="nav-link">Exposure report</a>
-                    <a href="{{ route('credentials') }}" class="nav-link">Credential monitor</a>
-                    <a href="{{ route('removals') }}" class="nav-link">Removal guidance</a>
-                    <a href="{{ route('monitoring') }}" class="nav-link">Monitoring</a>
-                    <a href="{{ route('password.check') }}" class="nav-link">Password check</a>
-                    <a href="{{ route('ip.check') }}" class="nav-link">IP check</a>
-                    <a href="{{ route('reports') }}" class="nav-link">Reports</a>
-                    <a href="{{ route('settings') }}" class="nav-link">Settings</a>
+                <div class="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1">
+                <nav class="space-y-5 pb-4" aria-label="Mobile navigation">
+                    <div class="space-y-1">
+                        <p class="px-3 pb-1 text-[10px] font-medium uppercase tracking-[0.16em] text-faint">Workspace</p>
+                        <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">dashboard</span><span>Dashboard</span></a>
+                        <a href="{{ route('identity') }}" class="nav-link {{ request()->routeIs('identity*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">fingerprint</span><span>Digital footprint</span></a>
+                        <a href="{{ route('findings') }}" class="nav-link {{ request()->routeIs('findings*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">search</span><span>Exposure report</span></a>
+                        <a href="{{ route('credentials') }}" class="nav-link {{ request()->routeIs('credentials*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">key</span><span>Credential monitor</span></a>
+                        <a href="{{ route('removals') }}" class="nav-link {{ request()->routeIs('removals*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">delete</span><span>Removal guidance</span></a>
+                        <a href="{{ route('monitoring') }}" class="nav-link {{ request()->routeIs('monitoring*') || request()->routeIs('alerts*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">notifications_active</span><span>Monitoring</span></a>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="px-3 pb-1 text-[10px] font-medium uppercase tracking-[0.16em] text-faint">Tools</p>
+                        <a href="{{ route('password.check') }}" class="nav-link {{ request()->routeIs('password.check') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">password</span><span>Password check</span></a>
+                        <a href="{{ route('ip.check') }}" class="nav-link {{ request()->routeIs('ip.check') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">public</span><span>IP check</span></a>
+                        <a href="{{ route('reports') }}" class="nav-link {{ request()->routeIs('reports*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">description</span><span>Reports</span></a>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="px-3 pb-1 text-[10px] font-medium uppercase tracking-[0.16em] text-faint">Account</p>
+                        <a href="{{ route('settings') }}" class="nav-link {{ request()->routeIs('settings*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">settings</span><span>Settings</span></a>
+                    </div>
                     @if(auth()->user()?->isAdmin())
-                        <a href="{{ route('admin.overview') }}" class="nav-link">Admin overview</a>
-                        <a href="{{ route('admin.users') }}" class="nav-link">Admin users</a>
-                        <a href="{{ route('admin.activity') }}" class="nav-link">Activity log</a>
-                        <a href="{{ route('admin.failed-jobs') }}" class="nav-link">Failed jobs</a>
-                        <a href="{{ route('admin.email') }}" class="nav-link">Email delivery</a>
+                        <div class="space-y-1">
+                            <p class="px-3 pb-1 text-[10px] font-medium uppercase tracking-[0.16em] text-faint">Admin</p>
+                            <a href="{{ route('admin.overview') }}" class="nav-link {{ request()->routeIs('admin.overview') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">monitoring</span><span>Overview</span></a>
+                            <a href="{{ route('admin.users') }}" class="nav-link {{ request()->routeIs('admin.users') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">group</span><span>Users</span></a>
+                            <a href="{{ route('admin.activity') }}" class="nav-link {{ request()->routeIs('admin.activity') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">history</span><span>Activity log</span></a>
+                            <a href="{{ route('admin.failed-jobs') }}" class="nav-link {{ request()->routeIs('admin.failed-jobs') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">error</span><span>Failed jobs</span></a>
+                            <a href="{{ route('admin.email') }}" class="nav-link {{ request()->routeIs('admin.email') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">outgoing_mail</span><span>Email delivery</span></a>
+                        </div>
                     @endif
                 </nav>
+            </div>
             </div>
             <a href="{{ route('scans.create') }}" class="btn-primary w-full">New scan</a>
         </div>

@@ -184,6 +184,6 @@ class IdentitySetup extends Component
     public function render()
     {
         return view('livewire.identity-setup')
-            ->layout('layouts.app', ['title' => 'New identity // TraceLess']);
+            ->layout('layouts.app', ['title' => 'Identity setup — TraceLess']);
     }
 }

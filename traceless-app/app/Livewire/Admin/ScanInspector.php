@@ -91,6 +91,6 @@ class ScanInspector extends Component
                 ->selectRaw('outcome, count(*) as total')
                 ->groupBy('outcome')
                 ->pluck('total', 'outcome'),
-        ])->layout('layouts.app', ['title' => 'Scan #'.$this->scan->id.' // TraceLess']);
+        ])->layout('layouts.app', ['title' => 'Scan inspection — TraceLess']);
     }
 }

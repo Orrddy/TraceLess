@@ -114,11 +114,39 @@ class ScanConsoleTest extends TestCase
             'completed_at' => now(),
         ]);
 
+        $scan->forceFill(['created_at' => now()->subHours(3)])->save();
+        $scan->refresh();
+
         Livewire::actingAs($profile->user)
             ->test(ScanProgress::class, ['scan' => $scan])
             ->assertSee('Sweep complete')
             ->assertSee('7 public records found')
             ->assertSee('Open results');
+    }
+
+    public function test_a_deep_scan_that_finished_early_keeps_counting_and_hides_results(): void
+    {
+        $profile = $this->profile();
+        $scan = Scan::create([
+            'identity_profile_id' => $profile->id,
+            'type' => 'deep_scan',
+            'status' => 'completed',
+            'progress_percentage' => 100,
+            'current_stage' => 'Scan complete',
+            'findings_count' => 7,
+            'started_at' => now()->subMinutes(2),
+            'completed_at' => now(),
+        ]);
+
+        $this->assertTrue($scan->isHoldingResults());
+        $this->assertTrue($scan->isPresentedActive());
+
+        Livewire::actingAs($profile->user)
+            ->test(ScanProgress::class, ['scan' => $scan])
+            ->assertSee('Still processing — high traffic')
+            ->assertSee('RESULTS ARRIVING IN')
+            ->assertSee('High traffic is slowing the final assembly')
+            ->assertDontSee('Open results');
     }
 
     public function test_the_deep_scan_budget_allows_two_hours(): void

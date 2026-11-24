@@ -143,6 +143,6 @@ class UsersIndex extends Component
             'users' => $users,
             'roles' => User::ROLES,
             'canManageRoles' => (bool) Auth::user()?->isSuperAdmin(),
-        ])->layout('layouts.app', ['title' => 'Admin users // TraceLess']);
+        ])->layout('layouts.app', ['title' => 'Admin users — TraceLess']);
     }
 }

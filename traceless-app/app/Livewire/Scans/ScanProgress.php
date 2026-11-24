@@ -39,6 +39,6 @@ class ScanProgress extends Component
         $sources = $this->scan->scanSources()->orderBy('id')->get();
 
         return view('livewire.scan-progress', compact('findings', 'sources'))
-            ->layout('layouts.app', ['title' => 'Scan #'.$this->scan->id.' // TraceLess']);
+            ->layout('layouts.app', ['title' => 'Scan progress — TraceLess']);
     }
 }

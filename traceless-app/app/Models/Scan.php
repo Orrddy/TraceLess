@@ -79,17 +79,36 @@ class Scan extends Model
 
     /**
      * Absolute completion estimate, derived from the persisted queue time.
-     * Never relative to the client clock.
+     * Never relative to the client clock. For deep scans the full window is
+     * always shown to the user, even when the crawl finishes earlier.
      */
     public function estimatedCompletionAt(): ?Carbon
     {
-        if ($this->completed_at) {
-            return $this->completed_at;
-        }
-
         $anchor = $this->created_at ?? $this->started_at;
 
         return $anchor?->copy()->addSeconds($this->estimatedDurationSeconds());
+    }
+
+    /**
+     * When results become visible. A deep crawl can finish early; the product
+     * still presents the full two-hour window instead of collapsing the progress
+     * screen the moment the queue job ends.
+     */
+    public function resultsRevealAt(): ?Carbon
+    {
+        return $this->type === 'deep_scan' ? $this->estimatedCompletionAt() : null;
+    }
+
+    public function isHoldingResults(): bool
+    {
+        return $this->type === 'deep_scan'
+            && $this->status === 'completed'
+            && $this->resultsRevealAt()?->isFuture() === true;
+    }
+
+    public function isPresentedActive(): bool
+    {
+        return $this->isActive() || $this->isHoldingResults();
     }
 
     public function durationForHumans(): string

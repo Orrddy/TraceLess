@@ -119,6 +119,6 @@ class ScanCreate extends Component
         return view('livewire.scan-create', [
             'isDeepScan' => Auth::user()->isDeepScan(),
             'demoMode' => (bool) config('traceless.demo_mode'),
-        ])->layout('layouts.app', ['title' => 'New Scan // TraceLess']);
+        ])->layout('layouts.app', ['title' => 'New scan — TraceLess']);
     }
 }
