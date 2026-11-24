@@ -52,7 +52,7 @@ class ScanInspector extends Component
         $audit->log(
             Auth::id(),
             'admin.scan_retried',
-            "Scan #{$this->scan->id} retried as scan #{$new->id} ({$this->scan->type}).",
+            "Scan {$this->scan->reference()} retried as {$new->reference()} ({$this->scan->type}).",
             request()->ip(),
         );
 
@@ -76,7 +76,7 @@ class ScanInspector extends Component
             'cancelled_at' => now(),
         ]);
 
-        $audit->log(Auth::id(), 'admin.scan_cancelled', "Scan #{$this->scan->id} cancelled.", request()->ip());
+        $audit->log(Auth::id(), 'admin.scan_cancelled', "Scan {$this->scan->reference()} cancelled.", request()->ip());
 
         $this->scan->refresh();
         $this->dispatch('notify', message: 'Scan cancelled.');

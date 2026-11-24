@@ -78,7 +78,8 @@ class NotificationsTest extends TestCase
         $mail = (new ScanCompletedNotification($scan))->toMail($user);
 
         $this->assertSame('Your TraceLess scan is complete', $mail->subject);
-        $this->assertStringContainsString('Scan #'.$scan->id, $mail->introLines[0]);
+        $this->assertSame('emails.scan-complete', $mail->view);
+        $this->assertSame($scan->reference(), $mail->viewData['reference'] ?? null);
     }
 
     public function test_the_panel_is_mounted_in_the_app_shell(): void

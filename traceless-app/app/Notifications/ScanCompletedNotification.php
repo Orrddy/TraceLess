@@ -26,6 +26,7 @@ class ScanCompletedNotification extends Notification implements ShouldQueue
         return [
             'type' => 'scan_completed',
             'scan_id' => $this->scan->id,
+            'reference' => $this->scan->reference(),
             'title' => 'Scan complete',
             'message' => "{$this->scan->findings_count} public findings indexed for {$profile->full_name}. Privacy score: {$profile->privacy_score}/100.",
             'url' => route('scans.show', $this->scan),
@@ -35,10 +36,19 @@ class ScanCompletedNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
+        $profile = $this->scan->identityProfile;
+
         return (new MailMessage)
             ->subject('Your TraceLess scan is complete')
-            ->line("Scan #{$this->scan->id} finished with {$this->scan->findings_count} public findings.")
-            ->line('Review the evidence before starting any removal request.')
-            ->action('Open TraceLess', route('scans.show', $this->scan));
+            ->view('emails.scan-complete', [
+                'scan' => $this->scan,
+                'reference' => $this->scan->reference(),
+                'identityName' => $profile?->full_name ?: 'Your identity',
+                'findings' => (int) $this->scan->findings_count,
+                'score' => (int) ($profile?->privacy_score ?? 0),
+                'url' => route('scans.show', $this->scan),
+                'logoUrl' => config('mail.logo_url') ?: asset('apple-touch-icon.png'),
+                'wordmarkUrl' => config('mail.wordmark_url') ?: asset('brand/wordmark-email.png'),
+            ]);
     }
 }

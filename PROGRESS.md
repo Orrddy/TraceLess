@@ -217,3 +217,15 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
   card remains clickable with a server-timed countdown.
 - “Run a scan” now opens Digital footprint so the identity and scan type are
   explicit; beta accounts default to the two-hour deep scan on the scan form.
+### 2026-11-24 — random scan references, branded completion mail, page loader
+
+- Scans now carry a **random public reference** (`TR-XXXXXXXXXX`) generated on
+  create and used for URLs (`/scans/{public_id}`) and all user-facing labels;
+  old numeric links keep working as a fallback. Database ids stay internal.
+- The "Your TraceLess scan is complete" email now uses a fully branded template
+  with the app icon, Nevera wordmark, reference, findings count, privacy score
+  and a results button — Laravel's default button/URL footer is gone.
+- Added a global branded **page loader** for the app and auth pages (rotating
+  mark, wordmark, sweeping progress bar) with reduced-motion and no-JS
+  fallbacks. Drop a loading.io export at `public/brand/page-loader.gif` (or
+  .svg/.webp/.png) to use it instead of the default brand animation.

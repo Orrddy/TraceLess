@@ -29,7 +29,7 @@
                         <td style="padding:32px;">
                             <h1 style="margin:0 0 12px;font-size:20px;line-height:1.3;color:#07111F;">Your deep scan has started</h1>
                             <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#374151;">
-                                TraceLess is now crawling public sources for <strong>{{ $identityName }}</strong> (scan #{{ $scan->id }}).
+                                TraceLess is now crawling public sources for <strong>{{ $identityName }}</strong> (reference {{ $scan->reference() }}).
                                 This is the widest sweep we run, so it can take up to <strong>{{ $estimatedHours }} hours</strong>.
                             </p>
                             <p style="margin:0 0 20px;font-size:13px;line-height:1.6;color:#6B7280;">

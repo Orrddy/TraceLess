@@ -38,7 +38,7 @@
     <div class="scan-hud">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <div class="flex flex-wrap items-center gap-2">
-                <span class="scan-pill"><span class="scan-live-dot"></span>SCAN PROTOCOL // #{{ $scan->id }}</span>
+                <span class="scan-pill"><span class="scan-live-dot"></span>SCAN PROTOCOL // {{ $scan->reference() }}</span>
                 <span class="scan-pill scan-pill-muted" data-status-pill>{{ $holding ? 'FINALIZING' : strtoupper($scan->status) }}</span>
                 <span class="scan-pill scan-pill-muted uppercase">{{ $scan->type === 'deep_scan' ? 'Deep crawl' : 'Snapshot' }}</span>
                 @if($queued && $queuePosition)

@@ -32,6 +32,8 @@
       @notify.window="toastMsg = $event.detail.message || 'Saved'; toast = true; setTimeout(() => toast = false, 4000)"
       @toast.window="toastMsg = $event.detail.message || 'Saved'; toast = true; setTimeout(() => toast = false, 4000)">
 
+    @include('partials.page-loader')
+
     <!-- Sidebar -->
     <aside class="ops-sidebar fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-line lg:flex">
         <div class="flex h-[4.5rem] items-center border-b border-line px-5">

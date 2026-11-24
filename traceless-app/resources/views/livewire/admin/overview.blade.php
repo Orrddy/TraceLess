@@ -151,7 +151,7 @@
                     @forelse($recentScans as $scan)
                         <tr>
                             <td class="px-5 py-2 font-mono text-faint">
-                                <a href="{{ route('admin.scans.show', $scan) }}" class="hover:text-accent">#{{ $scan->id }}</a>
+                                <a href="{{ route('admin.scans.show', $scan) }}" class="hover:text-accent">{{ $scan->reference() }}</a>
                             </td>
                             <td class="px-5 py-2 text-ink">
                                 {{ $scan->identityProfile?->full_name ?? 'Deleted profile' }}

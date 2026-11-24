@@ -25,6 +25,7 @@
     @livewireStyles
 </head>
 <body class="min-h-screen bg-canvas font-body text-ink antialiased">
+    @include('partials.page-loader')
     <!-- Processing loop (the same footage used during a scan) as the ambient backdrop. -->
     <video
         class="pointer-events-none fixed inset-0 z-0 h-full w-full object-cover opacity-45 motion-reduce:hidden"

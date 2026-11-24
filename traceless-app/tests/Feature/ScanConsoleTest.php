@@ -8,6 +8,7 @@ use App\Mail\DeepScanStartedMail;
 use App\Models\IdentityProfile;
 use App\Models\Scan;
 use App\Models\User;
+use App\Notifications\ScanCompletedNotification;
 use App\Services\ConsentService;
 use App\Services\ScanOrchestrator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -154,5 +155,61 @@ class ScanConsoleTest extends TestCase
         $this->assertSame(7200, (int) config('traceless.scan.deep_wall_clock_seconds'));
         $this->assertSame(7600, (new RunScanJob(new Scan))->timeout);
         $this->assertGreaterThanOrEqual(8100, (int) config('queue.connections.database.retry_after'));
+    }
+
+    public function test_scans_use_a_random_reference_in_urls_and_keep_numeric_links_working(): void
+    {
+        $profile = $this->profile();
+        $scan = Scan::create([
+            'identity_profile_id' => $profile->id,
+            'type' => 'snapshot',
+            'status' => 'queued',
+        ]);
+
+        $this->assertMatchesRegularExpression('/^TR-[A-Z0-9]{10}$/', $scan->reference());
+        $this->assertSame($scan->public_id, $scan->getAttribute($scan->getRouteKeyName()));
+        $this->assertStringContainsString($scan->public_id, route('scans.show', $scan));
+
+        $this->actingAs($profile->user)->get(route('scans.show', $scan))->assertOk();
+        $this->actingAs($profile->user)->get('/scans/'.$scan->id)->assertOk();
+    }
+
+    public function test_the_scan_completion_email_is_branded_and_has_no_default_footer_copy(): void
+    {
+        $profile = $this->profile();
+        $scan = Scan::create([
+            'identity_profile_id' => $profile->id,
+            'type' => 'snapshot',
+            'status' => 'completed',
+            'progress_percentage' => 100,
+            'findings_count' => 3,
+            'started_at' => now()->subMinute(),
+            'completed_at' => now(),
+        ]);
+
+        $mail = (new ScanCompletedNotification($scan))->toMail($profile->user);
+        $this->assertSame('emails.scan-complete', $mail->view);
+
+        $html = view('emails.scan-complete', [
+            'scan' => $scan,
+            'reference' => $scan->reference(),
+            'identityName' => $profile->full_name,
+            'findings' => 3,
+            'score' => 70,
+            'url' => route('scans.show', $scan),
+            'logoUrl' => asset('apple-touch-icon.png'),
+            'wordmarkUrl' => asset('brand/wordmark-email.png'),
+        ])->render();
+
+        $this->assertStringContainsString('brand/wordmark-email.png', $html);
+        $this->assertStringContainsString($scan->reference(), $html);
+        $this->assertStringNotContainsString('copy and paste', strtolower($html));
+    }
+
+    public function test_the_dashboard_ships_the_branded_page_loader(): void
+    {
+        $profile = $this->profile();
+
+        $this->actingAs($profile->user)->get('/dashboard')->assertSee('data-page-loader', false);
     }
 }

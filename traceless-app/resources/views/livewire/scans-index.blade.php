@@ -31,7 +31,7 @@
                         </span>
                         <div>
                             <div class="flex flex-wrap items-center gap-2">
-                                <a href="{{ route('scans.show', $scan) }}" class="font-body text-sm font-medium text-ink hover:text-electric-blue">Scan #{{ $scan->id }}</a>
+                                <a href="{{ route('scans.show', $scan) }}" class="font-body text-sm font-medium text-ink hover:text-electric-blue">{{ $scan->reference() }}</a>
                                 <x-status-badge :status="$scan->status" />
                                 @if($scan->demo_mode)<span class="badge badge-neutral">Demo</span>@endif
                             </div>

@@ -8,12 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class Scan extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'public_id',
         'identity_profile_id',
         'type',
         'status',
@@ -28,6 +30,42 @@ class Scan extends Model
         'completed_at',
         'cancelled_at',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Scan $scan) {
+            if (empty($scan->public_id)) {
+                do {
+                    $scan->public_id = Str::upper(Str::random(10));
+                } while (static::where('public_id', $scan->public_id)->exists());
+            }
+        });
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'public_id';
+    }
+
+    /**
+     * New links use the random reference; old numeric links keep working.
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        $field ??= $this->getRouteKeyName();
+
+        if ($field === 'public_id' && ctype_digit((string) $value)) {
+            return $this->newQuery()->where('public_id', $value)->orWhere('id', (int) $value)->first();
+        }
+
+        return $this->newQuery()->where($field, $value)->first();
+    }
+
+    /** Random, non-sequential reference shown to users instead of the database id. */
+    public function reference(): string
+    {
+        return 'TR-'.strtoupper((string) ($this->public_id ?: $this->id));
+    }
 
     protected $casts = [
         'started_at' => 'datetime',

@@ -95,7 +95,7 @@ class ScanCreate extends Component
             );
         }
 
-        $audit->log(Auth::id(), 'scan_started', "Scan #{$scan->id} ({$this->type}) queued.", request()->ip());
+        $audit->log(Auth::id(), 'scan_started', "Scan {$scan->reference()} ({$this->type}) queued.", request()->ip());
 
         return redirect()->route('scans.show', $scan);
     }

@@ -25,6 +25,7 @@ class ScanStatusController extends Controller
 
         return response()->json([
             'id' => $scan->id,
+            'reference' => $scan->reference(),
             'type' => $scan->type,
             'status' => $scan->status,
             'status_label' => $scan->statusLabel(),

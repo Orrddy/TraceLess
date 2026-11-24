@@ -1,7 +1,7 @@
 <div class="space-y-7">
     <x-page-header
         eyebrow="Administration · scan"
-        title="Scan #{{ $scan->id }}"
+        title="{{ $scan->reference() }}"
         description="{{ $scan->identityProfile?->full_name ?? 'Deleted profile' }} · {{ $scan->identityProfile?->user?->email ?? 'no account' }}">
         <a href="{{ route('admin.overview') }}" class="btn-secondary text-xs">
             <span class="material-symbols-outlined text-[16px]">arrow_back</span>

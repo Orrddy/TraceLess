@@ -1,6 +1,7 @@
 import './bootstrap';
 import './ambient-scene';
 import { initLiveClocks } from './live-clock';
+import { initPageLoader } from './page-loader';
 
 // Alpine.js is bundled and initialised by Livewire 3. Custom Alpine components
 // are registered from Blade via `Alpine.data(...)` inside `alpine:init` when needed.
@@ -32,3 +33,6 @@ if (document.querySelector('[data-scan-fx]') && !window.matchMedia('(prefers-red
         }
     });
 }
+
+// Global branded page loader (shown on first paint and between pages).
+initPageLoader();
