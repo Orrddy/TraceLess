@@ -49,9 +49,6 @@
                 <label for="ip" class="v-kicker mb-1.5 block">IP address (IPv4 or IPv6)</label>
                 <input id="ip" type="text" wire:model="ip" inputmode="text" class="input font-[family-name:'Geist_Mono',ui-monospace,monospace]"
                        autocomplete="off" spellcheck="false" placeholder="203.0.113.10" aria-describedby="ip-help">
-                <p id="ip-help" class="mt-2 text-[12px] leading-relaxed text-muted">
-                    Private, loopback and reserved addresses are rejected because they have no public network record.
-                </p>
                 @error('ip') <p class="mt-1 text-[12px] text-danger">{{ $message }}</p> @enderror
             </div>
             <div class="flex flex-col gap-2 sm:flex-row sm:justify-end">

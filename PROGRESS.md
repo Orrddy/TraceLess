@@ -254,3 +254,21 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
   `overflow:hidden` on the page.
 - IP check form controls now use a stable desktop grid with fixed-width buttons,
   and stack cleanly on mobile.
+### 2026-11-25 — admin user intelligence, account states, report links
+
+- Admin users table now shows **scan totals**, last sign-in **IP + device**, and
+  monitoring state with pause/resume. Expanding a user shows scan activity
+  (latest reference/status), recent sign-in locations plus active sessions,
+  monitoring cadence/provider and account controls.
+- New `user_login_events` table records IP, user agent and a readable device
+  label at every successful OTP sign-in. Current devices are also read from the
+  sessions table. (History starts from this deploy; earlier sign-ins were not
+  retained.)
+- Account states: **disabled** (suspended_at) and **pending verification**
+  (email_verified_at null) with verify/enable actions. Pending accounts are
+  signed out and blocked on their next request. The admin overview now shows
+  pending/disabled counts, active monitoring and recent sign-ins.
+- Removed the IP tool helper sentence and the discovery attribution footer.
+- Report downloads: production URLs are rooted at the canonical HTTPS APP_URL
+  and report links now live 24 hours instead of 30 minutes, fixing the proxy /
+  expiry “Invalid signature” 403.

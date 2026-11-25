@@ -6,6 +6,8 @@ use App\Models\Alert;
 use App\Models\AuditLog;
 use App\Models\Finding;
 use App\Models\IdentityProfile;
+use App\Models\LoginEvent;
+use App\Models\MonitoringSubscription;
 use App\Models\OutboundEmail;
 use App\Models\RemovalTask;
 use App\Models\Scan;
@@ -69,6 +71,9 @@ class Overview extends Component
             'schedule_heartbeat_age' => $this->ageInMinutes(Cache::get('heartbeat:schedule')),
             'email_sent_24h' => OutboundEmail::where('status', 'sent')->where('created_at', '>=', now()->subDay())->count(),
             'email_failed_24h' => OutboundEmail::where('status', 'failed')->where('created_at', '>=', now()->subDay())->count(),
+            'users_pending' => User::whereNull('email_verified_at')->count(),
+            'users_disabled' => User::whereNotNull('suspended_at')->count(),
+            'monitors_active' => MonitoringSubscription::where('is_active', true)->count(),
         ];
 
         return view('livewire.admin.overview', [
@@ -79,7 +84,8 @@ class Overview extends Component
                 ->orderByDesc('total')
                 ->pluck('total', 'status'),
             'recentScans' => Scan::with('identityProfile.user')->latest()->take(8)->get(),
-            'recentUsers' => User::latest()->take(6)->get(),
+            'recentUsers' => User::withCount('scans')->latest()->take(6)->get(),
+            'recentSignIns' => LoginEvent::with('user')->latest('logged_in_at')->take(8)->get(),
             'recentAudit' => AuditLog::with('user')->latest()->take(8)->get(),
         ])->layout('layouts.app', ['title' => 'Admin overview — TraceLess']);
     }

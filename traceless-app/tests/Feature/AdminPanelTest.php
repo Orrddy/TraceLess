@@ -9,6 +9,7 @@ use App\Models\Alert;
 use App\Models\AuditLog;
 use App\Models\Finding;
 use App\Models\IdentityProfile;
+use App\Models\LoginEvent;
 use App\Models\RemovalTask;
 use App\Models\Scan;
 use App\Models\User;
@@ -386,5 +387,100 @@ class AdminPanelTest extends TestCase
         $this->actingAs($client)->get('/dashboard')->assertOk();
         $this->actingAs($client)->get('/settings')->assertOk();
         $this->actingAs($client)->get('/identity')->assertOk();
+    }
+
+    // ------------------------------------------- richer account detail controls
+
+    public function test_the_users_table_shows_scan_count_sign_in_ip_device_and_monitoring(): void
+    {
+        $admin = $this->account(User::ROLE_ADMIN);
+        $client = $this->account();
+        $profile = $this->profileFor($client);
+
+        $scan = Scan::create([
+            'identity_profile_id' => $profile->id,
+            'type' => 'deep_scan',
+            'status' => 'completed',
+            'progress_percentage' => 100,
+            'findings_count' => 2,
+        ]);
+
+        $profile->monitoringSubscription()->create([
+            'is_active' => true,
+            'cadence' => 'weekly',
+            'next_scan_at' => now()->addWeek(),
+        ]);
+
+        LoginEvent::create([
+            'user_id' => $client->id,
+            'ip_address' => '203.0.113.10',
+            'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/131.0 Safari/537.36',
+            'device' => 'Chrome · Windows',
+            'logged_in_at' => now(),
+        ]);
+
+        Livewire::actingAs($admin)->test(UsersIndex::class)
+            ->assertSee('203.0.113.10')
+            ->assertSee('Chrome · Windows')
+            ->call('toggleDetails', $client->id)
+            ->assertSee($scan->reference())
+            ->assertSee('Scan activity')
+            ->assertSee('Pause');
+    }
+
+    public function test_an_admin_can_pause_and_resume_an_accounts_monitoring(): void
+    {
+        $admin = $this->account(User::ROLE_ADMIN);
+        $client = $this->account();
+        $profile = $this->profileFor($client);
+        $subscription = $profile->monitoringSubscription()->create([
+            'is_active' => true,
+            'cadence' => 'weekly',
+            'next_scan_at' => now()->addWeek(),
+        ]);
+
+        Livewire::actingAs($admin)->test(UsersIndex::class)
+            ->call('toggleMonitoring', $client->id)
+            ->assertHasNoErrors();
+
+        $this->assertFalse($subscription->fresh()->is_active);
+        $this->assertNull($subscription->fresh()->next_scan_at);
+        $this->assertDatabaseHas('audit_logs', ['action' => 'admin.monitoring_paused']);
+
+        Livewire::actingAs($admin)->test(UsersIndex::class)
+            ->call('toggleMonitoring', $client->id)
+            ->assertHasNoErrors();
+
+        $this->assertTrue($subscription->fresh()->is_active);
+        $this->assertNotNull($subscription->fresh()->next_scan_at);
+        $this->assertDatabaseHas('audit_logs', ['action' => 'admin.monitoring_resumed']);
+    }
+
+    public function test_an_admin_can_mark_an_account_pending_or_verified(): void
+    {
+        $admin = $this->account(User::ROLE_ADMIN);
+        $client = $this->account();
+
+        Livewire::actingAs($admin)->test(UsersIndex::class)
+            ->call('markPending', $client->id)
+            ->assertHasNoErrors();
+
+        $this->assertNull($client->fresh()->email_verified_at);
+        $this->assertDatabaseHas('audit_logs', ['action' => 'admin.user_pending_verification']);
+
+        Livewire::actingAs($admin)->test(UsersIndex::class)
+            ->call('markVerified', $client->id)
+            ->assertHasNoErrors();
+
+        $this->assertNotNull($client->fresh()->email_verified_at);
+        $this->assertDatabaseHas('audit_logs', ['action' => 'admin.user_verified']);
+    }
+
+    public function test_a_pending_account_cannot_use_the_client_app(): void
+    {
+        $pending = User::factory()->unverified()->create();
+
+        $this->actingAs($pending)->get('/dashboard')->assertForbidden();
+        $this->assertGuest();
     }
 }

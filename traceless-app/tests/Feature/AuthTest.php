@@ -97,6 +97,11 @@ class AuthTest extends TestCase
 
         $this->assertAuthenticatedAs($user);
         $this->assertNotNull($user->fresh()->last_login_at);
+        $this->assertDatabaseHas('user_login_events', [
+            'user_id' => $user->id,
+            'ip_address' => '127.0.0.1',
+        ]);
+        $this->assertNotNull($user->loginEvents()->first()?->device);
 
         $this->post('/logout')->assertRedirect('/');
         $this->assertGuest();

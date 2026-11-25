@@ -80,7 +80,7 @@
                             </div>
                         </div>
                         <div class="flex shrink-0 items-center gap-2">
-                            <a href="{{ URL::temporarySignedRoute('reports.download', now()->addMinutes(30), ['report' => $report->id, 'token' => $report->download_token]) }}"
+                            <a href="{{ $report->downloadUrl(1440) }}"
                                class="btn-secondary !px-3 !py-2 !text-[10px]">
                                 <span class="material-symbols-outlined text-[14px]">download</span> Download
                             </a>

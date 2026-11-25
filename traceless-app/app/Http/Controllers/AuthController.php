@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
 use App\Models\EmailOtp;
+use App\Models\LoginEvent;
 use App\Models\User;
 use App\Services\OtpService;
 use Illuminate\Auth\Events\Registered;
@@ -201,6 +202,14 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         $user->forceFill(['last_login_at' => now()])->save();
+
+        LoginEvent::create([
+            'user_id' => $user->id,
+            'ip_address' => $request->ip(),
+            'user_agent' => Str::limit((string) $request->userAgent(), 500, ''),
+            'device' => LoginEvent::describe($request->userAgent()),
+            'logged_in_at' => now(),
+        ]);
 
         AuditLog::create([
             'user_id' => $user->id,

@@ -120,10 +120,61 @@
                             <span class="block truncate text-ink">{{ $user->name }}</span>
                             <span class="block truncate text-[11px] text-faint">{{ $user->email }}</span>
                         </span>
-                        <span class="badge badge-low shrink-0">{{ $user->roleLabel() }}</span>
+                        <span class="shrink-0 text-right">
+                            <span class="badge badge-low">{{ $user->roleLabel() }}</span>
+                            <span class="mt-1 block font-mono text-[10px] text-faint">{{ $user->scans_count }} scans</span>
+                        </span>
                     </li>
                 @empty
                     <li class="text-sm text-muted">No accounts yet.</li>
+                @endforelse
+            </ul>
+        </div>
+    </div>
+
+    {{-- Account health + recent sign-ins --}}
+    <div class="grid gap-4 lg:grid-cols-2">
+        <div class="card p-5">
+            <div class="flex items-center justify-between">
+                <h2 class="text-sm font-semibold text-ink">Account states</h2>
+                <a href="{{ route('admin.users') }}" class="text-xs font-medium text-accent hover:underline">Manage users</a>
+            </div>
+            <dl class="mt-3 space-y-2 text-sm">
+                <div class="flex items-center justify-between">
+                    <dt class="text-muted">Pending verification</dt>
+                    <dd class="font-mono {{ $stats['users_pending'] > 0 ? 'text-warning' : 'text-ink' }}">{{ number_format($stats['users_pending']) }}</dd>
+                </div>
+                <div class="flex items-center justify-between">
+                    <dt class="text-muted">Disabled accounts</dt>
+                    <dd class="font-mono {{ $stats['users_disabled'] > 0 ? 'text-danger' : 'text-ink' }}">{{ number_format($stats['users_disabled']) }}</dd>
+                </div>
+                <div class="flex items-center justify-between">
+                    <dt class="text-muted">Monitoring active</dt>
+                    <dd class="font-mono text-ink">{{ number_format($stats['monitors_active']) }}</dd>
+                </div>
+            </dl>
+            <p class="mt-3 text-[11px] leading-relaxed text-faint">
+                Pause/resume monitoring, verify or disable any account from the users console.
+            </p>
+        </div>
+
+        <div class="card overflow-hidden">
+            <div class="flex items-center justify-between border-b border-line px-5 py-3">
+                <h2 class="text-sm font-semibold text-ink">Recent sign-ins</h2>
+                <span class="text-[10px] uppercase tracking-wide text-faint">IP + device</span>
+            </div>
+            <ul class="divide-y divide-line">
+                @forelse($recentSignIns as $event)
+                    <li class="flex items-start justify-between gap-3 px-5 py-3">
+                        <div class="min-w-0">
+                            <p class="truncate text-[13px] text-ink">{{ $event->user?->email ?? 'Deleted user' }}</p>
+                            <p class="truncate font-mono text-[11px] text-muted">{{ $event->ip_address ?? 'unknown IP' }}</p>
+                            <p class="truncate text-[10px] text-faint">{{ $event->device ?? \App\Models\LoginEvent::describe($event->user_agent) }}</p>
+                        </div>
+                        <span class="shrink-0 text-[10px] text-faint">{{ $event->logged_in_at?->diffForHumans(short: true) }}</span>
+                    </li>
+                @empty
+                    <li class="px-5 py-6 text-center text-sm text-muted">No sign-ins recorded yet.</li>
                 @endforelse
             </ul>
         </div>

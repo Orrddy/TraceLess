@@ -86,6 +86,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(IdentityProfile::class);
     }
 
+    public function scans(): HasManyThrough
+    {
+        return $this->hasManyThrough(Scan::class, IdentityProfile::class, 'user_id', 'identity_profile_id', 'id', 'id');
+    }
+
+    public function loginEvents(): HasMany
+    {
+        return $this->hasMany(LoginEvent::class);
+    }
+
     public function consentRecords(): HasMany
     {
         return $this->hasMany(ConsentRecord::class);

@@ -39,6 +39,12 @@ class AppServiceProvider extends ServiceProvider
         // browser drops the secure session cookie on the first redirect.
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
+
+            // Signed URLs must use the canonical host/scheme or a proxy-level
+            // http -> https redirect will invalidate the signature.
+            if (config('app.url')) {
+                URL::forceRootUrl(config('app.url'));
+            }
         }
 
         // Refuse to run production with development conveniences enabled.

@@ -20,6 +20,12 @@ class EnsureAccountActive
             abort(403, 'This account has been suspended. Contact support.');
         }
 
+        if ($request->user()?->email_verified_at === null) {
+            auth()->logout();
+
+            abort(403, 'This account is pending verification. Contact support.');
+        }
+
         return $next($request);
     }
 }

@@ -204,7 +204,7 @@
         <footer class="border-t border-line bg-canvas/50 px-6 py-4 font-mono text-[10px] text-faint backdrop-blur-sm">
             <div class="flex flex-col items-center justify-between gap-2 sm:flex-row">
                 <span>TraceLess · public-source privacy monitoring · v1.0 beta</span>
-                <span>v2.0 coming · Discovery uses WhatsMyName (CC BY-SA 4.0) and user-scanner (MIT)</span>
+
             </div>
         </footer>
     </div>
