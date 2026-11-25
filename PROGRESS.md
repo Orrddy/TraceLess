@@ -272,3 +272,10 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
 - Report downloads: production URLs are rooted at the canonical HTTPS APP_URL
   and report links now live 24 hours instead of 30 minutes, fixing the proxy /
   expiry “Invalid signature” 403.
+### 2026-11-25 — navigation loader dedupe
+
+- The loader no longer replays twice across a full-page navigation: a click shows
+  it immediately, and the destination page clears the marker and dismisses it as
+  soon as it is ready instead of holding it for the 1.1s brand delay again.
+- Links handled in place by Livewire/Alpine (`wire:click`, `wire:navigate`, `x-on:click`)
+  and same-page query/hash links no longer trigger the navigation loader at all.
