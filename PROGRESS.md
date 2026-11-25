@@ -1,6 +1,6 @@
 # TraceLess — progress snapshot
 
-_Last updated: 2026-11-23 (end of day)_
+_Last updated: 2026-11-25_
 
 ## Where it is
 
@@ -15,6 +15,44 @@ _Last updated: 2026-11-23 (end of day)_
   The old DirectAdmin SMTP relay is kept as a documented fallback.
 - **Old host:** weeny.cloud `weeny-traceless` service is **stopped**; Altare is the only
   production instance.
+
+## Current snapshot — 25 November 2026
+
+- **Latest code:** `fc5f282` (CI green, GHCR image built). Production should be
+  redeployed to pick up the login-event migration, admin console, report-link
+  fix and loader-navigation change.
+- **Scan experience:** snapshot (23 curated profile sites), two-hour deep scans
+  (~3,885 account probes worst case), random `TR-XXXXXXXXXX` references,
+  server-timed countdown that survives logout/other devices, photoreal NASA
+  globe, branded scan-start and completion emails.
+- **Beta UI:** Vercel-style light/dark app, grouped mobile navigation,
+  original monochrome dot-globe page loader on landing/app/auth, landing device
+  panel and licensed ripple/crawler effects.
+- **Admin:** users with scan totals, last sign-in IP/device and history, active
+  sessions, monitoring pause/resume, disable/enable and pending-verification
+  controls; overview with account states and recent sign-ins.
+- **Ops:** Resend mail (verified domain), four-provider IP intelligence, external
+  uptime workflow, two scan workers plus a dedicated default-mail worker,
+  48h IP cache, audit log and 24h signed report links.
+
+## Latest work — 24–25 November 2026
+
+- Mail recovered (the `RESEND_API_KEY` config name was wrong) and every OTP,
+  scan-start and scan-complete email is now branded with the icon and Nevera
+  wordmark; Laravel’s default button/URL footer was removed.
+- Scan console: instant load, server-timed two-hour countdown, early-result hold
+  with a calm high-traffic message, completion email delayed to the reveal,
+  queue position, two-hour backend/worker limits, queue split so mail never waits
+  behind a crawl.
+- Photoreal Earth: NASA day/cloud/normal/specular textures, full-globe framing,
+  axial tilt, no stylised orbit rings or hit markers.
+- Random public scan references (`TR-…`) for URLs, UI and emails; numeric links
+  still resolve.
+- Original monochrome dot-globe loader (three orbit rings, white wordmark,
+  1.1s brand delay, no replay across navigations) on landing/app/auth.
+- Admin user intelligence and account states; login events record IP/device from
+  this deploy onward; pending verification is enforced by the active middleware.
+- Report download fixed for canonical HTTPS hosts and 24h lifetimes.
 
 ## What was completed today (2026-11-23)
 
@@ -64,34 +102,39 @@ _Last updated: 2026-11-23 (end of day)_
 
 ## Verification status
 
-- **212 PHP tests / 923 assertions** pass; Pint clean on 179 files.
+- **226 PHP tests / 987 assertions** pass; Pint clean on 186 files.
 - **14 Python tests** pass (scanner).
-- Live checks today: `/up` 200, login OTP flow issues and redirects to `https`, CSS and
-  Livewire JS load, admin pages reachable with a session, landing IP card mock-verified in
-  light/dark/mobile (real provider result depends on production env keys).
+- All 15 migrations apply cleanly.
+- `https://traceless.orrddy.store` returns 200 on `/up`; HTTPS certificate, Caddy proxy and
+  Trusted Proxies are configured; report downloads use canonical HTTPS signed URLs.
+- CI is green on `main` and the `Uptime` workflow has been running green from GitHub’s
+  infrastructure. Production still needs the latest image redeployed for the newest
+  admin/login-history/report/loader changes.
 
 ## Blocking the 10 December beta
 
-1. **Altare app environment** — paste `traceless-app/deploy/altare.env` into the app's
-   Variables (Resend key, `do-not-reply` sender, IP provider keys, `TRACELESS_BETA=true`,
-   `DB_QUEUE_RETRY_AFTER=720`, `MAIL_TIMEOUT=10`) and redeploy the latest image.
-2. **Gmail/Outlook deliverability** — sign in with both and confirm inbox vs spam.
-3. **Live deep-scan QA** — run one deep scan under the beta gate; check timing, findings,
-   queue heartbeat, admin scan inspector.
-4. **Uptime monitor** — external check on `/up` alerting email/phone.
-5. **Backups** — Neon restore drill; nightly copy of the `/data` storage volume.
-6. **Legal + support** — business name, country, support address, subprocessor list.
-7. **Secrets** — rotate Altare SFTP password, API tokens, provider keys; decide repo
-   visibility (currently public).
+1. **Redeploy `fc5f282`** so the login-history/admin/report/loader changes and the
+   `user_login_events` migration are live; re-check report download and admin pages.
+2. **Pilot QA** — real deep scan end-to-end, two-device countdown, email/branding,
+   admin user details and monitoring/account controls.
+3. **Resilience** — prove the uptime alert email, Neon restore drill, nightly `/data`
+   copy; confirm mail failover plan.
+4. **Legal + support** — business name, country, support address, subprocessor list and
+   privacy/terms copy.
+5. **Secrets** — rotate Resend key, Altare SFTP/API token and four IP-provider keys;
+   decide repo visibility (currently public).
+6. **Launch surface** — beta waitlist/feedback capture, support inbox, announcement copy.
+7. **Freeze** features 1 Dec, full QA 1–5 Dec, **go/no-go 8 Dec**, launch **10 Dec**.
 
-## Tomorrow's plan
+## Launch plan to 10 December
 
-1. Verify env + redeploy; Gmail/Outlook OTP proof; live IP card with real providers.
-2. Deep scan end-to-end + admin sweep (failed jobs, email log, heartbeats).
-3. QA pass every page in both themes at 1440/768/390.
-4. Wire the external uptime monitor and a backup job.
-5. Legal page copy + support inbox; rotate exposed secrets.
-6. Then: beta waitlist page, image/face scan research for v2.0.
+| Window | Focus |
+|---|---|
+| 25–27 Nov | Deploy latest; pilot deep scan; verify admin, reports and emails; rotate secrets |
+| 28–30 Nov | Backups/restore drill; uptime alert test; legal copy; DMARC/BIMI; waitlist + support inbox |
+| 1–5 Dec | Feature freeze; QA every page light/dark at 1440/768/390; scan timing/source tuning; rate-limit and abuse pass |
+| 6–8 Dec | Final fixes, clean-account smoke test, monitoring checks, go/no-go 8 Dec |
+| 9–10 Dec | Announcement/waitlist send, final smoke test, launch |
 
 ## Operations cheatsheet
 
@@ -142,6 +185,9 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
   automated removals.
 - Image/face deep scans are explicitly marked planned for v2.0, not shipped.
 - The repo is currently public; treat any secret found in chat/history as exposed and rotate.
+- Login-event history starts from the 25 Nov deploy; older sign-ins are not reconstructed.
+- Scan public references are random, but database ids remain visible in internal operator tools.
+- Page loader and the Earth textures are intentionally heavy-ish brand moments; the Earth assets only load on the scan console.
 
 ### Licensed third-party effects (added end of 2026-11-23)
 

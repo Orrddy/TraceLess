@@ -9,12 +9,14 @@ The product is passwordless and consent-gated: no account passwords exist, and
 no scan runs without a recorded ownership attestation.
 
 > **Status: v1.0 public beta — live at https://traceless.orrddy.store.**
-> Free during the beta: scans, deep scans and monitoring are open to every
-> account. The app runs on Altare as a single container (nginx + PHP-FPM +
-> queue + scheduler) with Neon Postgres, the multi-provider IP intelligence
-> engine and a Vercel-style light/dark interface. Billing arrives in v2.0.
-> Current state and next steps: [PROGRESS.md](PROGRESS.md).
-> Full source inventory and deep-scan limits: [SCANNING.md](SCANNING.md).
+> Free during the beta: snapshot scans, two-hour deep scans, monitoring and
+> reports are open to every account. The app runs on Altare as one Docker
+> container (nginx + PHP-FPM + scan/default queue workers + scheduler) with Neon
+> Postgres, Resend mail, four-provider IP intelligence and a Vercel-style
+> light/dark interface. Admin console covers users, scan forensics, sign-in
+> locations, monitoring and account states. Billing arrives in v2.0.
+> Current state and launch plan: [PROGRESS.md](PROGRESS.md).
+> Source inventory and scan limits: [SCANNING.md](SCANNING.md).
 
 ---
 
@@ -22,17 +24,19 @@ no scan runs without a recorded ownership attestation.
 
 | Area | State |
 |---|---|
-| Passwordless authentication (email OTP) | **Working** — hashed codes, expiry, lockout, resend cooldown, route throttles |
+| Passwordless authentication (email OTP) | **Working** — hashed single-use codes, expiry, lockout, resend cooldown, per-route throttles; sign-in IP/device history |
 | Identity profile + recorded consent | **Working** — consent is re-validated before every queued scan |
-| Scan pipeline — demo mode | **Working** — deterministic 13-source adapter, labelled as demo |
-| Scan pipeline — live mode | **Working with limits** — username only, every monitored handle, 23 curated public sources, evidence stored per finding |
-| Findings, risk score, reports | **Working** — HTML dossier, signed download URL, per-report token |
-| Removal tracking | **Working as manual tracking** — no automated removal engine yet |
-| Continuous monitoring | **Partial** — preferences and hourly dispatch exist; live alerts are thin |
-| Credential / breach monitoring | **Not connected** — no provider is configured, so live scans never populate it |
-| Subscriptions and payments | **Not built** — no payment provider; the paid tier is unreachable in production |
-| Real-time updates | **Not wired** — events broadcast to the log; the UI polls |
-| Interface refresh | **In progress** — the marketing site and app shell are migrated; ~20 inner screens are not |
+| Snapshot scan | **Working** — up to 5 usernames against 23 curated WhatsMyName profile sites, evidence hash stored per finding |
+| Deep scan | **Working** — up to 5 usernames × 732 account probes, 1 email × 220 services, 1 phone × 5 registration probes; backend budget 2h, worker timeout 7800s |
+| Scan console | **Working** — instant page, photoreal NASA globe, server-timed 2h countdown that persists across devices/logout, results held until reveal |
+| Findings, risk score, reports | **Working** — HTML dossier, 24h signed download URL, per-report token and Gate check |
+| Removal tracking | **Working as guided tracking** — no automated removal engine yet |
+| Continuous monitoring | **Working** — hourly dispatch, alerts, and admin pause/resume per identity |
+| Credential / breach monitoring | **Not connected** — no breach provider configured; UI says so rather than implying a check |
+| Admin console | **Working** — users, scan counts, sign-in IP/device history, monitoring, disabled/pending states, scan inspector, failed jobs, email log, activity log |
+| Subscriptions and payments | **Not built** — free beta; billing is v2.0 |
+| Uptime & CI | **Working** — GitHub Actions CI + external `/up` probe with Resend alert email |
+| Interface refresh | **Working** — marketing site, app shell, dashboard, scan/IP/admin flows on the Vercel-style system; light/dark QA ongoing |
 
 ### Progress log
 
@@ -50,23 +54,25 @@ no scan runs without a recorded ownership attestation.
 | 2026-11-23 | Free v1.0 beta gate (deep scans + monitoring for every account), deep-scan wall-clock budget, cache pruning, queued notifications and mail-failure recording |
 | 2026-11-23 | Licensed third-party effects integrated (fluid water-ripple film background, two spider crawlers), a browser-exposed device check card, and the 48h IP-cache countdown |
 | 2026-11-23 | Full “We see you” fingerprint panel (device-key + Web APIs) with honest Safari/iOS/Firefox gaps; image build fixed (docker vendor context + composer retries) |
-| 2026-11-24+ | Resend sender verification in production, uptime monitoring, backups, legal copy, secret rotation, live deep-scan QA |
+| 2026-11-24 | Resend transport fixed (`RESEND_API_KEY` config name), branded scan-start and completion emails with Nevera wordmark; deep-scan-started email; uptime workflow; three.js Earth scan console with server-timed countdown; two-hour scan limits |
+| 2026-11-25 | Random `TR-…` scan references; original monochrome dot-globe page loader on app/auth/marketing; photoreal NASA day/cloud/normal/specular globe, full-globe zoom; admin user intelligence (scan counts, sign-in IP/device history, monitoring pause/resume, disabled/pending verification); report download signature/host fix |
 ### Verified right now
 
-- **212 PHP tests / 923 assertions** and **14 Python tests** pass; Pint is clean.
-- All migrations apply cleanly (including the IP intelligence cache and metrics tables).
+- **226 PHP tests / 987 assertions** pass; Pint clean on 186 files.
+- All **15 migrations** apply cleanly (including scan public references, IP cache, and login events).
 - `https://traceless.orrddy.store` serves the app over HTTPS with valid certificates:
   `/up`, `/`, `/login` return 200; `/dashboard` redirects guests; admin pages are role-gated.
 - The CI workflow on `main` runs the suite and publishes `ghcr.io/orrddy/traceless` on every push.
+- The `Uptime` workflow probes `/up` every five minutes from GitHub and emails an alert on failure.
 ### Next up (before the 10 December beta)
 
-1. **Production environment** — paste `traceless-app/deploy/altare.env` into the Altare app (Resend sender `TracelessBot <do-not-reply@orrddy.store>`, IP provider keys, beta flags) and redeploy the latest image.
-2. **Email deliverability proof** — sign in with Gmail and Outlook; confirm inbox vs spam.
-3. **Live QA** — one deep scan end-to-end under the beta gate, dashboard/findings/settings in both themes, mobile widths.
-4. **Resilience** — external uptime monitor, Neon restore drill, nightly backup of `/data` reports.
-5. **Legal + support** — business name, country, support address, subprocessor list on the privacy page.
-6. **Security** — rotate the Altare SFTP password, API tokens and provider keys; decide public vs private repo.
-7. **v2.0 scope** — billing (Bachs), waitlist, image/face deep scans.
+1. **Deploy the latest image** (`fc5f282`) and verify the new login-history migration, report download and admin console in production.
+2. **Pilot a real deep scan** — measure runtime, source failure rate and tune categories/timeouts; check the two-hour hold, emails and cross-device countdown.
+3. **Resilience** — prove the uptime alert path, run a Neon restore drill and copy `/data` reports nightly.
+4. **Legal + support** — business name, country, support address, subprocessor list on the privacy page.
+5. **Security** — rotate the Resend key, Altare SFTP/API token and IP provider keys; decide public vs private repo.
+6. **Launch surface** — beta waitlist, support inbox, announcement copy; freeze features 1 Dec; go/no-go 8 Dec; launch 10 Dec.
+7. **v2.0 scope** — billing, team seats, image/face deep scans.
 
 ### Open decisions
 
@@ -151,9 +157,12 @@ VIEW_COMPILED_PATH=/tmp/traceless-views php artisan test
 | `TRACELESS_DEMO_MODE=true` (default) | Deterministic demo findings from a local catalogue. Every record is generated, not observed. |
 | `TRACELESS_DEMO_MODE=false` | The Python worker issues real HTTP requests to 23 curated public sources and reports a finding only when that source's own existence rule matches. Blocked, timed-out or unmatched sources are recorded as `unknown`, never as findings. Every monitored username is checked, up to `TRACELESS_MAX_USERNAMES`. |
 
-In live mode only a **public username** is sent to the worker. Emails, phone
-numbers and all password material are rejected at the process boundary.
-Credential checks are skipped until a breach provider is configured.
+Snapshot scans send a **public username** to the worker. Deep scans additionally
+send one monitored email and one phone number to the registration-probe engines;
+every deep finding is labelled unverified because it proves an account exists,
+not that data is exposed. Passwords, private content and subject-unsafe checks
+never reach the worker. Credential checks are skipped until a breach provider is
+configured.
 
 ## Configuration
 
@@ -198,7 +207,8 @@ run it from a checkout that contains both directories.
   purchased breach dumps.
 - **Ownership checks** scope identities, scans, findings, reports and removals
   to the signed-in user.
-- **Reports** use signed, expiring URLs.
+- **Reports** use signed URLs with a 24h lifetime plus an ownership policy and per-report token; every download is audited.
+- **Sign-in history** stores IP, user agent and a conservative device label so owners can review account access; pending-verification accounts are blocked on the next request.
 - **Secrets** live in `.env`, which is git-ignored; the repository contains only
   `.env.example` and `.env.staging.example`.
 
@@ -209,8 +219,8 @@ The admin area lives at `/admin` and is only reachable by accounts whose
 
 | Page | Purpose |
 | --- | --- |
-| `/admin` | Live operational counts (users, scans by status, findings, removals, alerts, plans), worker/scheduler heartbeats, queue and email health |
-| `/admin/users` | Search, role filter, suspend/reactivate, role changes (super admin only) |
+| `/admin` | Operational counts, pending/disabled accounts, active monitoring, recent sign-ins, worker/scheduler heartbeats, queue and email health |
+| `/admin/users` | Search/filter, scan totals, sign-in IP/device history, monitoring pause/resume, disable/enable, pending verification, role changes (super admin only) |
 | `/admin/activity` | The audit log with search, action and date filters |
 | `/admin/scans/{id}` | Per-scan forensics: every source outcome and block reason, findings, the failure message, retry and cancel |
 | `/admin/failed-jobs` | Dead-letter console: exception excerpt, retry, delete, retry all |
@@ -249,12 +259,24 @@ privacy scores are prioritisation aids, not assessments of fact.
 Proprietary. See the project owner before redistribution.
 ---
 
-## Scan console assets
+## Scan console & page loader
 
-The scan progress screen renders a rotating 3D globe with **Three.js** (MIT) using the
-NASA **Blue Marble** equirectangular texture (public domain, via Wikimedia Commons).
-The countdown is driven by server timestamps (queue time + the expected deep-scan
-window), not the client clock.
+The scan progress screen renders a photoreal rotating globe with **Three.js** (MIT)
+using NASA day, cloud, normal and ocean-specular maps (public domain). The camera is
+framed so the full Earth stays visible; a faint scan band keeps the operation context.
+The countdown uses absolute server timestamps (queue time + the two-hour deep-scan
+window), so logout, another browser or a second phone shows the same remaining time.
+
+Deep scans finish server-side when the crawl ends, but results stay hidden until the
+window ends: the UI shows a calm high-traffic state and the completion email is queued
+for the same reveal moment. Scans are referenced publicly by random `TR-XXXXXXXXXX`
+ids; database ids stay internal.
+
+The app, auth and marketing layouts share an original **monochrome dot-globe page
+loader** with three 3D orbit rings and a white Nevera wordmark. It holds for a short
+brand moment on first paint and does not replay between navigations; reduced-motion
+and no-JS fallbacks are included. A custom `public/brand/page-loader.gif` (or
+svg/webp/png) can override it.
 
 ## Uptime monitoring
 
