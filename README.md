@@ -20,6 +20,18 @@ no scan runs without a recorded ownership attestation.
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/landing-dark.png" alt="TraceLess landing page in dark mode, with both licensed crawlers on screen" width="100%">
+</p>
+<p align="center"><em>The landing page in dark mode — both live crawlers are on screen. Hover one to lure it, click to send it flying to a word.</em></p>
+
+<p align="center">
+  <img src="docs/screenshots/dashboard-dark.png" alt="TraceLess user dashboard in dark mode" width="100%">
+</p>
+<p align="center"><em>The signed-in user dashboard: privacy score, findings, scan history and the removals/credential state at a glance.</em></p>
+
 ## Where the project stands
 
 | Area | State |
