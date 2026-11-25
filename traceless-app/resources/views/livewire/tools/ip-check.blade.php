@@ -44,7 +44,7 @@
     </header>
 
     <section class="v-card p-5 sm:p-6">
-        <form wire:submit="check" class="flex flex-col gap-3 sm:flex-row sm:items-end" novalidate>
+        <form wire:submit="check" class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end" novalidate>
             <div class="min-w-0 flex-1">
                 <label for="ip" class="v-kicker mb-1.5 block">IP address (IPv4 or IPv6)</label>
                 <input id="ip" type="text" wire:model="ip" inputmode="text" class="input font-[family-name:'Geist_Mono',ui-monospace,monospace]"
@@ -54,12 +54,16 @@
                 </p>
                 @error('ip') <p class="mt-1 text-[12px] text-danger">{{ $message }}</p> @enderror
             </div>
-            <div class="flex shrink-0 gap-2">
-                <button type="submit" class="v-btn v-btn-primary" wire:loading.attr="disabled" wire:target="check">
+            <div class="flex flex-col gap-2 sm:flex-row sm:justify-end">
+                <button type="submit"
+                        class="v-btn v-btn-primary min-w-[118px] justify-center whitespace-nowrap"
+                        wire:loading.attr="disabled" wire:target="check">
                     <span wire:loading.remove wire:target="check">Run check</span>
                     <span wire:loading wire:target="check">Checking…</span>
                 </button>
-                <button type="button" class="v-btn v-btn-secondary" wire:click="useMyIp">Use my IP</button>
+                <button type="button"
+                        class="v-btn v-btn-secondary min-w-[112px] justify-center whitespace-nowrap"
+                        wire:click="useMyIp">Use my IP</button>
             </div>
         </form>
     </section>

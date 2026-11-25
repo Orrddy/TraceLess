@@ -240,3 +240,17 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
   movement uses linear GPU transforms with will-change for smoothness.
 - Removed the landing-page crawler instruction strip; the licensed crawlers
   still run, they just no longer carry explanatory copy.
+### 2026-11-25 — photoreal Earth and IP tool polish
+
+- Earth on the scan console now uses the real NASA day/cloud/normal/specular maps
+  (three.js planet textures, NASA public domain): natural land and cloud detail,
+  ocean specular, a thin atmosphere rim, frontal sun lighting and a visible
+  23.4° axis rotation. Camera pulled back and FOV narrowed so the whole globe is
+  in frame; the sci-fi orbit rings and hit markers were removed for a Google-Earth
+  look, leaving only a faint scan band.
+- Fixed the global loader trapping mobile scrolling after the IP tool’s “Run
+  check”: Livewire/XHR form submissions no longer trigger the navigation loader,
+  and any interaction-shown loader auto-hides after 6s instead of leaving
+  `overflow:hidden` on the page.
+- IP check form controls now use a stable desktop grid with fixed-width buttons,
+  and stack cleanly on mobile.

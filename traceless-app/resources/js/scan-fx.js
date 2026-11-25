@@ -47,8 +47,8 @@ function initScene(root) {
     mount.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(38, mount.clientWidth / Math.max(1, mount.clientHeight), 0.1, 100);
-    camera.position.set(0, 0.15, 4.15);
+    const camera = new THREE.PerspectiveCamera(34, mount.clientWidth / Math.max(1, mount.clientHeight), 0.1, 100);
+    camera.position.set(0, 0.12, 5.4);
 
     const group = new THREE.Group();
     scene.add(group);
@@ -60,7 +60,7 @@ function initScene(root) {
         tex.colorSpace = THREE.SRGBColorSpace;
         tex.anisotropy = anisotropy;
     }) : null;
-    const bumpMap = root.dataset.bump ? loader.load(root.dataset.bump) : null;
+    const normalMap = root.dataset.normal ? loader.load(root.dataset.normal) : null;
     const specularMap = root.dataset.specular ? loader.load(root.dataset.specular) : null;
     const cloudMap = root.dataset.clouds ? loader.load(root.dataset.clouds) : null;
 
@@ -71,11 +71,11 @@ function initScene(root) {
         new THREE.MeshPhongMaterial({
             color: dayMap ? 0xffffff : 0x0c2333,
             map: dayMap,
-            bumpMap,
-            bumpScale: 0.022,
+            normalMap,
+            normalScale: new THREE.Vector2(0.75, 0.75),
             specularMap,
-            specular: new THREE.Color(0x3f6f8d),
-            shininess: 18,
+            specular: new THREE.Color(0x5b8aa6),
+            shininess: 22,
             emissive: new THREE.Color(0x020912),
             emissiveIntensity: 0.22,
         }),
@@ -88,11 +88,11 @@ function initScene(root) {
             new THREE.SphereGeometry(1.365, 128, 96),
             new THREE.MeshPhongMaterial({
                 color: 0xffffff,
-                alphaMap: cloudMap,
+                map: cloudMap,
                 transparent: true,
-                opacity: 0.5,
+                opacity: 0.82,
                 depthWrite: false,
-                specular: new THREE.Color(0x222222),
+                alphaTest: 0.01,
             }),
         );
         group.add(cloudShell);
@@ -100,7 +100,7 @@ function initScene(root) {
 
     // Atmosphere halo.
     const atmosphere = new THREE.Mesh(
-        new THREE.SphereGeometry(1.52, 64, 48),
+        new THREE.SphereGeometry(1.48, 64, 48),
         new THREE.ShaderMaterial({
             transparent: true,
             blending: THREE.AdditiveBlending,
@@ -120,61 +120,28 @@ function initScene(root) {
                 varying vec3 vNormal;
                 varying vec3 vView;
                 void main() {
-                    float rim = pow(1.0 - abs(dot(vNormal, vView)), 2.2);
-                    gl_FragColor = vec4(0.24, 0.72, 1.0, rim * 0.75);
+                    float rim = pow(1.0 - abs(dot(vNormal, vView)), 3.2);
+                    gl_FragColor = vec4(0.32, 0.62, 1.0, rim * 0.55);
                 }
             `,
         }),
     );
     group.add(atmosphere);
 
-    // Slow orbital rings.
-    [1.75, 1.95, 2.15].forEach((radius, index) => {
-        const ring = new THREE.Mesh(
-            new THREE.TorusGeometry(radius, 0.0025 + index * 0.0008, 8, 240),
-            new THREE.MeshBasicMaterial({ color: index === 1 ? 0x7de3ff : 0x2f7fa8, transparent: true, opacity: 0.22 }),
-        );
-        ring.rotation.set(1.1 + index * 0.2, index * 0.7, index * 0.45);
-        group.add(ring);
-    });
-
     // Moving scan band.
     const scanBand = new THREE.Mesh(
-        new THREE.TorusGeometry(1.4, 0.006, 6, 220),
-        new THREE.MeshBasicMaterial({ color: 0x7de3ff, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending }),
+        new THREE.TorusGeometry(1.37, 0.004, 6, 220),
+        new THREE.MeshBasicMaterial({ color: 0x7de3ff, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending }),
     );
     scanBand.rotation.x = Math.PI / 2;
     group.add(scanBand);
 
     const scanGlow = new THREE.Mesh(
-        new THREE.TorusGeometry(1.4, 0.035, 6, 160),
-        new THREE.MeshBasicMaterial({ color: 0x49d7ff, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending }),
+        new THREE.TorusGeometry(1.37, 0.02, 6, 160),
+        new THREE.MeshBasicMaterial({ color: 0x49d7ff, transparent: true, opacity: 0.09, blending: THREE.AdditiveBlending }),
     );
     scanGlow.rotation.x = Math.PI / 2;
     group.add(scanGlow);
-
-    // Pulsing "hit" points across the surface.
-    const hits = [];
-    const hitGeometry = new THREE.SphereGeometry(0.012, 8, 8);
-    for (let i = 0; i < 42; i += 1) {
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(2 * Math.random() - 1);
-        const radius = 1.365;
-        const material = new THREE.MeshBasicMaterial({
-            color: Math.random() > 0.45 ? 0x6cf0c2 : 0x7de3ff,
-            transparent: true,
-            opacity: 0.75,
-        });
-        const hit = new THREE.Mesh(hitGeometry, material);
-        hit.position.set(
-            radius * Math.sin(phi) * Math.cos(theta),
-            radius * Math.cos(phi),
-            radius * Math.sin(phi) * Math.sin(theta),
-        );
-        hit.userData.phase = Math.random() * Math.PI * 2;
-        group.add(hit);
-        hits.push(hit);
-    }
 
     // Star field.
     const starsGeometry = new THREE.BufferGeometry();
@@ -188,15 +155,15 @@ function initScene(root) {
         starPositions[i + 2] = r * Math.sin(phi) * Math.sin(theta) - 4;
     }
     starsGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-    scene.add(new THREE.Points(starsGeometry, new THREE.PointsMaterial({ color: 0xcfe9ff, size: 0.035, transparent: true, opacity: 0.55 })));
+    scene.add(new THREE.Points(starsGeometry, new THREE.PointsMaterial({ color: 0xcfe9ff, size: 0.025, transparent: true, opacity: 0.45 })));
 
-    scene.add(new THREE.AmbientLight(0x7f95a8, 2.0));
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.9);
-    keyLight.position.set(3.2, 1.8, 5.5);
+    scene.add(new THREE.AmbientLight(0xffffff, 2.2));
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.1);
+    keyLight.position.set(0.7, 0.6, 6);
     scene.add(keyLight);
-    const rimLight = new THREE.DirectionalLight(0x5fbcff, 0.7);
-    rimLight.position.set(-4, -1, -3);
-    scene.add(rimLight);
+    const fillLight = new THREE.DirectionalLight(0x4a90c2, 0.55);
+    fillLight.position.set(-4, 1, 2);
+    scene.add(fillLight);
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const clock = new THREE.Clock();
@@ -205,22 +172,16 @@ function initScene(root) {
         const t = clock.getElapsedTime();
 
         if (!reduced) {
-            group.rotation.y += 0.0019;
-            group.rotation.x = Math.sin(t * 0.11) * 0.045;
-            if (cloudShell) cloudShell.rotation.y += 0.0007;
+            group.rotation.y += 0.0024;
+            group.rotation.x = 0.408 + Math.sin(t * 0.05) * 0.015;
+            if (cloudShell) cloudShell.rotation.y += 0.0008;
 
             scanBand.position.y = Math.sin(t * 0.62) * 1.18;
             scanGlow.position.y = scanBand.position.y;
             scanBand.material.opacity = 0.55 + 0.35 * Math.sin(t * 2.4);
             scanGlow.material.opacity = 0.1 + 0.08 * Math.sin(t * 2.4);
 
-            hits.forEach((hit) => {
-                const pulse = 0.55 + 0.65 * Math.max(0, Math.sin(t * 1.8 + hit.userData.phase));
-                hit.scale.setScalar(pulse);
-                hit.material.opacity = 0.25 + pulse * 0.45;
-            });
-
-            camera.position.x = Math.sin(t * 0.09) * 0.18;
+            camera.position.x = Math.sin(t * 0.07) * 0.08;
             camera.lookAt(0, 0, 0);
         }
 

@@ -16,15 +16,21 @@ export function initPageLoader() {
     const shownAt = performance.now();
     let hideTimer = null;
     let hideAt = null;
+    let interactionHide = null;
 
     const show = () => {
         window.clearTimeout(hideTimer);
+        window.clearTimeout(interactionHide);
         loader.classList.remove('is-hidden', 'is-leaving');
         document.documentElement.classList.add('is-page-loading');
+        // If a navigation is prevented (Livewire, client-side guard), never
+        // leave the page locked behind the loader.
+        interactionHide = window.setTimeout(hide, 6000);
     };
 
     const hide = () => {
         window.clearTimeout(hideTimer);
+        window.clearTimeout(interactionHide);
         loader.classList.add('is-leaving');
         loader.classList.add('is-hidden');
         document.documentElement.classList.remove('is-page-loading');
@@ -63,5 +69,13 @@ export function initPageLoader() {
         show();
     }, { passive: true });
 
-    document.addEventListener('submit', show, { capture: true });
+    // Only full-page form posts show the intro loader. Livewire forms submit
+    // over XHR and must never freeze the page behind the loader.
+    document.addEventListener('submit', (event) => {
+        const form = event.target;
+        if (!(form instanceof HTMLFormElement) || event.defaultPrevented) return;
+        if (form.hasAttribute('wire:submit') || form.closest('[wire\\:id]') || form.querySelector('[wire\\:model]')) return;
+
+        show();
+    }, { capture: true });
 }
