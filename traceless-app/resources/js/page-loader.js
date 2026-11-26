@@ -18,9 +18,12 @@ export function initPageLoader() {
     let hideTimer = null;
     let hideAt = null;
     let interactionHide = null;
+    let navigatingAway = false;
     // If the link click already showed the loader on the previous page, this
     // page must not hold it for the full brand delay again.
+    const skipLoader = document.documentElement.classList.contains('page-loader-skip');
     const arrivedViaNavigation = (() => {
+        if (skipLoader) return true;
         try {
             if (window.sessionStorage.getItem(navigationKey) === '1') {
                 window.sessionStorage.removeItem(navigationKey);
@@ -44,8 +47,10 @@ export function initPageLoader() {
 
     const show = (navigating = false) => {
         window.clearTimeout(hideTimer);
+        document.documentElement.classList.remove('page-loader-skip');
         window.clearTimeout(interactionHide);
         if (navigating) {
+            navigatingAway = true;
             try {
                 window.sessionStorage.setItem(navigationKey, '1');
             } catch (error) {
@@ -55,14 +60,21 @@ export function initPageLoader() {
         loader.classList.remove('is-hidden', 'is-leaving');
         document.documentElement.classList.add('is-page-loading');
         // If a navigation is prevented (Livewire, client-side guard), never
-        // leave the page locked behind the loader.
-        interactionHide = window.setTimeout(hide, 6000);
+        // leave the page locked behind the loader. The longer window lets the
+        // destination arrive before a slow navigation is treated as cancelled.
+        interactionHide = window.setTimeout(() => {
+            navigatingAway = false;
+            hide();
+        }, 15000);
     };
 
     const hide = () => {
         window.clearTimeout(hideTimer);
         window.clearTimeout(interactionHide);
-        clearNavigationMark();
+        if (!navigatingAway) clearNavigationMark();
+        // The destination page may need to show the loader again for a later
+        // full-page action (logout, external auth handoff, etc.).
+        document.documentElement.classList.remove('page-loader-skip');
         loader.classList.add('is-leaving');
         loader.classList.add('is-hidden');
         document.documentElement.classList.remove('is-page-loading');
@@ -92,7 +104,7 @@ export function initPageLoader() {
     }
 
     window.addEventListener('pageshow', arrivedViaNavigation ? hide : hideAfterMinimum);
-    window.addEventListener('beforeunload', show);
+    window.addEventListener('beforeunload', () => show(true));
 
     document.addEventListener('click', (event) => {
         const link = event.target.closest('a[href]');

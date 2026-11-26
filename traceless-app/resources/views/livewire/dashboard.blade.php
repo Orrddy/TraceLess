@@ -31,11 +31,11 @@
                     Create yours once — it takes a minute.
                 </p>
                 <div class="mt-6 flex items-center justify-center gap-2">
-                    <a href="{{ route('identity.create') }}" class="v-btn v-btn-primary">
+                    <a wire:navigate href="{{ route('identity.create') }}" class="v-btn v-btn-primary">
                         Create identity
                         <span aria-hidden="true">→</span>
                     </a>
-                    <a href="{{ route('privacy') }}" class="v-btn v-btn-secondary">How it works</a>
+                    <a wire:navigate href="{{ route('privacy') }}" class="v-btn v-btn-secondary">How it works</a>
                 </div>
             </div>
         </div>
@@ -99,7 +99,7 @@
                         @endif
                         <span class="v-pill">{{ $profile->region ?? 'Global' }}</span>
                         @if($presentedScan)
-                            <a href="{{ route('scans.show', $presentedScan) }}" class="v-pill live-scan-pill" aria-label="Open the live scan">
+                            <a wire:navigate href="{{ route('scans.show', $presentedScan) }}" class="v-pill live-scan-pill" aria-label="Open the live scan">
                                 <span class="v-dot v-dot-green live-dot"></span>
                                 <span>{{ $presentedScan->isHoldingResults() ? 'Finalizing' : 'Scan in progress' }}</span>
                                 <span class="font-[family-name:'Geist_Mono',ui-monospace,monospace] tabular-nums"
@@ -115,7 +115,7 @@
                         Run a scan
                         <span aria-hidden="true">→</span>
                     </button>
-                    <a href="{{ route('reports') }}" class="v-btn v-btn-secondary">Dossier</a>
+                    <a wire:navigate href="{{ route('reports') }}" class="v-btn v-btn-secondary">Dossier</a>
                     <button type="button"
                             wire:click="resetForNewScan"
                             wire:confirm="Delete every scan, finding, report and removal task for this identity? Your account and consent record are kept."
@@ -126,7 +126,7 @@
             </header>
 
             @if($presentedScan)
-                <a href="{{ route('scans.show', $presentedScan) }}"
+                <a wire:navigate href="{{ route('scans.show', $presentedScan) }}"
                    class="live-scan-card v-card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
                    aria-label="Open the live scan">
                     <div class="flex items-center gap-3">
@@ -186,7 +186,7 @@
                     <p class="v-small mt-4">
                         Across {{ count($categoryStats) }} {{ Str::plural('category', count($categoryStats)) }}
                     </p>
-                    <a href="{{ route('findings') }}" class="v-link mt-1 inline-block">View findings →</a>
+                    <a wire:navigate href="{{ route('findings') }}" class="v-link mt-1 inline-block">View findings →</a>
                 </div>
 
                 <div class="v-card v-card-pad">
@@ -202,7 +202,7 @@
                         {{ (int) ($riskDistribution['critical'] ?? 0) }} critical ·
                         {{ (int) ($riskDistribution['high'] ?? 0) }} high
                     </p>
-                    <a href="{{ route('findings') }}" class="v-link mt-1 inline-block">Review risks →</a>
+                    <a wire:navigate href="{{ route('findings') }}" class="v-link mt-1 inline-block">Review risks →</a>
                 </div>
 
                 <div class="v-card v-card-pad">
@@ -217,7 +217,7 @@
                     <div class="v-progress mt-4" role="img" aria-label="Removals {{ $removalPercent }} percent complete">
                         <span style="width: {{ min(100, max(0, $removalPercent)) }}%"></span>
                     </div>
-                    <a href="{{ route('removals') }}" class="v-link mt-3 inline-block">Open removal center →</a>
+                    <a wire:navigate href="{{ route('removals') }}" class="v-link mt-3 inline-block">Open removal center →</a>
                 </div>
             </section>
 
@@ -229,7 +229,7 @@
                             <h2 class="v-h2">Recent findings</h2>
                             <p class="v-small mt-0.5">Public records discovered by the last scans</p>
                         </div>
-                        <a href="{{ route('findings') }}" class="v-link whitespace-nowrap">View all</a>
+                        <a wire:navigate href="{{ route('findings') }}" class="v-link whitespace-nowrap">View all</a>
                     </div>
 
                     @if(count($recentFindings))
@@ -248,7 +248,7 @@
                                     @foreach($recentFindings as $finding)
                                         <tr class="v-row">
                                             <td class="px-5 py-3 text-[13px] font-medium text-[color:var(--v-ink)]">
-                                                <a href="{{ route('findings.show', $finding) }}" class="hover:text-[color:var(--v-blue)]">
+                                                <a wire:navigate href="{{ route('findings.show', $finding) }}" class="hover:text-[color:var(--v-blue)]">
                                                     <span class="block truncate">{{ $finding->source }}</span>
                                                 </a>
                                             </td>
@@ -277,7 +277,7 @@
                         {{-- Mobile rows --}}
                         <div class="divide-y divide-black/5 border-t border-black/5 md:hidden">
                             @foreach($recentFindings as $finding)
-                                <a href="{{ route('findings.show', $finding) }}" class="v-row flex items-start gap-3 px-5 py-3.5">
+                                <a wire:navigate href="{{ route('findings.show', $finding) }}" class="v-row flex items-start gap-3 px-5 py-3.5">
                                     <span class="v-dot {{ $riskDots[$finding->risk] ?? 'v-dot-gray' }} mt-1.5"></span>
                                     <span class="min-w-0 flex-1">
                                         <span class="block text-[13px] font-medium text-[color:var(--v-ink)]">{{ $finding->source }}</span>
@@ -300,7 +300,7 @@
                     <section class="v-card overflow-hidden" aria-label="Scan activity">
                         <div class="flex items-center justify-between px-5 py-4">
                             <h2 class="v-h2">Scans</h2>
-                            <a href="{{ route('scans.index') }}" class="v-link whitespace-nowrap">History</a>
+                            <a wire:navigate href="{{ route('scans.index') }}" class="v-link whitespace-nowrap">History</a>
                         </div>
 
                         @if(count($recentScans))
@@ -310,7 +310,7 @@
                                         $scanDot = $scanDots[$scan->status] ?? 'v-dot-blue';
                                         $scanLive = $scan->isPresentedActive();
                                     @endphp
-                                    <a href="{{ route('scans.show', $scan) }}" class="v-row flex items-center gap-3 px-5 py-3">
+                                    <a wire:navigate href="{{ route('scans.show', $scan) }}" class="v-row flex items-center gap-3 px-5 py-3">
                                         <span class="v-dot {{ $scanDot }} {{ $scanLive ? 'live-dot' : '' }}"></span>
                                         <span class="min-w-0 flex-1">
                                             <span class="block text-[13px] font-medium capitalize text-[color:var(--v-ink)]">
@@ -375,7 +375,7 @@
                 <section class="v-card v-card-pad" aria-label="Removal pipeline">
                     <div class="flex items-center justify-between">
                         <h2 class="v-h2">Removal pipeline</h2>
-                        <a href="{{ route('removals') }}" class="v-link whitespace-nowrap">Manage</a>
+                        <a wire:navigate href="{{ route('removals') }}" class="v-link whitespace-nowrap">Manage</a>
                     </div>
 
                     @if(count($activeTasks))

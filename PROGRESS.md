@@ -325,3 +325,20 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
   soon as it is ready instead of holding it for the 1.1s brand delay again.
 - Links handled in place by Livewire/Alpine (`wire:click`, `wire:navigate`, `x-on:click`)
   and same-page query/hash links no longer trigger the navigation loader at all.
+### 2026-11-26 — navigation latency, loader hand-off and source health
+
+- App shell and dashboard links now use Livewire `wire:navigate` for SPA-style
+  transitions, with a thin top progress rail wired to `livewire:navigating` /
+  `livewire:navigated` and to every Livewire commit. This removes the CSS/JS/font
+  reload from routine dashboard navigation and gives every click immediate
+  feedback instead of a dead second.
+- Full-page navigations no longer replay the loader: a small head script marks
+  the destination before first paint, and the loader also refuses to clear the
+  navigation marker when it is dismissed mid-hand-off. The loader clears the
+  skip flag after dismissal so later full-page actions still get it.
+- Deep-scanner concurrency is capped (`TRACELESS_DEEP_CONCURRENCY`, default 8,
+  max 32) in the bridge; curated scans keep the existing per-host interval and
+  6-worker cap. New admin **Source health** page shows verdict/unknown/blocked
+  rates per source for 7/30/90 days, so a blocked source cannot masquerade as a
+  clean result.
+- Tests: 227 PHP / 999 assertions, 17 Python scanner tests, Pint clean.

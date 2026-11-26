@@ -50,3 +50,27 @@ username categories (the vendored user-scanner contains 2,545 site modules acros
 
 WhatsMyName (CC BY-SA 4.0, Chris Poulter & WebBreacher), user-scanner (MIT, kaifcodec),
 phonsint (MIT, kaifcodec), Three.js (MIT), NASA Blue Marble texture (public domain).
+## Politeness and concurrency
+
+TraceLess is a guest on every source it checks, so the scanner is deliberately
+less aggressive than a normal crawler.
+
+- **Curated snapshot checks:** per-host minimum interval (default 1.2 s), 6
+  in-flight requests per worker. Configurable with
+  `TRACELESS_SCANNER_DELAY_MS`, `TRACELESS_SCANNER_CONCURRENCY` and
+  `TRACELESS_SCANNER_TIMEOUT`.
+- **Deep scans:** the vendored user-scanner engines are capped at **8 concurrent
+  requests** by default (`TRACELESS_DEEP_CONCURRENCY`, max 32). A deep scan is
+  sequential across identifiers, so one identity never opens 732 × 5 requests in
+  parallel.
+- **Blocked sources:** 401/403/429/451/999 responses are recorded as `unknown`
+  with the `source_blocked_request` reason. Existence is never inferred from a
+  block; the report says unverified.
+- **Source health:** admins can inspect verdict, unknown and blocked rates per
+  source at `/admin/sources` (last 7/30/90 days). A rising unknown rate is a
+  coverage incident, not evidence that a person has no exposure.
+
+The remaining risk is shared egress: all jobs leave through the application
+server's IP. Per-host pacing, a global cap and honest `User-Agent` identify the
+crawler; rotate egress only through infrastructure you control and only with the
+target's terms in mind.

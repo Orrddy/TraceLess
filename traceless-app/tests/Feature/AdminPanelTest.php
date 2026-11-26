@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Livewire\Admin\ActivityLog;
 use App\Livewire\Admin\Overview;
+use App\Livewire\Admin\SourceHealth;
 use App\Livewire\Admin\UsersIndex;
 use App\Models\Alert;
 use App\Models\AuditLog;
@@ -12,6 +13,7 @@ use App\Models\IdentityProfile;
 use App\Models\LoginEvent;
 use App\Models\RemovalTask;
 use App\Models\Scan;
+use App\Models\ScanSource;
 use App\Models\User;
 use App\Services\AuditService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -50,6 +52,7 @@ class AdminPanelTest extends TestCase
         $this->get('/admin')->assertRedirect('/login');
         $this->get('/admin/users')->assertRedirect('/login');
         $this->get('/admin/activity')->assertRedirect('/login');
+        $this->get('/admin/sources')->assertRedirect('/login');
     }
 
     public function test_client_accounts_cannot_reach_any_admin_page(): void
@@ -59,6 +62,7 @@ class AdminPanelTest extends TestCase
         $this->actingAs($client)->get('/admin')->assertForbidden();
         $this->actingAs($client)->get('/admin/users')->assertForbidden();
         $this->actingAs($client)->get('/admin/activity')->assertForbidden();
+        $this->actingAs($client)->get('/admin/sources')->assertForbidden();
     }
 
     public function test_admins_and_super_admins_can_reach_every_admin_page(): void
@@ -69,6 +73,7 @@ class AdminPanelTest extends TestCase
             $this->actingAs($admin)->get('/admin')->assertOk()->assertSee('Overview');
             $this->actingAs($admin)->get('/admin/users')->assertOk()->assertSee('Users');
             $this->actingAs($admin)->get('/admin/activity')->assertOk()->assertSee('Activity log');
+            $this->actingAs($admin)->get('/admin/sources')->assertOk()->assertSee('Source health');
         }
     }
 
@@ -166,6 +171,41 @@ class AdminPanelTest extends TestCase
                     && $client->isAdmin() === false;
             })
             ->assertSee('Test Person');
+    }
+
+    public function test_source_health_panel_reports_verdict_and_blocked_rates(): void
+    {
+        $admin = $this->account(User::ROLE_ADMIN);
+        $client = $this->account();
+        $profile = $this->profileFor($client);
+        $scan = Scan::create([
+            'identity_profile_id' => $profile->id,
+            'type' => 'deep_scan',
+            'status' => 'completed',
+            'progress_percentage' => 100,
+            'current_stage' => 'Completed',
+            'demo_mode' => false,
+        ]);
+
+        ScanSource::create([
+            'scan_id' => $scan->id,
+            'name' => 'GitHub',
+            'category' => 'developer_profile',
+            'status' => 'completed',
+            'outcome' => 'unknown',
+            'http_status' => 403,
+            'checked_url' => 'https://github.com/tester',
+            'outcome_reason' => 'source_blocked_request',
+            'findings_found' => 0,
+        ]);
+
+        Livewire::actingAs($admin)->test(SourceHealth::class)
+            ->assertSee('Source health')
+            ->assertSee('GitHub')
+            ->assertSee('Unknown outcomes')
+            ->assertSee('Blocked responses')
+            ->call('setDays', 30)
+            ->assertSee('30 days');
     }
 
     // -------------------------------------------------------------- user actions

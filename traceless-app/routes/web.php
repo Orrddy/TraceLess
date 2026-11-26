@@ -9,6 +9,7 @@ use App\Livewire\Admin\EmailDelivery;
 use App\Livewire\Admin\FailedJobs;
 use App\Livewire\Admin\Overview;
 use App\Livewire\Admin\ScanInspector;
+use App\Livewire\Admin\SourceHealth;
 use App\Livewire\Admin\UsersIndex;
 use App\Livewire\Credentials\CredentialExposures;
 use App\Livewire\Dashboard\Dashboard;
@@ -115,6 +116,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/', Overview::class)->name('overview');
     Route::get('/users', UsersIndex::class)->name('users');
     Route::get('/activity', ActivityLog::class)->name('activity');
+    Route::get('/sources', SourceHealth::class)->name('sources');
     Route::get('/scans/{scan}', ScanInspector::class)->name('scans.show');
     Route::get('/failed-jobs', FailedJobs::class)->name('failed-jobs');
     Route::get('/email', EmailDelivery::class)->name('email');

@@ -28,6 +28,32 @@ from typing import Any, Dict, Iterable, List, Sequence
 UPSTREAM = Path(__file__).resolve().parents[1] / "upstream" / "user-scanner"
 
 DEFAULT_CATEGORIES = ("social", "dev")
+DEFAULT_DEEP_CONCURRENCY = 8
+MAX_DEEP_CONCURRENCY = 32
+
+
+def _deep_concurrency() -> int:
+    """Cap the vendored engine's own fan-out.
+
+    user-scanner defaults to a very high worker count; a shared server IP must
+    stay a polite, low-volume client. One process is one scan identifier.
+    """
+
+    raw = os.environ.get("TRACELESS_DEEP_CONCURRENCY", "")
+    try:
+        value = int(raw) if raw else DEFAULT_DEEP_CONCURRENCY
+    except (TypeError, ValueError):
+        value = DEFAULT_DEEP_CONCURRENCY
+    return max(1, min(MAX_DEEP_CONCURRENCY, value))
+
+
+def _apply_concurrency() -> None:
+    value = _deep_concurrency()
+    from user_scanner.core import orchestrator
+    from user_scanner.core import email_orchestrator
+
+    orchestrator.set_concurrency(value)
+    email_orchestrator.set_concurrency(value)
 
 
 def _ensure_import_path() -> None:
@@ -81,6 +107,7 @@ def scan_username(username: str, categories: Sequence[str] | None = None) -> Lis
     from user_scanner.core.helpers import ScanConfig, load_categories
     from user_scanner.core.orchestrator import run_user_category
 
+    _apply_concurrency()
     selected = [name.strip() for name in (categories or DEFAULT_CATEGORIES) if name and name.strip()]
     available = load_categories()
     configs = ScanConfig(show_all=True)
@@ -104,6 +131,8 @@ def scan_email(email: str) -> List[Dict[str, Any]]:
 
     from user_scanner.core.email_orchestrator import run_email_full_batch
     from user_scanner.core.helpers import ScanConfig
+
+    _apply_concurrency()
 
     with _quiet():
         results = run_email_full_batch(email, ScanConfig(show_all=True))

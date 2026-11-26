@@ -24,6 +24,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
 
+    @include('partials.page-loader-head')
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
@@ -34,6 +36,8 @@
 
     @include('partials.page-loader')
 
+    <div class="tl-nav-progress" data-nav-progress aria-hidden="true"></div>
+
     <!-- Sidebar -->
     <aside class="ops-sidebar fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-line lg:flex">
         <div class="flex h-[4.5rem] items-center border-b border-line px-5">
@@ -43,56 +47,56 @@
         <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" aria-label="Main navigation">
             <p class="px-3 pb-1 font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-faint">Monitoring</p>
 
-            <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'nav-link-active font-semibold' : '' }}">
+            <a wire:navigate href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'nav-link-active font-semibold' : '' }}">
                 <span class="material-symbols-outlined text-[20px]">dashboard</span>
                 <span>Overview</span>
             </a>
 
-            <a href="{{ route('identity') }}" class="nav-link {{ request()->routeIs('identity*') ? 'nav-link-active font-semibold' : '' }}">
+            <a wire:navigate href="{{ route('identity') }}" class="nav-link {{ request()->routeIs('identity*') ? 'nav-link-active font-semibold' : '' }}">
                 <span class="material-symbols-outlined text-[20px]">fingerprint</span>
                 <span>Digital footprint</span>
             </a>
 
-            <a href="{{ route('findings') }}" class="nav-link {{ request()->routeIs('findings*') ? 'nav-link-active font-semibold' : '' }}">
+            <a wire:navigate href="{{ route('findings') }}" class="nav-link {{ request()->routeIs('findings*') ? 'nav-link-active font-semibold' : '' }}">
                 <span class="material-symbols-outlined text-[20px]">search</span>
                 <span>Exposure report</span>
             </a>
 
-            <a href="{{ route('credentials') }}" class="nav-link {{ request()->routeIs('credentials*') ? 'nav-link-active font-semibold' : '' }}">
+            <a wire:navigate href="{{ route('credentials') }}" class="nav-link {{ request()->routeIs('credentials*') ? 'nav-link-active font-semibold' : '' }}">
                 <span class="material-symbols-outlined text-[20px]">key</span>
                 <span>Credential monitor</span>
             </a>
 
-            <a href="{{ route('removals') }}" class="nav-link {{ request()->routeIs('removals*') ? 'nav-link-active font-semibold' : '' }}">
+            <a wire:navigate href="{{ route('removals') }}" class="nav-link {{ request()->routeIs('removals*') ? 'nav-link-active font-semibold' : '' }}">
                 <span class="material-symbols-outlined text-[20px]">delete</span>
                 <span>Removal guidance</span>
             </a>
 
-            <a href="{{ route('monitoring') }}" class="nav-link {{ request()->routeIs('monitoring*') || request()->routeIs('alerts*') ? 'nav-link-active font-semibold' : '' }}">
+            <a wire:navigate href="{{ route('monitoring') }}" class="nav-link {{ request()->routeIs('monitoring*') || request()->routeIs('alerts*') ? 'nav-link-active font-semibold' : '' }}">
                 <span class="material-symbols-outlined text-[20px]">notifications_active</span>
                 <span>Monitoring</span>
             </a>
 
             <p class="px-3 pb-1 pt-4 font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-faint">Tools</p>
 
-            <a href="{{ route('password.check') }}" class="nav-link {{ request()->routeIs('password.check') ? 'nav-link-active font-semibold' : '' }}">
+            <a wire:navigate href="{{ route('password.check') }}" class="nav-link {{ request()->routeIs('password.check') ? 'nav-link-active font-semibold' : '' }}">
                 <span class="material-symbols-outlined text-[20px]">password</span>
                 <span>Password check</span>
             </a>
 
-            <a href="{{ route('ip.check') }}" class="nav-link {{ request()->routeIs('ip.check') ? 'nav-link-active font-semibold' : '' }}">
+            <a wire:navigate href="{{ route('ip.check') }}" class="nav-link {{ request()->routeIs('ip.check') ? 'nav-link-active font-semibold' : '' }}">
                 <span class="material-symbols-outlined text-[20px]">public</span>
                 <span>IP check</span>
             </a>
 
             <p class="px-3 pb-1 pt-4 font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-faint">Account</p>
 
-            <a href="{{ route('reports') }}" class="nav-link {{ request()->routeIs('reports*') ? 'nav-link-active font-semibold' : '' }}">
+            <a wire:navigate href="{{ route('reports') }}" class="nav-link {{ request()->routeIs('reports*') ? 'nav-link-active font-semibold' : '' }}">
                 <span class="material-symbols-outlined text-[20px]">description</span>
                 <span>Reports</span>
             </a>
 
-            <a href="{{ route('settings') }}" class="nav-link {{ request()->routeIs('settings*') ? 'nav-link-active font-semibold' : '' }}">
+            <a wire:navigate href="{{ route('settings') }}" class="nav-link {{ request()->routeIs('settings*') ? 'nav-link-active font-semibold' : '' }}">
                 <span class="material-symbols-outlined text-[20px]">settings</span>
                 <span>Settings</span>
             </a>
@@ -100,27 +104,32 @@
             @if(auth()->user()?->isAdmin())
                 <p class="px-3 pb-1 pt-4 font-mono text-[9px] font-medium uppercase tracking-[0.16em] text-warning">Administration</p>
 
-                <a href="{{ route('admin.overview') }}" class="nav-link {{ request()->routeIs('admin.overview') ? 'nav-link-active font-semibold' : '' }}">
+                <a wire:navigate href="{{ route('admin.overview') }}" class="nav-link {{ request()->routeIs('admin.overview') ? 'nav-link-active font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">monitoring</span>
                     <span>Admin overview</span>
                 </a>
 
-                <a href="{{ route('admin.users') }}" class="nav-link {{ request()->routeIs('admin.users') ? 'nav-link-active font-semibold' : '' }}">
+                <a wire:navigate href="{{ route('admin.users') }}" class="nav-link {{ request()->routeIs('admin.users') ? 'nav-link-active font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">group</span>
                     <span>Users</span>
                 </a>
 
-                <a href="{{ route('admin.activity') }}" class="nav-link {{ request()->routeIs('admin.activity') ? 'nav-link-active font-semibold' : '' }}">
+                <a wire:navigate href="{{ route('admin.activity') }}" class="nav-link {{ request()->routeIs('admin.activity') ? 'nav-link-active font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">history</span>
                     <span>Activity log</span>
                 </a>
 
-                <a href="{{ route('admin.failed-jobs') }}" class="nav-link {{ request()->routeIs('admin.failed-jobs') ? 'nav-link-active font-semibold' : '' }}">
+                <a wire:navigate href="{{ route('admin.sources') }}" class="nav-link {{ request()->routeIs('admin.sources') ? 'nav-link-active font-semibold' : '' }}">
+                    <span class="material-symbols-outlined text-[20px]">health_and_safety</span>
+                    <span>Source health</span>
+                </a>
+
+                <a wire:navigate href="{{ route('admin.failed-jobs') }}" class="nav-link {{ request()->routeIs('admin.failed-jobs') ? 'nav-link-active font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">error</span>
                     <span>Failed jobs</span>
                 </a>
 
-                <a href="{{ route('admin.email') }}" class="nav-link {{ request()->routeIs('admin.email') ? 'nav-link-active font-semibold' : '' }}">
+                <a wire:navigate href="{{ route('admin.email') }}" class="nav-link {{ request()->routeIs('admin.email') ? 'nav-link-active font-semibold' : '' }}">
                     <span class="material-symbols-outlined text-[20px]">outgoing_mail</span>
                     <span>Email delivery</span>
                 </a>
@@ -140,7 +149,7 @@
                 <p class="mt-2 truncate text-xs text-faint">{{ $sidebarProfile->full_name }}</p>
             @else
                 <p class="text-xs text-muted">No identity yet.</p>
-                <a href="{{ route('identity.create') }}" class="mt-1 inline-block text-xs font-medium text-accent hover:underline">Create an identity →</a>
+                <a wire:navigate href="{{ route('identity.create') }}" class="mt-1 inline-block text-xs font-medium text-accent hover:underline">Create an identity →</a>
             @endif
         </div>
     </aside>
@@ -174,13 +183,13 @@
                         <span class="material-symbols-outlined text-[20px]" x-text="dark ? 'light_mode' : 'dark_mode'">dark_mode</span>
                     </button>
 
-                    <a href="{{ route('scans.create') }}" class="btn-primary">
+                    <a wire:navigate href="{{ route('scans.create') }}" class="btn-primary">
                         <span class="material-symbols-outlined text-[18px]">search</span>
                         <span class="hidden sm:inline">New scan</span>
                     </a>
 
                     <div class="ml-1 flex items-center gap-2">
-                        <a href="{{ route('settings') }}"
+                        <a wire:navigate href="{{ route('settings') }}"
                            class="flex h-8 w-8 items-center justify-center rounded-full border border-line bg-elevated/70 text-xs font-semibold text-body transition hover:border-cyan hover:text-ink"
                            title="Account settings" aria-label="Account settings">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
@@ -224,37 +233,37 @@
                 <nav class="space-y-5 pb-4" aria-label="Mobile navigation">
                     <div class="space-y-1">
                         <p class="px-3 pb-1 text-[10px] font-medium uppercase tracking-[0.16em] text-faint">Workspace</p>
-                        <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">dashboard</span><span>Dashboard</span></a>
-                        <a href="{{ route('identity') }}" class="nav-link {{ request()->routeIs('identity*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">fingerprint</span><span>Digital footprint</span></a>
-                        <a href="{{ route('findings') }}" class="nav-link {{ request()->routeIs('findings*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">search</span><span>Exposure report</span></a>
-                        <a href="{{ route('credentials') }}" class="nav-link {{ request()->routeIs('credentials*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">key</span><span>Credential monitor</span></a>
-                        <a href="{{ route('removals') }}" class="nav-link {{ request()->routeIs('removals*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">delete</span><span>Removal guidance</span></a>
-                        <a href="{{ route('monitoring') }}" class="nav-link {{ request()->routeIs('monitoring*') || request()->routeIs('alerts*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">notifications_active</span><span>Monitoring</span></a>
+                        <a wire:navigate href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">dashboard</span><span>Dashboard</span></a>
+                        <a wire:navigate href="{{ route('identity') }}" class="nav-link {{ request()->routeIs('identity*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">fingerprint</span><span>Digital footprint</span></a>
+                        <a wire:navigate href="{{ route('findings') }}" class="nav-link {{ request()->routeIs('findings*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">search</span><span>Exposure report</span></a>
+                        <a wire:navigate href="{{ route('credentials') }}" class="nav-link {{ request()->routeIs('credentials*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">key</span><span>Credential monitor</span></a>
+                        <a wire:navigate href="{{ route('removals') }}" class="nav-link {{ request()->routeIs('removals*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">delete</span><span>Removal guidance</span></a>
+                        <a wire:navigate href="{{ route('monitoring') }}" class="nav-link {{ request()->routeIs('monitoring*') || request()->routeIs('alerts*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">notifications_active</span><span>Monitoring</span></a>
                     </div>
                     <div class="space-y-1">
                         <p class="px-3 pb-1 text-[10px] font-medium uppercase tracking-[0.16em] text-faint">Tools</p>
-                        <a href="{{ route('password.check') }}" class="nav-link {{ request()->routeIs('password.check') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">password</span><span>Password check</span></a>
-                        <a href="{{ route('ip.check') }}" class="nav-link {{ request()->routeIs('ip.check') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">public</span><span>IP check</span></a>
-                        <a href="{{ route('reports') }}" class="nav-link {{ request()->routeIs('reports*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">description</span><span>Reports</span></a>
+                        <a wire:navigate href="{{ route('password.check') }}" class="nav-link {{ request()->routeIs('password.check') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">password</span><span>Password check</span></a>
+                        <a wire:navigate href="{{ route('ip.check') }}" class="nav-link {{ request()->routeIs('ip.check') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">public</span><span>IP check</span></a>
+                        <a wire:navigate href="{{ route('reports') }}" class="nav-link {{ request()->routeIs('reports*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">description</span><span>Reports</span></a>
                     </div>
                     <div class="space-y-1">
                         <p class="px-3 pb-1 text-[10px] font-medium uppercase tracking-[0.16em] text-faint">Account</p>
-                        <a href="{{ route('settings') }}" class="nav-link {{ request()->routeIs('settings*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">settings</span><span>Settings</span></a>
+                        <a wire:navigate href="{{ route('settings') }}" class="nav-link {{ request()->routeIs('settings*') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">settings</span><span>Settings</span></a>
                     </div>
                     @if(auth()->user()?->isAdmin())
                         <div class="space-y-1">
                             <p class="px-3 pb-1 text-[10px] font-medium uppercase tracking-[0.16em] text-faint">Admin</p>
-                            <a href="{{ route('admin.overview') }}" class="nav-link {{ request()->routeIs('admin.overview') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">monitoring</span><span>Overview</span></a>
-                            <a href="{{ route('admin.users') }}" class="nav-link {{ request()->routeIs('admin.users') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">group</span><span>Users</span></a>
-                            <a href="{{ route('admin.activity') }}" class="nav-link {{ request()->routeIs('admin.activity') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">history</span><span>Activity log</span></a>
-                            <a href="{{ route('admin.failed-jobs') }}" class="nav-link {{ request()->routeIs('admin.failed-jobs') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">error</span><span>Failed jobs</span></a>
-                            <a href="{{ route('admin.email') }}" class="nav-link {{ request()->routeIs('admin.email') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">outgoing_mail</span><span>Email delivery</span></a>
+                            <a wire:navigate href="{{ route('admin.overview') }}" class="nav-link {{ request()->routeIs('admin.overview') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">monitoring</span><span>Overview</span></a>
+                            <a wire:navigate href="{{ route('admin.users') }}" class="nav-link {{ request()->routeIs('admin.users') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">group</span><span>Users</span></a>
+                            <a wire:navigate href="{{ route('admin.activity') }}" class="nav-link {{ request()->routeIs('admin.activity') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">history</span><span>Activity log</span></a>
+                            <a wire:navigate href="{{ route('admin.failed-jobs') }}" class="nav-link {{ request()->routeIs('admin.failed-jobs') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">error</span><span>Failed jobs</span></a>
+                            <a wire:navigate href="{{ route('admin.email') }}" class="nav-link {{ request()->routeIs('admin.email') ? 'nav-link-active' : '' }}"><span class="material-symbols-outlined text-[20px]">outgoing_mail</span><span>Email delivery</span></a>
                         </div>
                     @endif
                 </nav>
             </div>
             </div>
-            <a href="{{ route('scans.create') }}" class="btn-primary w-full">New scan</a>
+            <a wire:navigate href="{{ route('scans.create') }}" class="btn-primary w-full">New scan</a>
         </div>
     </div>
 

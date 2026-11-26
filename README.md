@@ -237,6 +237,7 @@ The admin area lives at `/admin` and is only reachable by accounts whose
 | `/admin/scans/{id}` | Per-scan forensics: every source outcome and block reason, findings, the failure message, retry and cancel |
 | `/admin/failed-jobs` | Dead-letter console: exception excerpt, retry, delete, retry all |
 | `/admin/email` | Delivery log for every outbound message, with transport errors |
+| `/admin/sources` | Source verdict, unknown and blocked rates (7/30/90 days) |
 
 Silent failures are covered twice over: the queue worker and scheduler write
 heartbeats shown on the dashboard, and `ops:alert` (scheduled every ten minutes)
