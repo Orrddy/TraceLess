@@ -35,8 +35,14 @@ class PythonScannerClient
      *                                    its wall-clock budget.
      * @return array{findings: array<int, array<string, mixed>>, sources: array<int, array<string, mixed>>}
      */
-    public function scanReport(string $identifierType, string $identifier, bool $consent, string $mode = 'curated', ?int $timeoutSeconds = null): array
-    {
+    public function scanReport(
+        string $identifierType,
+        string $identifier,
+        bool $consent,
+        string $mode = 'curated',
+        ?int $timeoutSeconds = null,
+        ?int $siteLimit = null,
+    ): array {
         if (! $consent) {
             throw new RuntimeException('Consent is required before scanning.');
         }
@@ -61,6 +67,11 @@ class PythonScannerClient
 
         if ($deep) {
             $arguments[] = '--deep';
+        }
+
+        if ($siteLimit !== null) {
+            $arguments[] = '--limit';
+            $arguments[] = (string) max(1, min(50, $siteLimit));
         }
 
         $defaultTimeout = (int) config($deep ? 'traceless.python.deep_timeout' : 'traceless.python.timeout', $deep ? 420 : 90);

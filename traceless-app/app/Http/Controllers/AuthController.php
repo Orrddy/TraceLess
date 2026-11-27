@@ -18,7 +18,9 @@ class AuthController extends Controller
 
     public function showRegister()
     {
-        return view('auth.register');
+        return view('auth.register', [
+            'quickScanPrefill' => session('quick_scan_prefill', []),
+        ]);
     }
 
     public function register(Request $request)
@@ -76,7 +78,9 @@ class AuthController extends Controller
 
     public function showLogin()
     {
-        return view('auth.login');
+        return view('auth.login', [
+            'quickScanPrefill' => session('quick_scan_prefill', []),
+        ]);
     }
 
     public function login(Request $request)

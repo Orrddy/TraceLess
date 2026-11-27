@@ -18,6 +18,7 @@ use App\Livewire\Findings\FindingsIndex;
 use App\Livewire\Identity\IdentityIndex;
 use App\Livewire\Identity\IdentitySetup;
 use App\Livewire\Monitoring\MonitoringPage;
+use App\Livewire\QuickScan;
 use App\Livewire\Removals\RemovalCenter;
 use App\Livewire\Removals\RemovalShow;
 use App\Livewire\Reports\ReportsPage;
@@ -37,6 +38,7 @@ Route::get('/', fn () => view('landing'))->name('home');
 Route::view('/privacy', 'pages.privacy')->name('privacy');
 Route::view('/terms', 'pages.terms')->name('terms');
 Route::view('/security', 'pages.security')->name('security');
+Route::get('/quick-scan', QuickScan::class)->middleware('throttle:20,1')->name('quick-scan');
 
 /*
 |--------------------------------------------------------------------------

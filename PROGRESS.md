@@ -342,3 +342,22 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
   rates per source for 7/30/90 days, so a blocked source cannot masquerade as a
   clean result.
 - Tests: 227 PHP / 999 assertions, 17 Python scanner tests, Pint clean.
+
+### 2026-11-27 — guest quick scan + auth story carousel
+
+- `Scan my footprint` now opens a public `/quick-scan` page instead of the
+  register screen: name, email and public username, mandatory ownership
+  confirmation, then a real 10-source curated scan (the Python worker's
+  `--limit 10`) with inline results. Nothing is written to the database; the
+  results live in the browser session, the endpoint is rate-limited, and name/
+  email are only used to prefill signup.
+- Every result is explicitly represented as found, no public match, or
+  unverified when a source blocks/does not answer. Below the results, deep scan
+  and monitoring hand off to free account creation / sign-in.
+- Sign-in and register screens now have a five-slide Alpine story carousel beside
+  the form (what can be found, what attackers can do, starting 2027 cleaner, deep
+  scan time, crawlers across public sources), while keeping the existing video
+  background. Quick-scan name/email prefill the auth forms.
+- Added guest quick-scan tests (consent, validation, honeypot, transient results)
+  and auth/landing CTA coverage. Tests: 233 PHP / 1,036 assertions, 17 Python,
+  Pint clean.

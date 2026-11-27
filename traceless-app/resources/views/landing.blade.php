@@ -24,7 +24,7 @@
             </p>
 
             <div class="mt-7 flex flex-wrap items-center gap-2">
-                <a href="{{ route('register') }}" class="v-btn v-btn-primary">
+                <a href="{{ route('quick-scan') }}" class="v-btn v-btn-primary">
                     Scan my footprint
                     <span aria-hidden="true">→</span>
                 </a>

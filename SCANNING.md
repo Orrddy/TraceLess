@@ -18,6 +18,15 @@ Keybase, Telegram, SoundCloud, Hacker News, Docker Hub, Behance, Dribbble, Flick
 
 Cap: up to 5 monitored usernames, so a snapshot is at most ~115 page checks.
 
+## Guest quick scan
+
+A free entry point on `/quick-scan` runs the same curated engine with a
+**10-source limit** for one public username. It requires an explicit ownership
+confirmation, is limited to **2 checks per IP per 10 minutes**, and writes
+nothing to the database: the results live only in the browser session. Name and
+email are optional signup prefill, never scan inputs. Deep scans and monitoring
+still require a free account and a recorded identity consent.
+
 ## Deep scan (up to two hours)
 
 Deep scan uses the vendored [user-scanner](https://github.com/kaifcodec/user-scanner)

@@ -49,32 +49,7 @@
                 <x-brand-logo :href="route('home')" size="lg" tagline="Account access" />
 
                 <div class="mt-auto max-w-md">
-                    <div class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-medium text-body">
-                        <span class="h-1.5 w-1.5 rounded-full bg-success"></span>
-                        Secure sign-in
-                    </div>
-
-                    <h2 class="mt-5 font-display text-[2.4rem] font-semibold leading-[1.1] tracking-[-0.02em] text-ink xl:text-[2.8rem]">
-                        Know what is public about you.
-                    </h2>
-                    <p class="mt-5 max-w-sm text-sm leading-relaxed text-body">
-                        We check public sources only, record your consent for every identity, and never ask for a password.
-                    </p>
-
-                    <div class="mt-8 space-y-3 border-t border-line pt-6 text-sm text-body">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[15px] text-success">verified_user</span>
-                            <span>Consent recorded for every scan</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[15px] text-accent">dns</span>
-                            <span>Evidence stored per finding</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[15px] text-warning">key_off</span>
-                            <span>No passwords, ever</span>
-                        </div>
-                    </div>
+                    @include('partials.auth-story-slider')
                 </div>
 
                 <div class="mt-10 flex items-center justify-between border-t border-line pt-5 text-xs text-faint">
@@ -96,6 +71,10 @@
 
                 {{ $slot ?? '' }}
                 @yield('content')
+
+                <p class="mt-6 text-center font-body text-[11px] text-muted">
+                    Just curious? <a href="{{ route('quick-scan') }}" class="font-medium text-accent hover:underline">Run a free 10-source quick scan</a>
+                </p>
 
                 <p class="mt-8 border-t border-line pt-5 text-center font-mono text-[10px] leading-relaxed text-faint">
                     By continuing you agree to the

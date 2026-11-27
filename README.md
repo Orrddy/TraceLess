@@ -36,6 +36,7 @@ no scan runs without a recorded ownership attestation.
 
 | Area | State |
 |---|---|
+| Guest quick scan | **Working** — 10 curated public-profile checks for one username, explicit ownership confirmation, 2 checks/IP/10 min, results transient and no account write |
 | Passwordless authentication (email OTP) | **Working** — hashed single-use codes, expiry, lockout, resend cooldown, per-route throttles; sign-in IP/device history |
 | Identity profile + recorded consent | **Working** — consent is re-validated before every queued scan |
 | Snapshot scan | **Working** — up to 5 usernames against 23 curated WhatsMyName profile sites, evidence hash stored per finding |
@@ -70,7 +71,7 @@ no scan runs without a recorded ownership attestation.
 | 2026-11-25 | Random `TR-…` scan references; original monochrome dot-globe page loader on app/auth/marketing; photoreal NASA day/cloud/normal/specular globe, full-globe zoom; admin user intelligence (scan counts, sign-in IP/device history, monitoring pause/resume, disabled/pending verification); report download signature/host fix |
 ### Verified right now
 
-- **226 PHP tests / 987 assertions** pass; Pint clean on 186 files.
+- **233 PHP tests / 1,036 assertions** pass; Pint clean on 189 files.
 - All **15 migrations** apply cleanly (including scan public references, IP cache, and login events).
 - `https://traceless.orrddy.store` serves the app over HTTPS with valid certificates:
   `/up`, `/`, `/login` return 200; `/dashboard` redirects guests; admin pages are role-gated.

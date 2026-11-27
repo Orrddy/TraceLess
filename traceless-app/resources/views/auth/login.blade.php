@@ -14,7 +14,7 @@
 
         <div>
             <label for="email" class="mb-1.5 block font-mono text-[10px] uppercase tracking-wider text-muted">Email address</label>
-            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="email"
+            <input id="email" type="email" name="email" value="{{ old('email', $quickScanPrefill['email'] ?? '') }}" required autofocus autocomplete="email"
                    class="input-base @error('email') border-coral/60 @enderror" placeholder="you@example.com">
             @error('email')<p class="mt-1 font-mono text-[10px] text-coral">{{ $message }}</p>@enderror
         </div>

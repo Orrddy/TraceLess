@@ -14,14 +14,14 @@
 
         <div>
             <label for="name" class="mb-1.5 block font-mono text-[10px] uppercase tracking-wider text-muted">Full name</label>
-            <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name"
+            <input id="name" type="text" name="name" value="{{ old('name', $quickScanPrefill['name'] ?? '') }}" required autofocus autocomplete="name"
                    class="input-base @error('name') border-coral/60 @enderror" placeholder="Alex Morgan">
             @error('name')<p class="mt-1 font-mono text-[10px] text-coral">{{ $message }}</p>@enderror
         </div>
 
         <div>
             <label for="email" class="mb-1.5 block font-mono text-[10px] uppercase tracking-wider text-muted">Email address</label>
-            <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email"
+            <input id="email" type="email" name="email" value="{{ old('email', $quickScanPrefill['email'] ?? '') }}" required autocomplete="email"
                    class="input-base @error('email') border-coral/60 @enderror" placeholder="you@example.com">
             @error('email')<p class="mt-1 font-mono text-[10px] text-coral">{{ $message }}</p>@enderror
             <p class="mt-1.5 font-body text-[11px] text-muted">This address becomes your sign-in method. Keep access to it.</p>

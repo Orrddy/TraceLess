@@ -33,9 +33,28 @@ class AuthTest extends TestCase
 
     public function test_public_pages_render(): void
     {
-        foreach (['/', '/login', '/register', '/privacy', '/terms', '/security'] as $path) {
+        foreach (['/', '/quick-scan', '/login', '/register', '/privacy', '/terms', '/security'] as $path) {
             $this->get($path)->assertOk();
         }
+    }
+
+    public function test_the_landing_scan_cta_goes_to_the_guest_quick_scan(): void
+    {
+        $this->get('/')
+            ->assertOk()
+            ->assertSee(route('quick-scan'), false);
+    }
+
+    public function test_auth_screens_keep_the_video_and_show_the_story_slider(): void
+    {
+        $this->get('/login')
+            ->assertOk()
+            ->assertSee('scanner-loop.mp4', false)
+            ->assertSee('What could be found')
+            ->assertSee('What hackers can do')
+            ->assertSee('Start 2027 with a new self.')
+            ->assertSee('A deep scan is not instant.')
+            ->assertSee('We work across the public web.');
     }
 
     public function test_registration_requires_an_email_code_before_creating_the_account(): void
