@@ -20,8 +20,9 @@ Cap: up to 5 monitored usernames, so a snapshot is at most ~115 page checks.
 
 ## Guest quick scan
 
-A free entry point on `/quick-scan` runs the same curated engine with a
-**10-source limit** for one public username. It requires an explicit ownership
+A free entry point on `/quick-scan` checks the top ten social sources for one
+public username, plus email registration on the four sources with a public
+email probe (Facebook, Instagram, X, Pinterest). The other six are username-only. It requires an explicit ownership
 confirmation, is limited to **2 checks per IP per 10 minutes**, and writes
 nothing to the database: the results live only in the browser session. Name and
 email are optional signup prefill, never scan inputs. Deep scans and monitoring
@@ -37,11 +38,11 @@ an account exists for the identifier. Every deep finding is therefore marked
 
 | Identifier | Engine | Coverage per identifier |
 | --- | --- | --- |
-| Username (max 5) | user-scanner, categories `social` + `dev` | **732** site modules (279 social + 453 developer/community) |
+| Username (max 5) | user-scanner, categories `social` + `dev` | **733** site modules (280 social + 453 developer/community) |
 | Email (max 1) | user-scanner email modules | **220** email-registration services (social, shopping, dev, dating, streaming, education, finance, …) |
 | Phone (max 1) | phonsint | **5** registration probes: Microsoft, Zoho, Amazon, Facebook, Instagram |
 
-Worst-case sweep: 5 × 732 + 220 + 5 = **3,885 public probes**, which is why a deep
+Worst-case sweep: 5 × 733 + 220 + 5 = **3,890 public probes**, which is why a deep
 scan is budgeted at two hours. It stops early when the crawl finishes; if the
 two-hour budget is exhausted the scan fails cleanly with a budget message rather
 than publishing partial results. `TRACELESS_DEEP_CATEGORIES` can widen the
@@ -70,7 +71,7 @@ less aggressive than a normal crawler.
   `TRACELESS_SCANNER_TIMEOUT`.
 - **Deep scans:** the vendored user-scanner engines are capped at **8 concurrent
   requests** by default (`TRACELESS_DEEP_CONCURRENCY`, max 32). A deep scan is
-  sequential across identifiers, so one identity never opens 732 × 5 requests in
+  sequential across identifiers, so one identity never opens 733 × 5 requests in
   parallel.
 - **Blocked sources:** 401/403/429/451/999 responses are recorded as `unknown`
   with the `source_blocked_request` reason. Existence is never inferred from a

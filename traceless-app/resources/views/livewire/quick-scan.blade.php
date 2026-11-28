@@ -9,8 +9,8 @@
             See what the public web already knows.
         </h1>
         <p class="mt-4 max-w-2xl text-[15px] leading-relaxed text-body">
-            Check one public username against <span class="font-medium text-ink">10 top public-profile sources</span>.
-            The results appear right here — no signup, no password, no scan saved to an account.
+            Check one public username and the email you own against <span class="font-medium text-ink">10 curated public sources</span>.
+            Username results and email-registration results appear together. No signup or password; the check is saved to a private admin audit log and never shown publicly.
         </p>
     </div>
 
@@ -30,7 +30,7 @@
                         Run the 10-source check
                     </h2>
                 </div>
-                <span class="v-pill hidden sm:inline-flex">~10–40 sec</span>
+                <span class="v-pill hidden sm:inline-flex">~20–60 sec</span>
             </div>
 
             <form wire:submit="scan" class="mt-6 space-y-4" data-quick-scan-form>
@@ -59,8 +59,7 @@
                     </div>
                     @error('username')<p class="mt-1 font-mono text-[10px] text-danger">{{ $message }}</p>@enderror
                     <p class="mt-1.5 text-[11px] leading-relaxed text-muted">
-                        The quick check uses your <span class="text-ink">username</span> only. Name and email are used only to
-                        prefill signup if you continue — nothing is saved to an account.
+                        Name and email are used to prefill signup, run the email registration checks where available, and save a private admin audit record. They are never shown publicly.
                     </p>
                 </div>
 
@@ -73,8 +72,8 @@
                     <input type="checkbox" wire:model="consent" required
                            class="mt-0.5 rounded border-line text-accent focus:ring-accent/30">
                     <span class="text-[11px] leading-relaxed text-body">
-                        I confirm this is <span class="font-medium text-ink">my own public username</span> or one I have
-                        explicit permission to check, and I accept the
+                        I confirm this is <span class="font-medium text-ink">my own public username and email</span>, or a
+                        username I have explicit permission to check, and I understand this scan is saved to a private admin audit log. I accept the
                         <a href="{{ route('terms') }}" class="text-accent hover:underline">terms</a> and
                         <a href="{{ route('privacy') }}" class="text-accent hover:underline">privacy policy</a>.
                     </span>
@@ -89,7 +88,7 @@
                     </span>
                     <span wire:loading wire:target="scan" class="inline-flex items-center gap-2">
                         <span class="h-3.5 w-3.5 animate-spin rounded-full border-2 border-canvas/40 border-t-canvas"></span>
-                        Checking 10 public sources…
+                        Checking username + email…
                     </span>
                 </button>
 
@@ -104,7 +103,7 @@
         <aside class="space-y-4">
             <div class="v-card p-5 sm:p-6">
                 <p class="v-kicker">The short list</p>
-                <h2 class="mt-1.5 text-[1.1rem] font-semibold text-ink">10 public profile checks</h2>
+                <h2 class="mt-1.5 text-[1.1rem] font-semibold text-ink">10 public source checks</h2>
                 <div class="mt-4 grid grid-cols-2 gap-2">
                     @foreach($checks as $check)
                         <div class="rounded-lg border border-line bg-elevated/35 px-3 py-2 font-mono text-[10px] text-body">
@@ -113,21 +112,21 @@
                     @endforeach
                 </div>
                 <p class="mt-4 text-[11px] leading-relaxed text-muted">
-                    This is a quick look, not a full report. Each result is either a public match, no match at that source,
-                    or unverified when the source refuses a check.
+                    This is a quick look, not a full report. Each username result is either a public match, no match, or
+                    unverified. Email-registration checks are available on four of the ten sources; LinkedIn, TikTok, YouTube, Reddit, Telegram and Snapchat are username-only.
                 </p>
             </div>
 
             <div class="v-card border-accent/20 p-5 sm:p-6">
                 <p class="v-kicker">What a quick scan cannot do</p>
                 <ul class="mt-3 space-y-2.5 text-[12px] leading-relaxed text-body">
-                    <li class="flex gap-2"><span class="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-faint"></span>Email and phone-registration checks</li>
+                    <li class="flex gap-2"><span class="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-faint"></span>Phone-registration and full deep-scan checks</li>
                     <li class="flex gap-2"><span class="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-faint"></span>Hundreds of deep social and developer sources</li>
                     <li class="flex gap-2"><span class="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-faint"></span>Removal workflow, reports and monitoring</li>
                 </ul>
                 <p class="mt-4 border-t border-line pt-3 text-[11px] leading-relaxed text-muted">
                     For the full picture, create a free account and run a deep scan across up to
-                    <span class="text-ink">3,885 public probes</span>.
+                    <span class="text-ink">3,890 public probes</span>.
                 </p>
                 <div class="mt-3 flex flex-wrap gap-2">
                     <a href="{{ route('register') }}" class="v-btn v-btn-primary !px-3 !py-2 !text-[11px]">Deep scan with an account</a>
@@ -143,42 +142,68 @@
                 <div>
                     <p class="v-kicker">Quick scan complete</p>
                     <h2 class="mt-1.5 font-display text-[clamp(1.7rem,3vw,2.6rem)] font-semibold tracking-[-0.04em] text-ink">
-                        {{ $results['public_matches'] }} public match{{ $results['public_matches'] === 1 ? '' : 'es' }} for <span>@</span>{{ $results['username'] }}
+                        {{ $results['public_matches'] }} public match{{ $results['public_matches'] === 1 ? '' : 'es' }} for <span>@</span>{{ $results['username'] }} + email
                     </h2>
                     <p class="mt-1 text-[12px] text-muted">
-                        {{ $results['checked'] }} sources checked · {{ $results['unverified'] }} unverified · {{ $results['scanned_at'] }}
+                        {{ $results['checked'] }} sources checked · {{ $results['username_matches'] }} username · {{ $results['email_matches'] }} email · {{ $results['scanned_at'] }}
                     </p>
                 </div>
-                <button type="button" wire:click="resetScan" class="v-btn v-btn-secondary !px-3 !py-2 !text-[11px]">
+                <a href="{{ route('quick-scan') }}" class="v-btn v-btn-secondary !px-3 !py-2 !text-[11px]">
                     Check another username
-                </button>
+                </a>
             </div>
+            @if($results['email_scan_error'] ?? false)
+                <div class="rounded-lg border border-warning/30 bg-warning/[0.07] px-3 py-2 font-mono text-[10px] text-warning">{{ $results['email_scan_error'] }}</div>
+            @endif
 
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach($results['sources'] as $source)
                     @php
                         $found = $source['outcome'] === 'found';
                         $unknown = in_array($source['outcome'], ['unknown', 'skipped'], true);
+                        $emailOutcome = $source['email_outcome'] ?? 'unsupported';
+                        $emailFound = $emailOutcome === 'found';
+                        $emailUnknown = in_array($emailOutcome, ['unknown', 'skipped'], true);
+                        $emailUnsupported = $emailOutcome === 'unsupported';
                         $tone = $found ? 'text-success' : ($unknown ? 'text-warning' : 'text-muted');
                         $label = $found ? 'Public profile found' : ($unknown ? 'Could not verify' : 'No public match');
+                        $emailTone = $emailFound ? 'text-success' : ($emailUnknown ? 'text-warning' : ($emailUnsupported ? 'text-faint' : 'text-muted'));
+                        $emailLabel = $emailFound ? 'Email registered' : ($emailUnknown ? 'Could not verify' : ($emailUnsupported ? 'Not available' : 'No email match'));
+                        $dotTone = ($found || $emailFound) ? 'bg-success' : (($unknown || $emailUnknown) ? 'bg-warning' : 'bg-faint');
                     @endphp
                     <div class="v-card flex flex-col gap-3 p-4" wire:key="quick-source-{{ $source['name'] }}">
                         <div class="flex items-start justify-between gap-3">
-                            <div>
-                                <p class="text-[13px] font-medium text-ink">{{ $source['name'] }}</p>
-                                <p class="mt-0.5 font-mono text-[9px] uppercase tracking-[0.13em] {{ $tone }}">{{ $label }}</p>
+                            <p class="text-[13px] font-medium text-ink">{{ $source['name'] }}</p>
+                            <span class="mt-0.5 h-2 w-2 shrink-0 rounded-full {{ $dotTone }}"></span>
+                        </div>
+                        <div class="space-y-1.5 border-y border-line/60 py-2.5 text-[10px]">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-mono uppercase tracking-[0.12em] text-muted">Username</span>
+                                <span class="font-mono {{ $tone }}">{{ $label }}</span>
                             </div>
-                            <span class="mt-0.5 h-2 w-2 rounded-full {{ $found ? 'bg-success' : ($unknown ? 'bg-warning' : 'bg-faint') }}"></span>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-mono uppercase tracking-[0.12em] text-muted">Email</span>
+                                <span class="font-mono {{ $emailTone }}">{{ $emailLabel }}</span>
+                            </div>
                         </div>
                         @if($found && $source['url'])
                             <a href="{{ $source['url'] }}" target="_blank" rel="noopener noreferrer nofollow"
                                class="break-all font-mono text-[10px] text-accent hover:underline">
                                 {{ \Illuminate\Support\Str::limit($source['url'], 64) }}
                             </a>
-                        @elseif($unknown && $source['reason'])
-                            <p class="text-[10px] leading-relaxed text-faint">The source did not answer in a way we could verify. This is not proof of absence.</p>
+                        @elseif($unknown)
+                            <p class="text-[10px] leading-relaxed text-faint">The username source did not answer in a way we could verify. This is not proof of absence.</p>
                         @else
                             <p class="text-[10px] leading-relaxed text-faint">No public profile was returned at this source for this handle.</p>
+                        @endif
+                        @if($emailUnsupported)
+                            <p class="text-[10px] leading-relaxed text-faint">Email registration checks are not available at this source.</p>
+                        @elseif($emailFound)
+                            <p class="text-[10px] leading-relaxed text-faint">This source responded as if an account is registered with this email. Review the account if it is yours.</p>
+                        @elseif($emailUnknown)
+                            <p class="text-[10px] leading-relaxed text-faint">The source did not verify the email check. Not proof of absence.</p>
+                        @else
+                            <p class="text-[10px] leading-relaxed text-faint">No account with this email was returned by this source.</p>
                         @endif
                     </div>
                 @endforeach
@@ -202,8 +227,8 @@
                     </div>
                 </div>
                 <p class="mt-4 border-t border-line pt-3 text-[10px] leading-relaxed text-faint">
-                    Quick-scan results are held only in this browser session and are not saved to an account.
-                    Nothing is scanned without the ownership confirmation above.
+                    Quick-scan results are saved to a private admin audit log and are not shown publicly.
+                    They are not attached to a member account, and nothing is scanned without the ownership confirmation above.
                 </p>
             </div>
         </section>

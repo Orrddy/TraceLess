@@ -114,8 +114,8 @@ class PayloadTests(unittest.TestCase):
         payload = StubScanner((200, "x", "https://example.test")).scan("username", "johndoe", False)
         self.assertEqual(payload["status"], "error")
 
-    def test_only_username_is_accepted(self):
-        payload = StubScanner((200, "x", "https://example.test")).scan("email", "a@b.test", True)
+    def test_unsupported_identifier_is_rejected(self):
+        payload = StubScanner((200, "x", "https://example.test")).scan("company", "acme.test", True)
         self.assertEqual(payload["status"], "error")
 
     def test_offline_mode_reports_unknown_without_findings(self):

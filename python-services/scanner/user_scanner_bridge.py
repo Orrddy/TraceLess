@@ -26,8 +26,12 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Sequence
 
 UPSTREAM = Path(__file__).resolve().parents[1] / "upstream" / "user-scanner"
+OVERRIDES = Path(__file__).resolve().parent / "overrides" / "user_scanner"
 
 DEFAULT_CATEGORIES = ("social", "dev")
+# The eight of the ten quick-check sources that have an email-registration
+# module in user-scanner. GitLab and Reddit are username-only.
+QUICK_EMAIL_MODULES = ("facebook", "instagram", "x", "pinterest")
 DEFAULT_DEEP_CONCURRENCY = 8
 MAX_DEEP_CONCURRENCY = 32
 
@@ -56,7 +60,32 @@ def _apply_concurrency() -> None:
     email_orchestrator.set_concurrency(value)
 
 
+def _install_overrides() -> None:
+    """Install TraceLess-owned modules into the fetched upstream clone.
+
+    ``python-services/upstream`` is git-ignored and is cloned by CI/runtime, so
+    source edits there disappear on deploy. Keep additions here instead and copy
+    them over before importing the upstream package.
+    """
+
+    if not OVERRIDES.is_dir() or not UPSTREAM.is_dir():
+        return
+
+    for source in OVERRIDES.rglob("*.py"):
+        relative = source.relative_to(OVERRIDES)
+        target = UPSTREAM / "user_scanner" / relative
+        try:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if not target.exists() or target.read_bytes() != source.read_bytes():
+                target.write_bytes(source.read_bytes())
+        except OSError:
+            # A read-only upstream must not break the whole scanner. The normal
+            # upstream modules are still importable; the override is just absent.
+            continue
+
+
 def _ensure_import_path() -> None:
+    _install_overrides()
     if str(UPSTREAM) not in sys.path:
         sys.path.insert(0, str(UPSTREAM))
 
@@ -81,13 +110,39 @@ def _status_label(status: Any, is_email: bool) -> str:
     return "unknown"
 
 
+_SOURCE_LABELS = {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "x": "X",
+    "x (twitter)": "X",
+    "linkedin": "LinkedIn",
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "reddit": "Reddit",
+    "telegram": "Telegram",
+    "snapchat": "Snapchat",
+    "pinterest": "Pinterest",
+    "github": "GitHub",
+    "gitlab": "GitLab",
+    "stackoverflow": "Stack Overflow",
+    "gravatar": "Gravatar",
+    "medium": "Medium",
+    "deviantart": "DeviantArt",
+    "spotify": "Spotify",
+}
+
+
+def _canonical_source(source: str) -> str:
+    return _SOURCE_LABELS.get(source.strip().lower(), source)
+
+
 def _to_row(result: Any) -> Dict[str, Any]:
     reason = result.reason
     if reason is not None and not isinstance(reason, str):
         reason = str(reason)
 
     return {
-        "source": result.site_name or result.category or "Unknown source",
+        "source": _canonical_source(result.site_name or result.category or "Unknown source"),
         "category": result.category or "",
         "outcome": _status_label(result.status, bool(result.is_email)),
         "url": result.url or "",
@@ -99,18 +154,35 @@ def _to_row(result: Any) -> Dict[str, Any]:
     }
 
 
-def scan_username(username: str, categories: Sequence[str] | None = None) -> List[Dict[str, Any]]:
-    """Check a handle across the selected categories."""
+def scan_username(
+    username: str,
+    categories: Sequence[str] | None = None,
+    modules: Sequence[str] | None = None,
+) -> List[Dict[str, Any]]:
+    """Check a handle across the selected categories or named modules."""
 
     _ensure_import_path()
 
-    from user_scanner.core.helpers import ScanConfig, load_categories
-    from user_scanner.core.orchestrator import run_user_category
+    from user_scanner.core.helpers import ScanConfig, load_categories, load_modules
+    from user_scanner.core.orchestrator import run_user_category, run_user_module
 
     _apply_concurrency()
+    configs = ScanConfig(show_all=True)
+
+    if modules is not None:
+        wanted = {name.strip().lower() for name in modules if name and name.strip()}
+        selected_modules = [
+            module
+            for path in load_categories().values()
+            for module in load_modules(path)
+            if module.__name__.split(".")[-1].lower() in wanted
+        ]
+        with _quiet():
+            results = run_user_module(selected_modules, username, configs)
+        return [_to_row(result) for result in results]
+
     selected = [name.strip() for name in (categories or DEFAULT_CATEGORIES) if name and name.strip()]
     available = load_categories()
-    configs = ScanConfig(show_all=True)
 
     rows: List[Dict[str, Any]] = []
     for name in selected:
@@ -124,18 +196,35 @@ def scan_username(username: str, categories: Sequence[str] | None = None) -> Lis
     return rows
 
 
-def scan_email(email: str) -> List[Dict[str, Any]]:
-    """Check whether an address is registered across the email modules."""
+def scan_email(email: str, modules: Sequence[str] | None = None) -> List[Dict[str, Any]]:
+    """Check whether an address is registered across email modules.
+
+    ``modules`` limits the pass to specific module names, used by the free
+    quick scan so it stays on the same ten public sources rather than running
+    the full 220-service deep list.
+    """
 
     _ensure_import_path()
 
-    from user_scanner.core.email_orchestrator import run_email_full_batch
-    from user_scanner.core.helpers import ScanConfig
+    from user_scanner.core.email_orchestrator import run_email_full_batch, run_email_module_batch
+    from user_scanner.core.helpers import ScanConfig, load_categories, load_modules
 
     _apply_concurrency()
+    configs = ScanConfig(show_all=True)
 
-    with _quiet():
-        results = run_email_full_batch(email, ScanConfig(show_all=True))
+    if modules is not None:
+        wanted = {name.strip().lower() for name in modules if name and name.strip()}
+        selected = [
+            module
+            for path in load_categories(is_email=True).values()
+            for module in load_modules(path)
+            if module.__name__.split(".")[-1].lower() in wanted
+        ]
+        with _quiet():
+            results = run_email_module_batch(selected, email, configs)
+    else:
+        with _quiet():
+            results = run_email_full_batch(email, configs)
 
     return [_to_row(result) for result in results]
 

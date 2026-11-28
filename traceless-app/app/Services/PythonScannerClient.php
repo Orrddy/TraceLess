@@ -57,6 +57,7 @@ class PythonScannerClient
         }
 
         $deep = $mode === 'deep';
+        $quick = $mode === 'quick';
         $arguments = [
             config('traceless.python.binary', 'python'),
             $script,
@@ -67,6 +68,8 @@ class PythonScannerClient
 
         if ($deep) {
             $arguments[] = '--deep';
+        } elseif ($quick) {
+            $arguments[] = '--quick';
         }
 
         if ($siteLimit !== null) {

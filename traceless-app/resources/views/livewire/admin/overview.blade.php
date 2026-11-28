@@ -3,10 +3,16 @@
         eyebrow="Administration"
         title="Overview"
         description="Live operational counts. Every figure below comes straight from the database.">
-        <a href="{{ route('admin.activity') }}" class="btn-secondary text-xs">
-            <span class="material-symbols-outlined text-[16px]">history</span>
-            <span>Activity log</span>
-        </a>
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ route('admin.quick-scans') }}" class="btn-secondary text-xs">
+                <span class="material-symbols-outlined text-[16px]">manage_search</span>
+                <span>Quick scans · {{ number_format($stats['quick_scans_total']) }}</span>
+            </a>
+            <a href="{{ route('admin.activity') }}" class="btn-secondary text-xs">
+                <span class="material-symbols-outlined text-[16px]">history</span>
+                <span>Activity log</span>
+            </a>
+        </div>
     </x-page-header>
 
     {{-- Headline counts --}}

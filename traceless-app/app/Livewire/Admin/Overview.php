@@ -9,6 +9,7 @@ use App\Models\IdentityProfile;
 use App\Models\LoginEvent;
 use App\Models\MonitoringSubscription;
 use App\Models\OutboundEmail;
+use App\Models\QuickScanRecord;
 use App\Models\RemovalTask;
 use App\Models\Scan;
 use App\Models\Subscription;
@@ -59,6 +60,8 @@ class Overview extends Component
             'scans_today' => Scan::where('created_at', '>=', now()->startOfDay())->count(),
             'scans_active' => Scan::whereIn('status', ['queued', 'initializing', 'checking_sources', 'normalizing_results', 'calculating_risk', 'generating_report'])->count(),
             'scans_failed' => Scan::where('status', 'failed')->count(),
+            'quick_scans_total' => QuickScanRecord::count(),
+            'quick_scans_today' => QuickScanRecord::where('created_at', '>=', now()->startOfDay())->count(),
             'findings_total' => Finding::count(),
             'findings_new' => Finding::where('created_at', '>=', now()->subDays(7))->count(),
             'removals_total' => RemovalTask::count(),

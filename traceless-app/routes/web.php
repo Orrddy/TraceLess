@@ -8,6 +8,7 @@ use App\Livewire\Admin\ActivityLog;
 use App\Livewire\Admin\EmailDelivery;
 use App\Livewire\Admin\FailedJobs;
 use App\Livewire\Admin\Overview;
+use App\Livewire\Admin\QuickScans;
 use App\Livewire\Admin\ScanInspector;
 use App\Livewire\Admin\SourceHealth;
 use App\Livewire\Admin\UsersIndex;
@@ -117,6 +118,7 @@ Route::middleware(['auth', 'active'])->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', Overview::class)->name('overview');
     Route::get('/users', UsersIndex::class)->name('users');
+    Route::get('/quick-scans', QuickScans::class)->name('quick-scans');
     Route::get('/activity', ActivityLog::class)->name('activity');
     Route::get('/sources', SourceHealth::class)->name('sources');
     Route::get('/scans/{scan}', ScanInspector::class)->name('scans.show');

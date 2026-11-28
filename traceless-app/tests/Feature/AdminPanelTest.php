@@ -11,6 +11,7 @@ use App\Models\AuditLog;
 use App\Models\Finding;
 use App\Models\IdentityProfile;
 use App\Models\LoginEvent;
+use App\Models\QuickScanRecord;
 use App\Models\RemovalTask;
 use App\Models\Scan;
 use App\Models\ScanSource;
@@ -52,6 +53,7 @@ class AdminPanelTest extends TestCase
         $this->get('/admin')->assertRedirect('/login');
         $this->get('/admin/users')->assertRedirect('/login');
         $this->get('/admin/activity')->assertRedirect('/login');
+        $this->get('/admin/quick-scans')->assertRedirect('/login');
         $this->get('/admin/sources')->assertRedirect('/login');
     }
 
@@ -62,6 +64,7 @@ class AdminPanelTest extends TestCase
         $this->actingAs($client)->get('/admin')->assertForbidden();
         $this->actingAs($client)->get('/admin/users')->assertForbidden();
         $this->actingAs($client)->get('/admin/activity')->assertForbidden();
+        $this->actingAs($client)->get('/admin/quick-scans')->assertForbidden();
         $this->actingAs($client)->get('/admin/sources')->assertForbidden();
     }
 
@@ -73,8 +76,34 @@ class AdminPanelTest extends TestCase
             $this->actingAs($admin)->get('/admin')->assertOk()->assertSee('Overview');
             $this->actingAs($admin)->get('/admin/users')->assertOk()->assertSee('Users');
             $this->actingAs($admin)->get('/admin/activity')->assertOk()->assertSee('Activity log');
+            $this->actingAs($admin)->get('/admin/quick-scans')->assertOk()->assertSee('Quick scans');
             $this->actingAs($admin)->get('/admin/sources')->assertOk()->assertSee('Source health');
         }
+    }
+
+    public function test_admin_quick_scans_shows_name_email_and_green_sources(): void
+    {
+        $admin = $this->account(User::ROLE_ADMIN);
+
+        QuickScanRecord::create([
+            'name' => 'Ada',
+            'email' => 'ada@example.com',
+            'username' => 'adalovelace',
+            'sources' => [['name' => 'Instagram', 'outcome' => 'found', 'email_outcome' => 'found']],
+            'green_sources' => ['Instagram'],
+            'checked_count' => 10,
+            'public_matches' => 1,
+            'username_matches' => 1,
+            'email_matches' => 1,
+        ]);
+
+        $this->actingAs($admin)->get('/admin/quick-scans')
+            ->assertOk()
+            ->assertSee('Ada')
+            ->assertSee('ada@example.com')
+            ->assertSee('adalovelace')
+            ->assertSee('Instagram')
+            ->assertSee('Green sources');
     }
 
     public function test_a_suspended_admin_is_blocked(): void

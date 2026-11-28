@@ -22,7 +22,7 @@ _Last updated: 2026-11-25_
   redeployed to pick up the login-event migration, admin console, report-link
   fix and loader-navigation change.
 - **Scan experience:** snapshot (23 curated profile sites), two-hour deep scans
-  (~3,885 account probes worst case), random `TR-XXXXXXXXXX` references,
+  (~3,890 account probes worst case), random `TR-XXXXXXXXXX` references,
   server-timed countdown that survives logout/other devices, photoreal NASA
   globe, branded scan-start and completion emails.
 - **Beta UI:** Vercel-style light/dark app, grouped mobile navigation,
@@ -384,3 +384,37 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
   worst-case budget is 3,885; a 4.8-billion-probe claim would be false without a
   real search-index provider. See the Nigeria note and scanner docs.
 - Tests: 235 PHP / 1,044 assertions; Pint clean on 190 files.
+
+### 2026-11-28 — Nigerian public source: Nairaland
+
+- Added `nairaland.py` to the vendored `user-scanner` social modules. Nairaland
+  member profiles are public at `nairaland.com/{username}`; the probe extracts
+  only short public fields (location, gender, linked X handle, registration date,
+  last seen), never follower/post lists.
+- Nairaland sits behind a Cloudflare bot challenge for plain `httpx`; the module
+  uses the repo's `impersonate_validate` curl_cffi helper with a warmed session.
+  A 404 is `not_found`; a challenged or marker-less 200 is `unknown`, never a
+  match. Live-tested against two real profiles and a nonexistent handle.
+- Deep-scan budget is now 5 × 733 + 220 + 5 = **3,890** worst-case probes.
+  Updated `SCANNING.md`, README and the quick-scan deep-scan copy.
+- CAC remains a public entity lookup; NIN and PVC remain consent-based
+  verification, not public probes. See `docs/nigeria-public-probes.md`.
+
+### 2026-11-28 — top-10 social quick scan + admin audit
+
+- Quick scan now covers the requested top ten social sources: Facebook,
+  Instagram, X, LinkedIn, TikTok, YouTube, Reddit, Telegram, Snapchat and
+  Pinterest. The fast path uses nine WhatsMyName profiles plus the public
+  user-scanner LinkedIn module; it returns ten source cards in about 17 seconds
+  in local tests.
+- Email registration is checked on the four of those ten with a public email
+  module: Facebook, Instagram, X and Pinterest. The other six are explicitly
+  labelled username-only rather than claiming an email result.
+- Every successful guest scan is written to the protected `quick_scan_records`
+  table with name, email, username, per-source outcomes, green sources and match
+  counts. `/admin/quick-scans` shows the audit trail to admins with green-source
+  badges; no member account or public page receives the data.
+- Consent/disclosure copy now states that quick scans are retained for admin
+  review. The reset action is a plain GET link to avoid the Livewire 419 reset
+  failure.
+- Tests: 236 PHP / 1,067 assertions; 17 Python; Pint clean.

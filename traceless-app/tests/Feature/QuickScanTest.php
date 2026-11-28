@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Livewire\QuickScan;
+use App\Models\QuickScanRecord;
 use App\Services\PythonScannerClient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
@@ -23,26 +24,26 @@ class QuickScanTest extends TestCase
     private function report(): array
     {
         $sources = [
-            ['GitHub', 'found', 'https://github.com/adalovelace'],
-            ['GitLab', 'not_found', null],
-            ['Reddit', 'found', 'https://reddit.com/user/adalovelace'],
-            ['X', 'unknown', null],
-            ['Instagram', 'not_found', null],
-            ['LinkedIn', 'skipped', null],
-            ['Stack Overflow', 'not_found', null],
-            ['Gravatar', 'unknown', null],
-            ['Medium', 'not_found', null],
-            ['DeviantArt', 'not_found', null],
+            ['Facebook', 'not_found', null],
+            ['Instagram', 'found', 'https://instagram.com/adalovelace'],
+            ['X', 'found', 'https://x.com/adalovelace'],
+            ['LinkedIn', 'not_found', null],
+            ['TikTok', 'not_found', null],
+            ['YouTube', 'not_found', null],
+            ['Reddit', 'not_found', null],
+            ['Telegram', 'unknown', null],
+            ['Snapchat', 'not_found', null],
+            ['Pinterest', 'not_found', null],
         ];
 
         return [
             'findings' => [
                 [
-                    'source' => 'GitHub',
-                    'category' => 'developer_profile',
+                    'source' => 'Instagram',
+                    'category' => 'social_profile',
                     'identifier_type' => 'username',
                     'identifier_value' => 'adalovelace',
-                    'url' => 'https://github.com/adalovelace',
+                    'url' => 'https://instagram.com/adalovelace',
                     'confidence' => 0.95,
                     'risk' => 'low',
                     'removal_method' => 'manual_instructions',
@@ -51,11 +52,11 @@ class QuickScanTest extends TestCase
                     'verification_status' => 'verified',
                 ],
                 [
-                    'source' => 'Reddit',
+                    'source' => 'X',
                     'category' => 'social_profile',
                     'identifier_type' => 'username',
                     'identifier_value' => 'adalovelace',
-                    'url' => 'https://reddit.com/user/adalovelace',
+                    'url' => 'https://x.com/adalovelace',
                     'confidence' => 0.8,
                     'risk' => 'moderate',
                     'removal_method' => 'manual_instructions',
@@ -77,12 +78,36 @@ class QuickScanTest extends TestCase
         ];
     }
 
+    private function emailReport(): array
+    {
+        $sources = [
+            ['Facebook', 'found'],
+            ['Instagram', 'found'],
+            ['X', 'unknown'],
+            ['Pinterest', 'not_found'],
+        ];
+
+        return [
+            'findings' => [],
+            'sources' => collect($sources)->map(fn (array $source) => [
+                'name' => $source[0],
+                'category' => 'public_directory',
+                'outcome' => $source[1],
+                'checked_url' => null,
+                'http_status' => null,
+                'rule' => 'account_probe',
+                'reason' => $source[1] === 'unknown' ? 'source_blocked_request' : null,
+                'elapsed_ms' => 100,
+            ])->all(),
+        ];
+    }
+
     public function test_guests_can_open_the_quick_scan_page(): void
     {
         $this->get('/quick-scan')
             ->assertOk()
             ->assertSee('Free quick check')
-            ->assertSee('10 public profile checks')
+            ->assertSee('10 public source checks')
             ->assertSee('no account required');
     }
 
@@ -93,13 +118,14 @@ class QuickScanTest extends TestCase
             ->assertHasErrors(['name', 'email', 'username', 'consent']);
     }
 
-    public function test_quick_scan_returns_ten_source_results_without_persisting_them(): void
+    public function test_quick_scan_returns_ten_source_results_and_keeps_only_an_admin_audit_record(): void
     {
         $mock = Mockery::mock(PythonScannerClient::class);
         $mock->shouldReceive('scanReport')
-            ->once()
-            ->with('username', 'adalovelace', true, 'curated', 45, 10)
-            ->andReturn($this->report());
+            ->twice()
+            ->andReturnUsing(function (string $type, string $value, bool $consent, string $mode, int $timeout, ?int $limit = null) {
+                return $type === 'email' ? $this->emailReport() : $this->report();
+            });
         $this->app->instance(PythonScannerClient::class, $mock);
 
         Livewire::test(QuickScan::class)
@@ -110,15 +136,27 @@ class QuickScanTest extends TestCase
             ->call('scan')
             ->assertHasNoErrors()
             ->assertSet('scanned', true)
-            ->assertSee('2 public matches')
+            ->assertSee('4 public matches')
             ->assertSee('adalovelace')
             ->assertSee('10 sources checked')
-            ->assertSee('GitHub')
+            ->assertSee('2 username')
+            ->assertSee('2 email')
+            ->assertSee('Instagram')
+            ->assertSee('Email registered')
+            ->assertSee('Not available')
             ->assertSee('No public match')
             ->assertSee('Could not verify');
 
         $this->assertDatabaseCount('findings', 0);
         $this->assertDatabaseCount('scans', 0);
+        $this->assertDatabaseCount('quick_scan_records', 1);
+
+        $record = QuickScanRecord::first();
+        $this->assertSame('Ada', $record->name);
+        $this->assertSame('ada@example.com', $record->email);
+        $this->assertSame('adalovelace', $record->username);
+        $this->assertContains('Instagram', $record->green_sources);
+        $this->assertContains('X', $record->green_sources);
         $this->assertSame('Ada', session('quick_scan_prefill.name'));
     }
 

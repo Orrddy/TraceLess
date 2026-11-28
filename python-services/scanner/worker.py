@@ -74,6 +74,48 @@ DEFAULT_SITE_LIMIT = 24
 # Curated sources we are willing to publish findings for. Names are matched
 # case-insensitively against the WhatsMyName dataset. Sites missing from the
 # installed dataset are skipped rather than guessed at.
+QUICK_WMN_SITES: Tuple[str, ...] = (
+    "Facebook",
+    "Instagram",
+    "X",
+    "TikTok",
+    "YouTube",
+    "Reddit",
+    "Telegram",
+    "Snapchat",
+    "Pinterest",
+)
+QUICK_TOP10: Tuple[str, ...] = (
+    "Facebook",
+    "Instagram",
+    "X",
+    "LinkedIn",
+    "TikTok",
+    "YouTube",
+    "Reddit",
+    "Telegram",
+    "Snapchat",
+    "Pinterest",
+)
+QUICK_USERNAME_MODULES: Tuple[str, ...] = (
+    "facebook",
+    "instagram",
+    "x",
+    "linkedin",
+    "tiktok",
+    "youtube",
+    "reddit",
+    "telegram",
+    "snapchat",
+    "pinterest",
+)
+QUICK_EMAIL_MODULES: Tuple[str, ...] = (
+    "facebook",
+    "instagram",
+    "x",
+    "pinterest",
+)
+
 CURATED_SITES: Tuple[str, ...] = (
     "GitHub",
     "GitLab",
@@ -105,6 +147,7 @@ CURATED_ALIASES: Dict[str, Tuple[str, ...]] = {
     # Dataset entries whose names differ from the label we show to users.
     "GitHub": ("GitHub (User)", "GitHub (Gists)"),
     "Stack Overflow": ("StackOverflow",),
+    "YouTube": ("YouTube Channel", "YouTube User", "YouTube User2"),
     "HackerNews": ("Hacker News",),
     "Docker Hub": ("Docker Hub (User)", "Docker Hub (Organization)"),
     # LinkedIn is no longer present in the dataset; kept here so the curated
@@ -275,14 +318,14 @@ class ScannerService:
         except (OSError, ValueError):
             return []
 
-    def _selected_sites(self) -> List[Dict[str, Any]]:
+    def _selected_sites(self, curated_sites: Optional[Sequence[str]] = None) -> List[Dict[str, Any]]:
         by_name = {
             str(site.get("name", "")).lower(): site
             for site in self.wmn_sites
             if isinstance(site, dict)
         }
         selected: List[Dict[str, Any]] = []
-        for name in CURATED_SITES:
+        for name in curated_sites or CURATED_SITES:
             site = self._resolve_site(by_name, name)
             if not site:
                 continue
@@ -438,7 +481,11 @@ class ScannerService:
             }
 
         if identifier_type == "email":
-            return self._scan_deep(identifier_type, identifier_value)
+            return self._scan_deep(
+                identifier_type,
+                identifier_value,
+                email_modules=QUICK_EMAIL_MODULES if mode == "quick" else None,
+            )
 
         if identifier_type == "phone":
             return self._scan_phone(identifier_value)
@@ -448,6 +495,9 @@ class ScannerService:
                 "status": "error",
                 "message": "Only public usernames, emails and phone numbers can be checked.",
             }
+
+        if mode == "quick":
+            return self._scan_quick_username(identifier_value)
 
         if mode == "deep":
             return self._scan_deep(identifier_type, identifier_value)
@@ -475,7 +525,94 @@ class ScannerService:
                 except Exception:  # noqa: BLE001 - a single source must not fail the scan
                     continue
 
-        order = {name.lower(): index for index, name in enumerate(CURATED_SITES)}
+        return self._build_report(identifier_type, identifier_value, results, CURATED_SITES)
+
+
+    def _scan_quick_username(self, identifier_value: str) -> Dict[str, Any]:
+        """Nine fast curated social checks plus the public LinkedIn module.
+
+        This is the guest quick scan. It deliberately avoids fanning out across
+        the full deep module set: the ten top social sources are enough for a
+        quick look, and keep the request inside a normal PHP timeout.
+        """
+        slug = _slug_identifier(identifier_value)
+        if slug is None:
+            return {
+                "status": "error",
+                "message": "The username could not be normalized into a safe query value.",
+            }
+
+        sites = self._selected_sites(QUICK_WMN_SITES)
+        if not sites:
+            return {
+                "status": "error",
+                "message": "The scanner dataset is unavailable. Install python-services/upstream/WhatsMyName.",
+            }
+
+        results: List[CheckResult] = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.concurrency) as pool:
+            futures = [pool.submit(self._check_site, site, slug) for site in sites]
+            for future in concurrent.futures.as_completed(futures):
+                try:
+                    results.append(future.result())
+                except Exception:  # noqa: BLE001 - one source must not fail the quick scan
+                    continue
+
+        # LinkedIn is not in the WMN dataset anymore, but user-scanner has a
+        # public-profile module for it. One module, no full deep scan.
+        if self.offline:
+            results.append(
+                CheckResult(
+                    name="LinkedIn",
+                    category="social_profile",
+                    outcome=STATUS_UNKNOWN,
+                    url=f"https://www.linkedin.com/in/{slug}",
+                    rule="account_probe",
+                    reason="network_disabled",
+                )
+            )
+        else:
+            try:
+                import user_scanner_bridge as bridge
+
+                rows = bridge.scan_username(identifier_value, modules=("linkedin",))
+                row = rows[0] if rows else {}
+                results.append(
+                    CheckResult(
+                        name="LinkedIn",
+                        category="social_profile",
+                        outcome=_text(row.get("outcome")) or STATUS_UNKNOWN,
+                        url=_text(row.get("url")) or f"https://www.linkedin.com/in/{slug}",
+                        rule="account_probe",
+                        reason=row.get("reason"),
+                        title="Public profile on LinkedIn",
+                        description="The service responded as if this handle has a public profile.",
+                        risk="moderate",
+                    )
+                )
+            except Exception:  # noqa: BLE001 - source errors remain unknown
+                results.append(
+                    CheckResult(
+                        name="LinkedIn",
+                        category="social_profile",
+                        outcome=STATUS_UNKNOWN,
+                        url=f"https://www.linkedin.com/in/{slug}",
+                        rule="account_probe",
+                        reason="source_error",
+                    )
+                )
+
+        return self._build_report("username", identifier_value, results, QUICK_TOP10)
+
+
+    def _build_report(
+        self,
+        identifier_type: str,
+        identifier_value: str,
+        results: List[CheckResult],
+        order_names: Sequence[str],
+    ) -> Dict[str, Any]:
+        order = {name.lower(): index for index, name in enumerate(order_names)}
         results.sort(key=lambda item: order.get(item.name.lower(), len(order)))
 
         findings: List[Dict[str, Any]] = []
@@ -525,7 +662,13 @@ class ScannerService:
 
 
     # ------------------------------------------------------- deep adapters
-    def _scan_deep(self, identifier_type: str, identifier_value: str) -> Dict[str, Any]:
+    def _scan_deep(
+        self,
+        identifier_type: str,
+        identifier_value: str,
+        email_modules: Optional[Sequence[str]] = None,
+        username_modules: Optional[Sequence[str]] = None,
+    ) -> Dict[str, Any]:
         """Run the vendored user-scanner (username categories or email modules).
 
         These are account probes, not page fetches, so every finding is marked
@@ -542,9 +685,13 @@ class ScannerService:
 
         try:
             if identifier_type == "email":
-                rows = bridge.scan_email(identifier_value)
+                rows = bridge.scan_email(identifier_value, modules=email_modules)
             else:
-                rows = bridge.scan_username(identifier_value, bridge.categories_from_env())
+                rows = bridge.scan_username(
+                    identifier_value,
+                    bridge.categories_from_env(),
+                    modules=username_modules,
+                )
         except Exception as exc:  # noqa: BLE001 - never leak stack traces
             return {
                 "status": "error",
@@ -762,7 +909,7 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
     )
 
     try:
-        mode = "deep" if "--deep" in args else "curated"
+        mode = "deep" if "--deep" in args else ("quick" if "--quick" in args else "curated")
         payload = service.scan(identifier_type, identifier_value, consent_verified=consent, mode=mode)
     except Exception:  # noqa: BLE001 - never leak stack traces to the caller
         payload = {"status": "error", "message": "Scanner failed to complete."}
