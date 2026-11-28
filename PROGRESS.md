@@ -361,3 +361,26 @@ docs: README.md (status/log), this file, BRAND.md (design reference)
 - Added guest quick-scan tests (consent, validation, honeypot, transient results)
   and auth/landing CTA coverage. Tests: 233 PHP / 1,036 assertions, 17 Python,
   Pint clean.
+
+### 2026-11-28 — first-visit landing film + quick-scan result focus
+
+- Added a first-launch, full-screen landing intro from `intro.mp4` (transcoded
+  HEVC → browser-safe H.264/AAC). No controls and no skip button; completion is
+  persisted in `localStorage` only after the `ended` event. A half-watched video
+  therefore replays after refresh, while a completed one never does on that
+  browser/device profile. The existing branded page loader is hidden during the
+  film and shown for a full beat after it before landing.
+- Audible autoplay is attempted first; blocked browsers fall back to muted
+  playback with an explicit sound toggle, and only a hard autoplay block exposes
+  a single “Play intro” control (not a skip). Background links are `inert` while
+  the gate is up.
+- Quick scan now has a scanning shimmer/spinner state on the submit button and a
+  slow smooth scroll + scale-in reveal of the public results after Livewire
+  returns. `quick-scan-complete` / `quick-scan-reset` events drive the transition.
+- Added `docs/nigeria-public-probes.md`: CAC entity search is a public source;
+  NIN and PVC are consent-based verification, not public probes; X posts and
+  public giveaway pages are candidate public probes.
+- Not changed: the claim “up to 3,885 public probes”. The scanner's documented
+  worst-case budget is 3,885; a 4.8-billion-probe claim would be false without a
+  real search-index provider. See the Nigeria note and scanner docs.
+- Tests: 235 PHP / 1,044 assertions; Pint clean on 190 files.

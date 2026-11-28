@@ -1715,3 +1715,316 @@ html.page-loader-skip .page-loader { display: none !important; }
 }
 .tl-nav-progress.is-active { opacity: 1; }
 .tl-nav-progress.is-done { opacity: 0; transform: scaleX(1) !important; transition: transform 0.18s ease, opacity 0.25s ease 0.08s; }
+
+/* --------------------------------------------------------------------------
+   First-launch landing intro
+   -------------------------------------------------------------------------- */
+html.intro-gate-pending,
+html.intro-gate-pending body {
+    overflow: hidden;
+}
+html:not(.intro-gate-pending) .intro-gate {
+    display: none !important;
+}
+html.intro-gate-pending .page-loader {
+    display: none !important;
+}
+
+.intro-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    overflow: hidden;
+    background: #02050a;
+    transition: opacity 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.intro-gate.is-leaving {
+    opacity: 0;
+    pointer-events: none;
+}
+.intro-gate-video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #02050a;
+    pointer-events: none;
+    user-select: none;
+}
+.intro-gate-scrim {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, rgba(2, 5, 10, 0.56) 0%, transparent 22%, transparent 72%, rgba(2, 5, 10, 0.74) 100%),
+        radial-gradient(ellipse 88% 78% at 50% 46%, transparent 46%, rgba(2, 5, 10, 0.24) 100%);
+}
+.intro-gate-top {
+    position: absolute;
+    top: max(22px, env(safe-area-inset-top));
+    left: max(24px, env(safe-area-inset-left));
+    right: max(24px, env(safe-area-inset-right));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    pointer-events: none;
+}
+.intro-gate-id {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 34px;
+    color: rgba(239, 244, 252, 0.82);
+}
+.intro-gate-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: #6cf0c2;
+    box-shadow: 0 0 14px rgba(108, 240, 194, 0.8);
+}
+.intro-gate-kicker {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+.intro-gate-sound {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 0 13px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(4, 9, 16, 0.62);
+    color: rgba(239, 244, 252, 0.9);
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    pointer-events: auto;
+    backdrop-filter: blur(12px);
+    transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+.intro-gate-sound:hover {
+    border-color: rgba(108, 240, 194, 0.5);
+    background: rgba(6, 16, 20, 0.82);
+    color: #ffffff;
+}
+.intro-gate-sound:focus-visible {
+    outline: 2px solid #6cf0c2;
+    outline-offset: 3px;
+}
+.intro-gate-sound-icon {
+    color: #6cf0c2;
+    font-size: 12px;
+    line-height: 1;
+}
+.intro-gate-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    min-height: 48px;
+    padding: 0 22px;
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    border-radius: 999px;
+    background: rgba(238, 244, 251, 0.96);
+    color: #05070c;
+    font-family: 'Geist', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.36);
+}
+.intro-gate-bottom {
+    position: absolute;
+    left: max(26px, env(safe-area-inset-left));
+    right: max(26px, env(safe-area-inset-right));
+    bottom: max(24px, env(safe-area-inset-bottom));
+    color: rgba(239, 244, 252, 0.62);
+    pointer-events: none;
+}
+.intro-gate-track {
+    position: relative;
+    height: 2px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+}
+.intro-gate-track span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform: scaleX(0);
+    transform-origin: left center;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #6cb1ff, #6cf0c2);
+    box-shadow: 0 0 12px rgba(73, 215, 255, 0.45);
+    transition: transform 120ms linear;
+}
+.intro-gate-meta {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 9px;
+    margin-top: 13px;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 9px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+.intro-gate-meta-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.55;
+}
+.intro-gate-buffering {
+    position: absolute;
+    left: 50%;
+    bottom: 58px;
+    width: 22px;
+    height: 22px;
+    margin-left: -11px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease;
+}
+.intro-gate.is-buffering .intro-gate-buffering {
+    opacity: 0.8;
+}
+.intro-gate-buffering span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-top-color: rgba(108, 240, 194, 0.9);
+    border-radius: 999px;
+    animation: intro-gate-spin 0.9s linear infinite;
+}
+@keyframes intro-gate-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 640px) {
+    .intro-gate-top {
+        top: max(16px, env(safe-area-inset-top));
+        left: max(16px, env(safe-area-inset-left));
+        right: max(16px, env(safe-area-inset-right));
+    }
+    .intro-gate-kicker {
+        font-size: 9px;
+        letter-spacing: 0.12em;
+    }
+    .intro-gate-bottom {
+        left: max(18px, env(safe-area-inset-left));
+        right: max(18px, env(safe-area-inset-right));
+        bottom: max(18px, env(safe-area-inset-bottom));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .intro-gate,
+    .intro-gate-track span,
+    .intro-gate-sound {
+        transition: none;
+    }
+    .intro-gate-buffering span {
+        animation: none;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Quick scan feedback and result reveal
+   -------------------------------------------------------------------------- */
+.quick-scan-submit {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+.quick-scan-submit.is-scanning {
+    cursor: progress;
+}
+.quick-scan-submit.is-scanning::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(110deg, transparent 18%, rgba(255, 255, 255, 0.17) 48%, transparent 78%);
+    transform: translateX(-120%);
+    animation: quick-scan-sheen 1.35s ease-in-out infinite;
+    pointer-events: none;
+}
+@keyframes quick-scan-sheen {
+    0% { transform: translateX(-120%); }
+    65%, 100% { transform: translateX(120%); }
+}
+
+.quick-scan-loading {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    border: 1px solid var(--line, rgba(255,255,255,.1));
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--v-elevated, #111623) 44%, transparent);
+    padding: 10px 12px;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px;
+    line-height: 1.55;
+    color: var(--v-muted, #8996ab);
+}
+.quick-scan-loading-bar {
+    position: relative;
+    display: block;
+    height: 2px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+}
+.quick-scan-loading-bar::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 34%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--v-blue, #6cb1ff), var(--v-mint, #6cf0c2));
+    animation: quick-scan-progress 1.25s ease-in-out infinite;
+}
+@keyframes quick-scan-progress {
+    0% { transform: translateX(-110%); }
+    100% { transform: translateX(320%); }
+}
+
+.quick-results {
+    scroll-margin-top: 6.5rem;
+}
+.quick-results--entering {
+    opacity: 0;
+    transform: translateY(30px) scale(0.965);
+    transform-origin: top center;
+}
+.quick-results--visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition:
+        opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .quick-scan-submit.is-scanning::after,
+    .quick-scan-loading-bar::after {
+        animation: none;
+    }
+    .quick-results--visible {
+        transition: none;
+    }
+}

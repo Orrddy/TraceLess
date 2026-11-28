@@ -35,6 +35,14 @@ if (document.querySelector('[data-scan-fx]') && !window.matchMedia('(prefers-red
     });
 }
 
+// First-launch landing intro. The gate is only rendered on the landing page;
+// the loader script below waits for its completion event before dismissing.
+if (document.querySelector('[data-intro-gate]')) {
+    import('./intro-gate').then(({ initIntroGate }) => {
+        initIntroGate();
+    });
+}
+
 // Global branded page loader (shown on first paint and between pages).
 initPageLoader();
 

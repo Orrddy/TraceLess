@@ -138,6 +138,7 @@ class QuickScan extends Component
             'scanned_at' => now()->format('H:i'),
         ];
         $this->scanned = true;
+        $this->dispatch('quick-scan-complete', publicMatches: $publicMatches);
 
         // Purposeful use of the optional details: the auth pages may prefill,
         // but nothing is written to the database until the person signs up.
@@ -150,6 +151,7 @@ class QuickScan extends Component
 
     public function resetScan(): void
     {
+        $this->dispatch('quick-scan-reset');
         $this->scanned = false;
         $this->results = null;
         $this->scanError = '';

@@ -22,6 +22,8 @@ export function initPageLoader() {
     // If the link click already showed the loader on the previous page, this
     // page must not hold it for the full brand delay again.
     const skipLoader = document.documentElement.classList.contains('page-loader-skip');
+    const introPending = document.documentElement.classList.contains('intro-gate-pending');
+    const introComplete = document.documentElement.classList.contains('intro-gate-complete');
     const arrivedViaNavigation = (() => {
         if (skipLoader) return true;
         try {
@@ -86,7 +88,28 @@ export function initPageLoader() {
         hideAt = window.setTimeout(hide, remaining);
     };
 
-    if (arrivedViaNavigation) {
+    // The landing intro owns the first paint on a first visit. Once the film
+    // finishes, reveal the branded loader for one short beat before the landing.
+    const revealAfterIntro = () => {
+        window.clearTimeout(hideTimer);
+        window.clearTimeout(hideAt);
+        loader.style.animation = 'none';
+        loader.classList.remove('is-hidden', 'is-leaving');
+        document.documentElement.classList.add('is-page-loading');
+        // The intro fade lasts ~520ms. Give the branded loader a full beat
+        // after the film has cleared, not while it is still behind the fade.
+        hideAt = window.setTimeout(hide, reduced ? 900 : 1700);
+    };
+
+    if (introPending) {
+        if (document.documentElement.classList.contains('intro-gate-complete')) {
+            revealAfterIntro();
+        } else {
+            window.addEventListener('traceless:intro-complete', revealAfterIntro, { once: true });
+        }
+    } else if (introComplete) {
+        revealAfterIntro();
+    } else if (arrivedViaNavigation) {
         // One continuous loader across the navigation: dismiss as soon as the
         // new page is ready instead of replaying the minimum brand delay.
         if (document.readyState === 'complete') {
@@ -103,7 +126,11 @@ export function initPageLoader() {
         hideTimer = window.setTimeout(hide, reduced ? 2500 : 7000);
     }
 
-    window.addEventListener('pageshow', arrivedViaNavigation ? hide : hideAfterMinimum);
+    window.addEventListener('pageshow', () => {
+        if (document.documentElement.classList.contains('intro-gate-pending')) return;
+
+        arrivedViaNavigation ? hide() : hideAfterMinimum();
+    });
     window.addEventListener('beforeunload', () => show(true));
 
     document.addEventListener('click', (event) => {

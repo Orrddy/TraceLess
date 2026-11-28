@@ -26,10 +26,18 @@
 
     @include('partials.page-loader-head')
 
+    @if(request()->routeIs('home'))
+        @include('partials.intro-gate-head')
+    @endif
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
 <body class="min-h-screen bg-canvas text-ink antialiased ops-shell v-shell" x-data="{ mobileNav: false }">
+
+    @if(request()->routeIs('home'))
+        @include('partials.intro-gate')
+    @endif
 
     @include('partials.page-loader')
 

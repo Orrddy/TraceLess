@@ -1,4 +1,4 @@
-<div class="space-y-8">
+<div class="space-y-8" data-quick-scan>
     {{-- Intro --}}
     <div class="max-w-3xl">
         <div class="inline-flex items-center gap-2 rounded-full border border-line bg-surface/80 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-body">
@@ -33,7 +33,7 @@
                 <span class="v-pill hidden sm:inline-flex">~10–40 sec</span>
             </div>
 
-            <form wire:submit="scan" class="mt-6 space-y-4">
+            <form wire:submit="scan" class="mt-6 space-y-4" data-quick-scan-form>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div>
                         <label for="quick-name" class="v-kicker mb-1.5 block">Your first name</label>
@@ -81,8 +81,8 @@
                 </label>
                 @error('consent')<p class="font-mono text-[10px] text-danger">{{ $message }}</p>@enderror
 
-                <button type="submit" class="v-btn v-btn-primary w-full !justify-center !py-3.5"
-                        wire:loading.attr="disabled" wire:target="scan">
+                <button type="submit" class="v-btn v-btn-primary quick-scan-submit w-full !justify-center !py-3.5"
+                        wire:loading.attr="disabled" wire:loading.attr="aria-busy" wire:loading.class="is-scanning" wire:target="scan">
                     <span wire:loading.remove wire:target="scan" class="inline-flex items-center gap-2">
                         Scan my footprint
                         <span aria-hidden="true">→</span>
@@ -93,8 +93,9 @@
                     </span>
                 </button>
 
-                <div wire:loading wire:target="scan" class="rounded-lg border border-line bg-elevated/40 px-3 py-2 font-mono text-[10px] leading-relaxed text-muted">
-                    We are requesting each source politely, one at a time. Some sites may be slow or block automated checks.
+                <div wire:loading wire:target="scan" class="quick-scan-loading" role="status" aria-live="polite">
+                    <span class="quick-scan-loading-bar" aria-hidden="true"></span>
+                    <span>We are requesting each source politely, one at a time. Some sites may be slow or block automated checks.</span>
                 </div>
             </form>
         </section>
@@ -137,7 +138,7 @@
     </div>
 
     @if($scanned && $results)
-        <section class="space-y-4" aria-live="polite">
+        <section class="quick-results scroll-mt-24 space-y-4" data-quick-results aria-live="polite">
             <div class="flex flex-col justify-between gap-3 border-t border-line pt-7 sm:flex-row sm:items-end">
                 <div>
                     <p class="v-kicker">Quick scan complete</p>
@@ -207,4 +208,42 @@
             </div>
         </section>
     @endif
+
+    <script>
+        (() => {
+            let registered = false;
+            const revealResults = () => {
+                const shell = document.querySelector('[data-quick-scan]');
+                const results = document.querySelector('[data-quick-results]');
+                if (!results) return;
+
+                shell?.classList.add('quick-scan--complete');
+                results.classList.add('quick-results--entering');
+
+                window.setTimeout(() => {
+                    results.classList.add('quick-results--visible');
+                    results.scrollIntoView({
+                        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+                        block: 'start',
+                    });
+                }, 70);
+
+                window.setTimeout(() => results.classList.remove('quick-results--entering'), 1100);
+            };
+
+            const resetResults = () => {
+                document.querySelector('[data-quick-scan]')?.classList.remove('quick-scan--complete');
+            };
+
+            const register = () => {
+                if (registered || !window.Livewire) return;
+                registered = true;
+                window.Livewire.on('quick-scan-complete', revealResults);
+                window.Livewire.on('quick-scan-reset', resetResults);
+            };
+
+            document.addEventListener('livewire:init', register);
+            if (window.Livewire) register();
+        })();
+    </script>
 </div>
